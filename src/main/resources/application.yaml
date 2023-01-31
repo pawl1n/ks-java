@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: kishka-strybaie
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+  jpa:
+    open-in-view: false

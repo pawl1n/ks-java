@@ -1,0 +1,57 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-tables-product_category-and-product
+      author: andrii
+      changes:
+        - createTable:
+            tableName: product_category
+            schemaName: main
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: parent_category_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: parent_category_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: product_category
+                    referencedColumnNames: id
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: true
+
+        - createTable:
+            tableName: product
+            schemaName: main
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: category_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: product_category_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: product_category
+                    referencedColumnNames: id
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: main_image
+                  type: text

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-schema
+      author: andrii
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            sql:
+              create schema if not exists main

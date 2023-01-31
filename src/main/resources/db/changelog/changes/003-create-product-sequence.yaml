@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 003-create-product-sequence
+      changes:
+        - createSequence:
+            schemaName: main
+            sequenceName: product_seq

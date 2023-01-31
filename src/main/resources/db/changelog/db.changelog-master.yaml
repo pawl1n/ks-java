@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: changes/001-create-schema.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/002-create-tables-product_category-and-product.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/003-create-product-sequence.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/004-create-category-sequence.yaml
+      relativeToChangelogFile: true

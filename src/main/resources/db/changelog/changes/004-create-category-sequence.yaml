@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 004-create-category-sequence
+      changes:
+        - createSequence:
+            schemaName: main
+            sequenceName: category_seq
