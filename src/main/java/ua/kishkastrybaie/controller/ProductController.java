@@ -1,9 +1,12 @@
 package ua.kishkastrybaie.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.kishkastrybaie.controller.dto.ProductDTO;
-import ua.kishkastrybaie.controller.dto.ProductMapper;
+import ua.kishkastrybaie.controller.dto.ProductDto;
+import ua.kishkastrybaie.controller.dto.mapper.ProductMapper;
+import ua.kishkastrybaie.repository.entity.Product;
 import ua.kishkastrybaie.service.ProductService;
 
 import java.util.List;
@@ -16,27 +19,39 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public List<ProductDTO> getAll() {
-        return productService.findAll().stream().map(productMapper::toDTO).toList();
+    public ResponseEntity<List<ProductDto>> getAll() {
+        List<ProductDto> responseDto = productMapper.toDto(productService.findAll());
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/{id}")
-    public ProductDTO getById(@PathVariable Long id) {
-        return productMapper.toDTO(productService.findById(id));
+    public ResponseEntity<ProductDto> getById(@PathVariable Long id) {
+        ProductDto responseDto = productMapper.toDto(productService.findById(id));
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping
-    public void save(@RequestBody ProductDTO productDTO) {
-        productService.save(productMapper.toDomain(productDTO));
+    public ResponseEntity<ProductDto> save(@RequestBody ProductDto productDto) {
+        Product response = productService.save(productMapper.toDomain(productDto));
+        ProductDto responseDto = productMapper.toDto(response);
+
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public void update(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-        productService.update(id, productMapper.toDomain(productDTO));
+    @PutMapping
+    public ResponseEntity<ProductDto> update(@RequestBody ProductDto productDto) {
+        Product response = productService.update(productMapper.toDomain(productDto));
+        ProductDto responseDto = productMapper.toDto(response);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

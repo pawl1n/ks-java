@@ -1,6 +1,7 @@
 package ua.kishkastrybaie.controller.dto;
 
-public record ProductDTO(
+public record ProductDto(
+        Long id,
         String name,
         String description,
         String category,
