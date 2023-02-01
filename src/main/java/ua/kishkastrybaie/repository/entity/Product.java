@@ -27,6 +27,6 @@ public class Product {
     @Column
     private String mainImage;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Category category;
 }
