@@ -34,16 +34,16 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductDto> save(@RequestBody ProductDto productDto) {
-        Product response = productService.save(productMapper.toDomain(productDto));
-        ProductDto responseDto = productMapper.toDto(response);
+        Product product = productService.save(productMapper.toDomain(productDto));
+        ProductDto responseDto = productMapper.toDto(product);
 
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<ProductDto> update(@RequestBody ProductDto productDto) {
-        Product response = productService.update(productMapper.toDomain(productDto));
-        ProductDto responseDto = productMapper.toDto(response);
+        Product product = productService.update(productMapper.toDomain(productDto));
+        ProductDto responseDto = productMapper.toDto(product);
 
         return ResponseEntity.ok(responseDto);
     }

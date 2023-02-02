@@ -34,16 +34,16 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryDto> save(@RequestBody CategoryDto categoryDto) {
-        Category response = categoryService.save(categoryMapper.toDomain(categoryDto));
-        CategoryDto responseDto = categoryMapper.toDto(response);
+        Category category = categoryService.save(categoryMapper.toDomain(categoryDto));
+        CategoryDto responseDto = categoryMapper.toDto(category);
 
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDto> update(@RequestBody CategoryDto categoryDto) {
-        Category response = categoryService.update(categoryMapper.toDomain(categoryDto));
-        CategoryDto responseDto = categoryMapper.toDto(response);
+        Category category = categoryService.update(categoryMapper.toDomain(categoryDto));
+        CategoryDto responseDto = categoryMapper.toDto(category);
 
         return ResponseEntity.ok(responseDto);
     }

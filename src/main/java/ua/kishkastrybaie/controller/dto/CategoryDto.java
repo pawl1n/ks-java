@@ -5,5 +5,4 @@ public record CategoryDto(
         String name,
         CategoryDto parentCategory
 ) {
-
 }
