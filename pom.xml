@@ -22,6 +22,7 @@
         <spring-boot-devtools.version>3.0.1</spring-boot-devtools.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
         <springdoc-openapi.version>2.0.2</springdoc-openapi.version>
+        <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
     </properties>
 
     <dependencies>
@@ -95,6 +96,11 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-common</artifactId>
             <version>${springdoc-openapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
         </dependency>
     </dependencies>
 
