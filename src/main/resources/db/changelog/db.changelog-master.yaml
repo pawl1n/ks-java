@@ -11,3 +11,18 @@ databaseChangeLog:
   - include:
       file: changes/004-create-category-sequence.yaml
       relativeToChangelogFile: true
+  - include:
+      file: changes/005-create-table-variation.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/006-create-table-product_item.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/007-create-table-variation_option.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/008-create-table-product_configuration.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/009-create-table-user.yaml
+      relativeToChangelogFile: true

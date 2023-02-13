@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 006-create-table-product_item
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: product_item
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: product_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: product_item_product_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: product
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: SKU
+                  type: text
+                  constraints:
+                    unique: true
+              - column:
+                  name: price
+                  type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: stock
+                  type: number
+        - createSequence:
+            schemaName: main
+            sequenceName: product_item_seq
