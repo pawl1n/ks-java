@@ -6,8 +6,6 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.kishkastrybaie.controller.assembler.CategoryModelAssembler;
-import ua.kishkastrybaie.controller.assembler.VariationModelAssembler;
 import ua.kishkastrybaie.controller.dto.CategoryDto;
 import ua.kishkastrybaie.controller.dto.ErrorDto;
 import ua.kishkastrybaie.controller.dto.VariationDto;
