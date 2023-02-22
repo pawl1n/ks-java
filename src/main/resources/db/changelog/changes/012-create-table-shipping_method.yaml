@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 012-create-table-shipping_method
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: shipping_method
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+        - createSequence:
+            schemaName: main
+            sequenceName: shipping_method_seq

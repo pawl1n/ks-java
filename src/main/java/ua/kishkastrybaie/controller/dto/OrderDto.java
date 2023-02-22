@@ -5,17 +5,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@Relation(itemRelation = "category", collectionRelation = "categories")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CategoryDto extends RepresentationModel<CategoryDto> {
+public class OrderDto extends RepresentationModel<OrderDto> {
     private Long id;
-    private String name;
-    private CategoryDto parentCategory;
+    private LocalDateTime date;
+    private String shippingMethodName;
+    private String orderStatusName;
+    private Double totalPrice;
+    private String address;
+    private String paymentTypeName;
+    private Set<OrderItemDto> orderItems;
 }

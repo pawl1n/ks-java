@@ -1,16 +1,21 @@
 package ua.kishkastrybaie.repository.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.net.URL;
+import java.util.Set;
 
 @Entity
 @Table(name = "product", schema = "main")
-@Data
+@Getter
+@Setter
 public class Product {
     @Id
-    @GeneratedValue(generator = "product_seq_generator")
+    @GeneratedValue(generator = "product_seq")
     @SequenceGenerator(
-            name = "product_seq_generator",
+            name = "product_seq",
             sequenceName = "product_seq",
             schema = "main",
             allocationSize = 1
@@ -25,8 +30,11 @@ public class Product {
     private String description;
 
     @Column
-    private String mainImage;
+    private URL mainImage;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Category category;
+
+    @OneToMany(mappedBy = "product")
+    private Set<ProductItem> productItems;
 }

@@ -1,3 +1,4 @@
+#file: noinspection SpellCheckingInspection
 spring:
   application:
     name: kishka-strybaie
@@ -8,3 +9,6 @@ spring:
     url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
   jpa:
     open-in-view: false
+  devtools:
+    restart:
+      enabled: true

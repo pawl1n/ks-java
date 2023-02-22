@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 005-create-table-variation
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: variation
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: category_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: variation_category_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: product_category
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+        - createSequence:
+            schemaName: main
+            sequenceName: variation_seq

@@ -1,0 +1,68 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 015-create-table-order
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: order
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: order_user_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: user
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: shipping_method_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: order_shipping_method_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: shipping_method
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: order_status_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: order_status_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: order_status
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: total_price
+                  type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_type_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: order_payment_type_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: payment_type
+                    referencedColumnNames: id
+                    nullable: false
+        - createSequence:
+            schemaName: main
+            sequenceName: order_seq

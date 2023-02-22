@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 013-create-table-order_status
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: order_status
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+        - createSequence:
+            schemaName: main
+            sequenceName: order_status_seq

@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 007-create-table-variation_option
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: variation_option
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: variation_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: variation_option_variation_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: variation
+                    referencedColumnNames: id
+              - column:
+                  name: value
+                  type: text
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            schemaName: main
+            tableName: variation_option
+            constraintName: variation_options_UN
+            columnNames: variation_id, value
+        - createSequence:
+            schemaName: main
+            sequenceName: variation_option_seq

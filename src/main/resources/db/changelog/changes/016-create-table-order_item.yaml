@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 016-create-table-order_item
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: order_item
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: order_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: order_item_order_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: order
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: product_item_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: order_item_product_item_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: product_item
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: number
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: double
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            schemaName: main
+            tableName: order_item
+            columnNames: product_item_id, order_id
+        - createSequence:
+            schemaName: main
+            sequenceName: order_item_seq

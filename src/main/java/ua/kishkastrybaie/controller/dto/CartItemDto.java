@@ -5,17 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
-import java.util.Set;
+import java.net.URL;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@Relation(itemRelation = "category", collectionRelation = "categories")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CategoryDto extends RepresentationModel<CategoryDto> {
+public class CartItemDto extends RepresentationModel<CartItemDto> {
     private Long id;
-    private String name;
-    private CategoryDto parentCategory;
+    private Long productItemId;
+    private String productName;
+    private URL productImage;
+    private Double productItemPrice;
+    private Long quantity;
 }

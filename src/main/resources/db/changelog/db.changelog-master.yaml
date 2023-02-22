@@ -11,3 +11,39 @@ databaseChangeLog:
   - include:
       file: changes/004-create-category-sequence.yaml
       relativeToChangelogFile: true
+  - include:
+      file: changes/005-create-table-variation.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/006-create-table-product_item.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/007-create-table-variation_option.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/008-create-table-product_configuration.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/009-create-table-user.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/010-create-table-user_cart.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/011-create-table-user_cart_item.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/012-create-table-shipping_method.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/013-create-table-order_status.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/014-create-table-payment_type.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/015-create-table-order.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/016-create-table-order_item.yaml
+      relativeToChangelogFile: true

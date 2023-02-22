@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 008-create-table-product_configuration
+      changes:
+        - createTable:
+            tableName: product_configuration
+            schemaName: main
+            columns:
+              - column:
+                  name: product_item_id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: product_configuration_product_item_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: product_item
+                    referencedColumnNames: id
+              - column:
+                  name: variation_option_id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: product_configuration_variation_option_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: variation_option
+                    referencedColumnNames: id
