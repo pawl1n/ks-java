@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 011-create-table-user_cart_item
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: user_cart_item
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: cart_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: item_cart_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: user_cart
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: product_item_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: item_product_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: product_item
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: number
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            schemaName: main
+            tableName: user_cart_item
+            columnNames: cart_id, product_item_id
+        - createSequence:
+            schemaName: main
+            sequenceName: user_cart_item_seq

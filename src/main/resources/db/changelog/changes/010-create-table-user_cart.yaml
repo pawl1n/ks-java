@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 010-create-table-user_cart
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: user_cart
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: cart_user_FK
+                    referencedTableSchemaName: main
+                    referencedTableName: user
+                    referencedColumnNames: id
+                    nullable: false
+                    unique: true
+        - createSequence:
+            schemaName: main
+            sequenceName: user_cart_seq

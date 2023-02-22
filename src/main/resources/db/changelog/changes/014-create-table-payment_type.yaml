@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 014-create-table-payment_type
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: payment_type
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+        - createSequence:
+            schemaName: main
+            sequenceName: payment_type_seq
