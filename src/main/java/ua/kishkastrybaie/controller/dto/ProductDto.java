@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import java.net.URL;
 import java.util.Set;
 
 @Getter
@@ -17,6 +18,6 @@ public class ProductDto extends RepresentationModel<ProductDto> {
     private String name;
     private String description;
     private String category;
-    private String mainImage;
+    private URL mainImage;
     private Set<ProductItemDto> variations;
 }
