@@ -16,10 +16,12 @@ public class VariationServiceImpl implements VariationService {
     private final VariationRepository variationRepository;
     private final CategoryService categoryService;
 
+    @Override
     public List<Variation> findAll() {
         return variationRepository.findAll();
     }
 
+    @Override
     public Variation findById(Long id) {
         return variationRepository.findById(id)
                 .orElseThrow(VariationNotFoundException::new);

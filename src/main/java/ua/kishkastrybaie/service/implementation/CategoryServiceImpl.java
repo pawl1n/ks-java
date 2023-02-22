@@ -16,19 +16,23 @@ import java.util.function.Supplier;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
+    @Override
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
 
+    @Override
     public Category findById(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(CategoryNotFoundException::new);
     }
 
+    @Override
     public Category create(Category category) {
         return categoryRepository.save(category);
     }
 
+    @Override
     public Category update(Long id, Category categoryDetails) {
         Category category = categoryRepository.findById(categoryDetails.getId())
                 .orElseThrow(EntityNotFoundException::new);
@@ -43,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.save(category);
     }
 
+    @Override
     public Category replace(Long id, Category newCategory) {
         return categoryRepository.findById(id).map(category -> {
             category.setName(newCategory.getName());
@@ -53,11 +58,13 @@ public class CategoryServiceImpl implements CategoryService {
         });
     }
 
+    @Override
     public void deleteById(Long id) {
         Category category = findById(id);
         categoryRepository.delete(category);
     }
 
+    @Override
     public Category createIfNotExists(String name) {
         Supplier<Category> createCategory = () -> {
             Category category = new Category();
@@ -69,6 +76,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findCategoryByName(name).orElseGet(createCategory);
     }
 
+    @Override
     public Category getParentCategory(Long id) {
         Category category = findById(id).getParentCategory();
         if (category == null) throw new CategoryNotFoundException();

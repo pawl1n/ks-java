@@ -17,14 +17,17 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
 
+    @Override
     public List<Product> findAll() {
         return productRepository.findAll();
     }
 
+    @Override
     public Product findById(Long id) {
         return productRepository.findById(id).orElseThrow();
     }
 
+    @Override
     public Product create(Product product) {
         if (product.getCategory() != null) {
             Category category = categoryService.createIfNotExists(product.getCategory().getName());
@@ -34,6 +37,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
+    @Override
     public Product update(Long id, Product productDetails) {
         Product product = productRepository.findById(productDetails.getId())
                 .orElseThrow(EntityNotFoundException::new);
@@ -55,6 +59,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
+    @Override
     public Product replace(Long id, Product newProduct) {
         return productRepository.findById(id).map(product -> {
             product.setName(newProduct.getName());
@@ -68,6 +73,7 @@ public class ProductServiceImpl implements ProductService {
         });
     }
 
+    @Override
     public void deleteById(Long id) {
         Product product = findById(id);
         productRepository.delete(product);
