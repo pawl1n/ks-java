@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.net.URL;
 import java.util.Set;
 
 @Entity
@@ -29,7 +30,7 @@ public class Product {
     private String description;
 
     @Column
-    private String mainImage;
+    private URL mainImage;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Category category;
