@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 017-add-role-column-to-user
+      changes:
+        - addColumn:
+            schemaName: main
+            tableName: user
+            columns:
+              - column:
+                  name: role
+                  type: text
+                  defaultValue: "USER"
+                  constraints:
+                    nullable: false
