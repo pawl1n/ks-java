@@ -12,5 +12,3 @@ spring:
   devtools:
     restart:
       enabled: true
-jwt:
-  secret: ${JWT_SECRET}
