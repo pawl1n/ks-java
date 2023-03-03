@@ -1,4 +1,4 @@
-package ua.kishkastrybaie.config;
+package ua.kishkastrybaie.config.security;
 
 public interface MatcherPatterns {
     String[] PUBLIC = new String[] {
@@ -6,6 +6,7 @@ public interface MatcherPatterns {
     };
     String[] PUBLIC_GET = new String[] {
             "/api/v1/products/**",
-            "/api/v1/categories/**"
+            "/api/v1/categories/**",
+            "/api/v1/"
     };
 }
