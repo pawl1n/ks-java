@@ -9,17 +9,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ShippingMethod {
-    @Id
-    @GeneratedValue(generator = "shipping_method_seq")
-    @SequenceGenerator(
-            name = "shipping_method_seq",
-            sequenceName = "shipping_method_seq",
-            schema = "main",
-            allocationSize = 1
-    )
-    @Column(name = "id", updatable = false)
-    private Long id;
+  @Id
+  @GeneratedValue(generator = "shipping_method_seq")
+  @SequenceGenerator(
+      name = "shipping_method_seq",
+      sequenceName = "shipping_method_seq",
+      schema = "main",
+      allocationSize = 1)
+  @Column(name = "id", updatable = false)
+  private Long id;
 
-    @Column
-    private String name;
+  @Column private String name;
 }

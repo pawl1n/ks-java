@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 import ua.kishkastrybaie.repository.entity.VariationOption;
 
 @Repository
-public interface VariationOptionRepository extends JpaRepository<VariationOption, Long> {
-}
+public interface VariationOptionRepository extends JpaRepository<VariationOption, Long> {}

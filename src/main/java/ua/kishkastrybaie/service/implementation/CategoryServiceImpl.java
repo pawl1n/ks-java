@@ -1,86 +1,75 @@
 package ua.kishkastrybaie.service.implementation;
 
-import jakarta.persistence.EntityNotFoundException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
+import ua.kishkastrybaie.controller.assembler.CategoryModelAssembler;
+import ua.kishkastrybaie.controller.dto.CategoryDto;
+import ua.kishkastrybaie.controller.dto.CategoryRequestDto;
+import ua.kishkastrybaie.controller.dto.mapper.CategoryMapper;
 import ua.kishkastrybaie.exception.CategoryNotFoundException;
 import ua.kishkastrybaie.repository.CategoryRepository;
 import ua.kishkastrybaie.repository.entity.Category;
 import ua.kishkastrybaie.service.CategoryService;
 
-import java.util.List;
-import java.util.function.Supplier;
-
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-    private final CategoryRepository categoryRepository;
+  private final CategoryRepository categoryRepository;
+  private final CategoryMapper categoryMapper;
+  private final CategoryModelAssembler categoryModelAssembler;
 
-    @Override
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
-    }
+  @Override
+  public CollectionModel<CategoryDto> findAll() {
+    return categoryModelAssembler.toCollectionModel(categoryRepository.findAll());
+  }
 
-    @Override
-    public Category findById(Long id) {
-        return categoryRepository.findById(id)
-                .orElseThrow(CategoryNotFoundException::new);
-    }
+  @Override
+  public CategoryDto findById(Long id) {
+    return categoryModelAssembler.toModel(
+        categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id)));
+  }
 
-    @Override
-    public Category create(Category category) {
-        return categoryRepository.save(category);
-    }
+  @Override
+  public CategoryDto create(CategoryRequestDto categoryRequestDto) {
+    Category category = categoryMapper.toDomain(categoryRequestDto);
+    return categoryModelAssembler.toModel(categoryRepository.save(category));
+  }
 
-    @Override
-    public Category update(Long id, Category categoryDetails) {
-        Category category = categoryRepository.findById(categoryDetails.getId())
-                .orElseThrow(EntityNotFoundException::new);
+  @Override
+  public CategoryDto replace(Long id, CategoryRequestDto categoryRequestDto) {
+    Category categoryDetails = categoryMapper.toDomain(categoryRequestDto);
 
-        if (categoryDetails.getName() != null) {
-            category.setName(categoryDetails.getName());
-        }
-        if (categoryDetails.getParentCategory() != null) {
-            category.setParentCategory(categoryDetails.getParentCategory());
-        }
+    Category category =
+        categoryRepository
+            .findById(id)
+            .map(
+                p -> {
+                  p.setName(categoryDetails.getName());
+                  p.setParentCategory(categoryDetails.getParentCategory());
+                  return categoryRepository.save(p);
+                })
+            .orElseThrow(() -> new CategoryNotFoundException(id));
 
-        return categoryRepository.save(category);
-    }
+    return categoryModelAssembler.toModel(category);
+  }
 
-    @Override
-    public Category replace(Long id, Category newCategory) {
-        return categoryRepository.findById(id).map(category -> {
-            category.setName(newCategory.getName());
-            return categoryRepository.save(category);
-        }).orElseGet(() -> {
-            newCategory.setId(id);
-            return categoryRepository.save(newCategory);
-        });
-    }
+  @Override
+  public void deleteById(Long id) {
+    Category category =
+        categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+    categoryRepository.delete(category);
+  }
 
-    @Override
-    public void deleteById(Long id) {
-        Category category = findById(id);
-        categoryRepository.delete(category);
-    }
+  @Override
+  public CategoryDto getParentCategory(Long id) {
+    Category category =
+        categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+    Category parentCategory =
+        Optional.ofNullable(category.getParentCategory())
+            .orElseThrow(() -> new CategoryNotFoundException("No parent category for id: " + id));
 
-    @Override
-    public Category createIfNotExists(String name) {
-        Supplier<Category> createCategory = () -> {
-            Category category = new Category();
-            category.setName(name);
-
-            return categoryRepository.save(category);
-        };
-
-        return categoryRepository.findCategoryByName(name).orElseGet(createCategory);
-    }
-
-    @Override
-    public Category getParentCategory(Long id) {
-        Category category = findById(id).getParentCategory();
-        if (category == null) throw new CategoryNotFoundException();
-
-        return category;
-    }
+    return categoryModelAssembler.toModel(parentCategory);
+  }
 }

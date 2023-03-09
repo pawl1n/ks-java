@@ -6,5 +6,5 @@ import ua.kishkastrybaie.repository.entity.OrderItem;
 
 @Mapper(componentModel = "spring")
 public interface OrderItemMapper {
-    OrderItemDto toDto(OrderItem cartItem);
+  OrderItemDto toDto(OrderItem cartItem);
 }

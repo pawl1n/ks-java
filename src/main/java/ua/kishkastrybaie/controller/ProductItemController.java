@@ -16,23 +16,24 @@ import ua.kishkastrybaie.service.ProductItemService;
 @RequestMapping("/api/v1/product-variations")
 @RequiredArgsConstructor
 public class ProductItemController {
-    private final ProductItemService productItemService;
-    private final RepresentationModelAssembler<ProductItem, ProductItemDto> productItemModelAssembler;
+  private final ProductItemService productItemService;
+  private final RepresentationModelAssembler<ProductItem, ProductItemDto> productItemModelAssembler;
 
-    @GetMapping
-    public ResponseEntity<CollectionModel<ProductItemDto>> all() {
-        CollectionModel<ProductItemDto> responseDto = productItemModelAssembler.toCollectionModel(productItemService.findAll());
-        return ResponseEntity.ok(responseDto);
-    }
+  @GetMapping
+  public ResponseEntity<CollectionModel<ProductItemDto>> all() {
+    CollectionModel<ProductItemDto> responseDto =
+        productItemModelAssembler.toCollectionModel(productItemService.findAll());
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductItemDto> one(@PathVariable Long id) {
-        ProductItemDto responseDto = productItemModelAssembler.toModel(productItemService.findById(id));
-        return ResponseEntity.ok(responseDto);
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<ProductItemDto> one(@PathVariable Long id) {
+    ProductItemDto responseDto = productItemModelAssembler.toModel(productItemService.findById(id));
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @ExceptionHandler(VariationNotFoundException.class)
-    public ResponseEntity<ErrorDto> handleVariationNotfound(VariationNotFoundException e) {
-        return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.NOT_FOUND);
-    }
+  @ExceptionHandler(VariationNotFoundException.class)
+  public ResponseEntity<ErrorDto> handleVariationNotfound(VariationNotFoundException e) {
+    return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.NOT_FOUND);
+  }
 }

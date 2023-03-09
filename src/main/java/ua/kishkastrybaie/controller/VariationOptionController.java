@@ -16,23 +16,26 @@ import ua.kishkastrybaie.service.VariationOptionService;
 @RequestMapping("/api/v1/variation-options")
 @RequiredArgsConstructor
 public class VariationOptionController {
-    private final VariationOptionService variationOptionService;
-    private final RepresentationModelAssembler<VariationOption, VariationOptionDto> variationOptionModelAssembler;
+  private final VariationOptionService variationOptionService;
+  private final RepresentationModelAssembler<VariationOption, VariationOptionDto>
+      variationOptionModelAssembler;
 
-    @GetMapping
-    public ResponseEntity<CollectionModel<VariationOptionDto>> all() {
-        CollectionModel<VariationOptionDto> responseDto = variationOptionModelAssembler.toCollectionModel(variationOptionService.findAll());
-        return ResponseEntity.ok(responseDto);
-    }
+  @GetMapping
+  public ResponseEntity<CollectionModel<VariationOptionDto>> all() {
+    CollectionModel<VariationOptionDto> responseDto =
+        variationOptionModelAssembler.toCollectionModel(variationOptionService.findAll());
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<VariationOptionDto> one(@PathVariable Long id) {
-        VariationOptionDto responseDto = variationOptionModelAssembler.toModel(variationOptionService.findById(id));
-        return ResponseEntity.ok(responseDto);
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<VariationOptionDto> one(@PathVariable Long id) {
+    VariationOptionDto responseDto =
+        variationOptionModelAssembler.toModel(variationOptionService.findById(id));
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @ExceptionHandler(VariationNotFoundException.class)
-    public ResponseEntity<ErrorDto> handleVariationNotfound(VariationNotFoundException e) {
-        return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.NOT_FOUND);
-    }
+  @ExceptionHandler(VariationNotFoundException.class)
+  public ResponseEntity<ErrorDto> handleVariationNotfound(VariationNotFoundException e) {
+    return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.NOT_FOUND);
+  }
 }

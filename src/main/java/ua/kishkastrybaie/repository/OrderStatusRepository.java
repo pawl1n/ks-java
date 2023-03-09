@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 import ua.kishkastrybaie.repository.entity.OrderStatus;
 
 @Repository
-public interface OrderStatusRepository extends JpaRepository<OrderStatus, Long> {
-}
+public interface OrderStatusRepository extends JpaRepository<OrderStatus, Long> {}

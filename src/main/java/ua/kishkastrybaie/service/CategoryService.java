@@ -1,14 +1,19 @@
 package ua.kishkastrybaie.service;
 
-import ua.kishkastrybaie.repository.entity.Category;
+import org.springframework.hateoas.CollectionModel;
+import ua.kishkastrybaie.controller.dto.CategoryDto;
+import ua.kishkastrybaie.controller.dto.CategoryRequestDto;
 
 public interface CategoryService {
-    Iterable<Category> findAll();
-    Category findById(Long id);
-    Category create(Category category);
-    Category update(Long id, Category category);
-    Category replace(Long id, Category category);
-    void deleteById(Long id);
-    Category createIfNotExists(String name);
-    Category getParentCategory(Long id);
+  CollectionModel<CategoryDto> findAll();
+
+  CategoryDto findById(Long id);
+
+  CategoryDto create(CategoryRequestDto category);
+
+  CategoryDto replace(Long id, CategoryRequestDto category);
+
+  void deleteById(Long id);
+
+  CategoryDto getParentCategory(Long id);
 }

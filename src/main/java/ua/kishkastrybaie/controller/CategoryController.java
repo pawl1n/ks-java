@@ -1,76 +1,69 @@
 package ua.kishkastrybaie.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.kishkastrybaie.controller.dto.CategoryDto;
-import ua.kishkastrybaie.controller.dto.ErrorDto;
-import ua.kishkastrybaie.controller.dto.mapper.CategoryMapper;
-import ua.kishkastrybaie.exception.CategoryNotFoundException;
-import ua.kishkastrybaie.repository.entity.Category;
+import ua.kishkastrybaie.controller.dto.CategoryRequestDto;
 import ua.kishkastrybaie.service.CategoryService;
 
 @RestController
 @RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryController {
-    private final CategoryMapper categoryMapper;
-    private final CategoryService categoryService;
-    private final RepresentationModelAssembler<Category, CategoryDto> categoryModelAssembler;
+  private final CategoryService categoryService;
 
-    @GetMapping
-    public ResponseEntity<CollectionModel<CategoryDto>> all() {
-        CollectionModel<CategoryDto> responseDto = categoryModelAssembler.toCollectionModel(categoryService.findAll());
+  @GetMapping
+  public ResponseEntity<CollectionModel<CategoryDto>> all() {
+    log.info("Get all categories");
 
-        return ResponseEntity.ok(responseDto);
-    }
+    CollectionModel<CategoryDto> responseDto = categoryService.findAll();
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> one(@PathVariable Long id) {
-        CategoryDto responseDto = categoryModelAssembler.toModel(categoryService.findById(id));
+  @GetMapping("/{id}")
+  public ResponseEntity<CategoryDto> one(@PathVariable Long id) {
+    log.info("Get category by id: {}", id);
 
-        return ResponseEntity.ok(responseDto);
-    }
+    CategoryDto responseDto = categoryService.findById(id);
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @GetMapping("/{id}/parent-category")
-    public ResponseEntity<CategoryDto> parentCategory(@PathVariable Long id) {
-        CategoryDto responseDto = categoryModelAssembler.toModel(categoryService.getParentCategory(id));
+  @GetMapping("/{id}/parent-category")
+  public ResponseEntity<CategoryDto> parentCategory(@PathVariable Long id) {
+    log.info("Get parent category by id: {}", id);
 
-        return ResponseEntity.ok(responseDto);
-    }
+    CategoryDto responseDto = categoryService.getParentCategory(id);
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @PostMapping
-    public ResponseEntity<CategoryDto> save(@RequestBody CategoryDto categoryDto) {
-        Category category = categoryService.create(categoryMapper.toDomain(categoryDto));
-        CategoryDto responseDto = categoryModelAssembler.toModel(category);
+  @PostMapping
+  public ResponseEntity<CategoryDto> save(@RequestBody CategoryRequestDto categoryRequestDto) {
+    log.info("Save category: {}", categoryRequestDto);
 
-        return ResponseEntity
-                .created(responseDto.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(responseDto);
-    }
+    CategoryDto responseDto = categoryService.create(categoryRequestDto);
+    return ResponseEntity.created(responseDto.getRequiredLink(IanaLinkRelations.SELF).toUri())
+        .body(responseDto);
+  }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CategoryDto> update(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
-        Category category = categoryService.update(id, categoryMapper.toDomain(categoryDto));
-        CategoryDto responseDto = categoryModelAssembler.toModel(category);
+  @PutMapping("/{id}")
+  public ResponseEntity<CategoryDto> update(
+      @PathVariable Long id, @RequestBody CategoryRequestDto categoryRequestDto) {
+    log.info("Update category by id: {}", id);
 
-        return ResponseEntity.ok(responseDto);
-    }
+    CategoryDto responseDto = categoryService.replace(id, categoryRequestDto);
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        categoryService.deleteById(id);
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    log.info("Delete category by id: {}", id);
 
-        return ResponseEntity.noContent().build();
-    }
-
-    @ExceptionHandler(CategoryNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public static ResponseEntity<ErrorDto> handleCategoryNotFound(CategoryNotFoundException e) {
-        return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.NOT_FOUND);
-    }
+    categoryService.deleteById(id);
+    return ResponseEntity.noContent().build();
+  }
 }

@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 import ua.kishkastrybaie.repository.entity.ProductItem;
 
 @Repository
-public interface ProductItemRepository extends JpaRepository<ProductItem, Long> {
-}
+public interface ProductItemRepository extends JpaRepository<ProductItem, Long> {}

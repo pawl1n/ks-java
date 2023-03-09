@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 import ua.kishkastrybaie.repository.entity.PaymentType;
 
 @Repository
-public interface PaymentTypeRepository extends JpaRepository<PaymentType, Long> {
-}
+public interface PaymentTypeRepository extends JpaRepository<PaymentType, Long> {}

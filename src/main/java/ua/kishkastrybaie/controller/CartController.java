@@ -12,9 +12,9 @@ import ua.kishkastrybaie.controller.dto.CartDto;
 @RequestMapping("/api/v1/carts")
 @RequiredArgsConstructor
 public class CartController {
-    // TODO: implement cart controller
-    @GetMapping("/{id}")
-    public ResponseEntity<CartDto> one(@PathVariable Long id) {
-        return ResponseEntity.ok().build();
-    }
+  // TODO: implement cart controller
+  @GetMapping("/{id}")
+  public ResponseEntity<CartDto> one(@PathVariable Long id) {
+    return ResponseEntity.ok().build();
+  }
 }
