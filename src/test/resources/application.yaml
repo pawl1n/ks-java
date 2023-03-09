@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:test
+    driverClassName: org.h2.Driver
+    username: sa
+    password: sa
+    hikari:
+      connection-init-sql: CREATE SCHEMA IF NOT EXISTS MAIN
+  liquibase:
+    enabled: false
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    open-in-view: false
+  h2:
+    console:
+      enabled: true
+  sql:
+    init:
+      mode: always
