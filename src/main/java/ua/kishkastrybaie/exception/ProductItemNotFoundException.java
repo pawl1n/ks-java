@@ -1,9 +1,9 @@
 package ua.kishkastrybaie.exception;
 
 public class ProductItemNotFoundException extends RuntimeException {
-    private static final String MESSAGE = "Product item not found";
+  private static final String MESSAGE = "Product item not found";
 
-    public ProductItemNotFoundException() {
-        super(MESSAGE);
-    }
+  public ProductItemNotFoundException() {
+    super(MESSAGE);
+  }
 }

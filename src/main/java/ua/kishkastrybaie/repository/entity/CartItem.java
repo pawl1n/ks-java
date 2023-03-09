@@ -9,23 +9,20 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CartItem {
-    @Id
-    @GeneratedValue(generator = "user_cart_item_seq")
-    @SequenceGenerator(
-            name = "user_cart_item_seq",
-            sequenceName = "user_cart_item_seq",
-            schema = "main",
-            allocationSize = 1
-    )
-    @Column(name = "id", updatable = false)
-    private Long id;
+  @Id
+  @GeneratedValue(generator = "user_cart_item_seq")
+  @SequenceGenerator(
+      name = "user_cart_item_seq",
+      sequenceName = "user_cart_item_seq",
+      schema = "main",
+      allocationSize = 1)
+  @Column(name = "id", updatable = false)
+  private Long id;
 
-    @ManyToOne
-    private Cart cart;
+  @ManyToOne private Cart cart;
 
-    @ManyToOne
-    private ProductItem productItem;
+  @ManyToOne private ProductItem productItem;
 
-    @Column(name = "quantity")
-    private Integer quantity;
+  @Column(name = "quantity")
+  private Integer quantity;
 }

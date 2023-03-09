@@ -1,4 +1,3 @@
 package ua.kishkastrybaie.controller.dto;
 
-public record ErrorDto(String message) {
-}
+public record ErrorDto(String message) {}

@@ -1,79 +1,71 @@
 package ua.kishkastrybaie.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.kishkastrybaie.controller.dto.CategoryDto;
-import ua.kishkastrybaie.controller.dto.ErrorDto;
 import ua.kishkastrybaie.controller.dto.ProductDto;
-import ua.kishkastrybaie.controller.dto.mapper.ProductMapper;
-import ua.kishkastrybaie.exception.ProductNotFoundException;
-import ua.kishkastrybaie.repository.entity.Category;
-import ua.kishkastrybaie.repository.entity.Product;
+import ua.kishkastrybaie.controller.dto.ProductRequestDto;
 import ua.kishkastrybaie.service.ProductService;
 
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductController {
-    private final ProductMapper productMapper;
-    private final ProductService productService;
-    private final RepresentationModelAssembler<Product, ProductDto> productModelAssembler;
-    private final RepresentationModelAssembler<Category, CategoryDto> categoryModelAssembler;
+  private final ProductService productService;
 
-    @GetMapping
-    public ResponseEntity<CollectionModel<ProductDto>> all() {
-        CollectionModel<ProductDto> responseDto = productModelAssembler.toCollectionModel(productService.findAll());
+  @GetMapping
+  public ResponseEntity<CollectionModel<ProductDto>> all() {
+    log.info("Get all products");
 
-        return ResponseEntity.ok(responseDto);
-    }
+    CollectionModel<ProductDto> responseDto = productService.findAll();
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductDto> one(@PathVariable Long id) {
-        ProductDto responseDto = productModelAssembler.toModel(productService.findById(id));
+  @GetMapping("/{id}")
+  public ResponseEntity<ProductDto> one(@PathVariable Long id) {
+    log.info("Get product by id: {}", id);
 
-        return ResponseEntity.ok(responseDto);
-    }
+    ProductDto responseDto = productService.findById(id);
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @GetMapping("/{id}/category")
-    public ResponseEntity<CategoryDto> category(@PathVariable Long id) {
-        CategoryDto responseDto = categoryModelAssembler.toModel(productService.findById(id).getCategory());
+  @GetMapping("/{id}/category")
+  public ResponseEntity<CategoryDto> category(@PathVariable Long id) {
+    log.info("Get product category by id: {}", id);
 
-        return ResponseEntity.ok(responseDto);
-    }
+    CategoryDto responseDto = productService.getProductCategory(id);
+    return ResponseEntity.ok(responseDto);
+  }
 
-    @PostMapping
-    public ResponseEntity<ProductDto> save(@RequestBody ProductDto productDto) {
-        Product product = productService.create(productMapper.toDomain(productDto));
-        ProductDto responseDto = productModelAssembler.toModel(product);
+  @PostMapping
+  public ResponseEntity<ProductDto> save(@RequestBody ProductRequestDto productRequestDto) {
+    log.info("Save product: {}", productRequestDto);
 
-        return ResponseEntity
-                .created(responseDto.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(responseDto);
-    }
+    ProductDto responseDto = productService.create(productRequestDto);
+    return ResponseEntity.created(responseDto.getRequiredLink(IanaLinkRelations.SELF).toUri())
+        .body(responseDto);
+  }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductDto> replace(@PathVariable Long id, @RequestBody ProductDto productDto) {
-        Product product = productService.update(id, productMapper.toDomain(productDto));
-        ProductDto responseDto = productModelAssembler.toModel(product);
+  @PutMapping("/{id}")
+  public ResponseEntity<ProductDto> replace(
+      @PathVariable Long id, @RequestBody ProductRequestDto productRequestDto) {
+    log.info("Replace product by id: {}", id);
 
-        return ResponseEntity.ok(responseDto);
-    }
+    ProductDto responseDto = productService.replace(id, productRequestDto);
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        productService.deleteById(id);
+    return ResponseEntity.ok(responseDto);
+  }
 
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    log.info("Delete product by id: {}", id);
 
-    @ExceptionHandler(ProductNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorDto> handleProductNotFound(ProductNotFoundException e) {
-        return new ResponseEntity<>(new ErrorDto(e.getMessage()), HttpStatus.NOT_FOUND);
-    }
+    productService.deleteById(id);
+    return ResponseEntity.noContent().build();
+  }
 }

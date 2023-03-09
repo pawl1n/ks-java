@@ -18,43 +18,43 @@ import ua.kishkastrybaie.service.TokenService;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
-    private final AuthenticationManager authenticationManager;
+  private final UserRepository userRepository;
+  private final TokenService tokenService;
+  private final AuthenticationManager authenticationManager;
+  private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public AuthenticationResponse register(RegisterRequest request) {
-        User userDetails = User.builder()
-                .firstName(request.firstName())
-                .middleName(request.middleName())
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .phoneNumber(request.phoneNumber())
-                .role(Role.USER)
-                .build();
+  @Override
+  public AuthenticationResponse register(RegisterRequest request) {
+    User userDetails =
+        User.builder()
+            .firstName(request.firstName())
+            .middleName(request.middleName())
+            .lastName(request.lastName())
+            .email(request.email())
+            .password(passwordEncoder.encode(request.password()))
+            .phoneNumber(request.phoneNumber())
+            .role(Role.USER)
+            .build();
 
-        userRepository.save(userDetails);
+    userRepository.save(userDetails);
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
-        );
+    Authentication authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
-        return authenticationResponse(authentication);
-    }
+    return authenticationResponse(authentication);
+  }
 
-    @Override
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
-        );
+  @Override
+  public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    Authentication authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
-        return authenticationResponse(authentication);
-    }
+    return authenticationResponse(authentication);
+  }
 
-    private AuthenticationResponse authenticationResponse(Authentication authentication) {
-        return AuthenticationResponse.builder()
-                .token(tokenService.generateToken(authentication))
-                .build();
-    }
+  private AuthenticationResponse authenticationResponse(Authentication authentication) {
+    return new AuthenticationResponse(tokenService.generateToken(authentication));
+  }
 }

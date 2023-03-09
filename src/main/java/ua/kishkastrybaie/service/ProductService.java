@@ -1,12 +1,22 @@
 package ua.kishkastrybaie.service;
 
-import ua.kishkastrybaie.repository.entity.Product;
+import org.springframework.hateoas.CollectionModel;
+import ua.kishkastrybaie.controller.dto.CategoryDto;
+import ua.kishkastrybaie.controller.dto.ProductDto;
+import ua.kishkastrybaie.controller.dto.ProductRequestDto;
 
 public interface ProductService {
-    Iterable<Product> findAll();
-    Product findById(Long id);
-    Product create(Product product);
-    Product update(Long id, Product product);
-    Product replace(Long id, Product product);
-    void deleteById(Long id);
+  CollectionModel<ProductDto> findAll();
+
+  boolean existsById(Long id);
+
+  ProductDto findById(Long id);
+
+  ProductDto create(ProductRequestDto product);
+
+  ProductDto replace(Long id, ProductRequestDto product);
+
+  void deleteById(Long id);
+
+  CategoryDto getProductCategory(Long id);
 }

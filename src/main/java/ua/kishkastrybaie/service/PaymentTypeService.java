@@ -1,5 +1,3 @@
 package ua.kishkastrybaie.service;
 
-
-public interface PaymentTypeService {
-}
+public interface PaymentTypeService {}

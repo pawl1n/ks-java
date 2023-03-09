@@ -1,81 +1,88 @@
 package ua.kishkastrybaie.service.implementation;
 
-import jakarta.persistence.EntityNotFoundException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
+import ua.kishkastrybaie.controller.assembler.CategoryModelAssembler;
+import ua.kishkastrybaie.controller.assembler.ProductModelAssembler;
+import ua.kishkastrybaie.controller.dto.CategoryDto;
+import ua.kishkastrybaie.controller.dto.ProductDto;
+import ua.kishkastrybaie.controller.dto.ProductRequestDto;
+import ua.kishkastrybaie.controller.dto.mapper.ProductMapper;
+import ua.kishkastrybaie.exception.CategoryNotFoundException;
+import ua.kishkastrybaie.exception.ProductNotFoundException;
 import ua.kishkastrybaie.repository.ProductRepository;
 import ua.kishkastrybaie.repository.entity.Category;
 import ua.kishkastrybaie.repository.entity.Product;
-import ua.kishkastrybaie.service.CategoryService;
 import ua.kishkastrybaie.service.ProductService;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
-    private final ProductRepository productRepository;
-    private final CategoryService categoryService;
+  private final ProductRepository productRepository;
+  private final CategoryModelAssembler categoryModelAssembler;
+  private final ProductModelAssembler productModelAssembler;
+  private final ProductMapper productMapper;
 
-    @Override
-    public List<Product> findAll() {
-        return productRepository.findAll();
-    }
+  @Override
+  public CollectionModel<ProductDto> findAll() {
+    return productModelAssembler.toCollectionModel(productRepository.findAll());
+  }
 
-    @Override
-    public Product findById(Long id) {
-        return productRepository.findById(id).orElseThrow();
-    }
+  @Override
+  public ProductDto findById(Long id) {
+    return productModelAssembler.toModel(
+        productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id)));
+  }
 
-    @Override
-    public Product create(Product product) {
-        if (product.getCategory() != null) {
-            Category category = categoryService.createIfNotExists(product.getCategory().getName());
-            product.setCategory(category);
-        }
+  @Override
+  public boolean existsById(Long id) {
+    return productRepository.existsById(id);
+  }
 
-        return productRepository.save(product);
-    }
+  @Override
+  public ProductDto create(ProductRequestDto productRequestDto) {
+    Product product = productMapper.toDomain(productRequestDto);
 
-    @Override
-    public Product update(Long id, Product productDetails) {
-        Product product = productRepository.findById(productDetails.getId())
-                .orElseThrow(EntityNotFoundException::new);
+    return productModelAssembler.toModel(productRepository.save(product));
+  }
 
-        if (productDetails.getName() != null) {
-            product.setName(product.getName());
-        }
-        if (productDetails.getDescription() != null) {
-            product.setDescription(productDetails.getDescription());
-        }
-        if (productDetails.getCategory() != null) {
-            Category category = categoryService.createIfNotExists(product.getCategory().getName());
-            product.setCategory(category);
-        }
-        if (productDetails.getMainImage() != null) {
-            product.setMainImage(productDetails.getMainImage());
-        }
+  @Override
+  public ProductDto replace(Long id, ProductRequestDto productRequestDto) {
+    Product productRequest = productMapper.toDomain(productRequestDto);
 
-        return productRepository.save(product);
-    }
+    Product product =
+        productRepository
+            .findById(id)
+            .map(
+                p -> {
+                  p.setName(productRequest.getName());
+                  p.setDescription(productRequest.getDescription());
+                  p.setCategory(productRequest.getCategory());
+                  p.setMainImage(productRequest.getMainImage());
+                  return productRepository.save(p);
+                })
+            .orElseThrow(() -> new ProductNotFoundException(id));
 
-    @Override
-    public Product replace(Long id, Product newProduct) {
-        return productRepository.findById(id).map(product -> {
-            product.setName(newProduct.getName());
-            product.setDescription(newProduct.getDescription());
-            product.setMainImage(newProduct.getMainImage());
-            product.setCategory(categoryService.createIfNotExists(newProduct.getCategory().getName()));
-            return productRepository.save(product);
-        }).orElseGet(() -> {
-            newProduct.setId(id);
-            return productRepository.save(newProduct);
-        });
-    }
+    return productModelAssembler.toModel(product);
+  }
 
-    @Override
-    public void deleteById(Long id) {
-        Product product = findById(id);
-        productRepository.delete(product);
-    }
+  @Override
+  public void deleteById(Long id) {
+    Product product =
+        productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
+    productRepository.delete(product);
+  }
+
+  @Override
+  public CategoryDto getProductCategory(Long id) {
+    Product product =
+        productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
+    Category category =
+        Optional.ofNullable(product.getCategory())
+            .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+
+    return categoryModelAssembler.toModel(category);
+  }
 }

@@ -1,8 +1,7 @@
 package ua.kishkastrybaie.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,21 +15,22 @@ import ua.kishkastrybaie.service.AuthenticationService;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationController {
-    private final AuthenticationService authenticationService;
-    private final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+  private final AuthenticationService authenticationService;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        logger.info("Register request: {}", request.email());
+  @PostMapping("/register")
+  public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+    log.info("Register request: {}", request.email());
 
-        return ResponseEntity.ok(authenticationService.register(request));
-    }
+    return ResponseEntity.ok(authenticationService.register(request));
+  }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        logger.info("Authenticate request: {}", request.email());
+  @PostMapping("/login")
+  public ResponseEntity<AuthenticationResponse> authenticate(
+      @RequestBody AuthenticationRequest request) {
+    log.info("Authenticate request: {}", request.email());
 
-        return ResponseEntity.ok(authenticationService.authenticate(request));
-    }
+    return ResponseEntity.ok(authenticationService.authenticate(request));
+  }
 }

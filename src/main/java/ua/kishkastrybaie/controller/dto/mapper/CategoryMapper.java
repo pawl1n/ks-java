@@ -1,14 +1,20 @@
 package ua.kishkastrybaie.controller.dto.mapper;
 
-import org.mapstruct.Mapper;
+import org.mapstruct.*;
 import ua.kishkastrybaie.controller.dto.CategoryDto;
+import ua.kishkastrybaie.controller.dto.CategoryRequestDto;
 import ua.kishkastrybaie.repository.entity.Category;
 
-import java.util.List;
-
-@Mapper(componentModel = "spring")
+@Mapper(
+    componentModel = "spring",
+    uses = {CategoryIdToCategoryMapperImpl.class})
 public interface CategoryMapper {
-    CategoryDto toDto(Category category);
-    List<CategoryDto> toDto(List<Category> categories);
-    Category toDomain(CategoryDto categoryDto);
+
+  @Mapping(source = "parentCategory.name", target = "parentCategory")
+  CategoryDto toDto(Category category);
+
+  @Mapping(
+      target = "parentCategory",
+      qualifiedBy = {CategoryIdToCategory.class})
+  Category toDomain(CategoryRequestDto categoryDto);
 }

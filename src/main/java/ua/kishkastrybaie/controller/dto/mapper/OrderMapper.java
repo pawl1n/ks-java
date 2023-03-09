@@ -6,5 +6,5 @@ import ua.kishkastrybaie.repository.entity.Order;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
-    OrderDto toDto(Order order);
+  OrderDto toDto(Order order);
 }

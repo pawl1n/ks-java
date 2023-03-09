@@ -6,5 +6,5 @@ import ua.kishkastrybaie.repository.entity.Cart;
 
 @Mapper(componentModel = "spring")
 public interface CartMapper {
-    CartDto toDto(Cart cart);
+  CartDto toDto(Cart cart);
 }

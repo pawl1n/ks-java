@@ -11,7 +11,7 @@ import org.springframework.hateoas.RepresentationModel;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class VariationOptionDto extends RepresentationModel<VariationOptionDto> {
-    private Long id;
-    private VariationDto variationDto;
-    private String value;
+  private Long id;
+  private VariationDto variationDto;
+  private String value;
 }
