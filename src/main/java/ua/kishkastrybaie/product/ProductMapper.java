@@ -6,7 +6,7 @@ import ua.kishkastrybaie.shared.mapper.CategoryIdToCategoryMapperImpl;
 
 @Mapper(
     componentModel = "spring",
-    uses = {CategoryIdToCategoryMapperImpl.class})
+    uses = {CategoryIdToCategoryMapperImpl.class, ImageURLToImageMapperImpl.class},
     injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface ProductMapper {
 
@@ -15,6 +15,8 @@ public interface ProductMapper {
   ProductDto toDto(Product product);
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(
+      target = "mainImage",
       qualifiedBy = {ImageURLToImage.class})
   @Mapping(
       target = "category",

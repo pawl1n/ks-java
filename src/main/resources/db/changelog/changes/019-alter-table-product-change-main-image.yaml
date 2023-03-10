@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 019-alter-table-product-change-main-image
+      changes:
+        - dropColumn:
+            tableName: product
+            schemaName: main
+            columnName: main_image
+        - addColumn:
+            schemaName: main
+            tableName: product
+            columns:
+              - column:
+                  name: main_image_id
+                  type: bigInt
+                  constraints:
+                    nullable: true
+                    foreignKeyName: product_image_FK
+                    references: main.image(id)

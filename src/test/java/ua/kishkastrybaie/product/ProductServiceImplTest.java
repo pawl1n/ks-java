@@ -1,4 +1,4 @@
-package ua.kishkastrybaie.service.implementation;
+package ua.kishkastrybaie.product;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
@@ -16,15 +16,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.CollectionModel;
-import ua.kishkastrybaie.controller.assembler.CategoryModelAssembler;
-import ua.kishkastrybaie.controller.dto.ProductDto;
-import ua.kishkastrybaie.controller.dto.ProductRequestDto;
-import ua.kishkastrybaie.controller.dto.mapper.ProductMapper;
-import ua.kishkastrybaie.exception.CategoryNotFoundException;
-import ua.kishkastrybaie.exception.ProductNotFoundException;
-import ua.kishkastrybaie.repository.ProductRepository;
-import ua.kishkastrybaie.repository.entity.Category;
-import ua.kishkastrybaie.repository.entity.Product;
+import ua.kishkastrybaie.category.Category;
+import ua.kishkastrybaie.category.CategoryDto;
+import ua.kishkastrybaie.category.CategoryModelAssembler;
+import ua.kishkastrybaie.category.CategoryNotFoundException;
+import ua.kishkastrybaie.image.Image;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -34,6 +30,7 @@ class ProductServiceImplTest {
   private static ProductDto productDto1;
   private static ProductDto productDto2;
   private static ProductRequestDto productRequestDto;
+  private static Image image;
   @Mock private ProductRepository productRepository;
   @Mock private ProductModelAssembler productModelAssembler;
   @Mock private CategoryModelAssembler categoryModelAssembler;
@@ -46,12 +43,16 @@ class ProductServiceImplTest {
     category.setId(1L);
     category.setName("Category 1");
 
+    image = new Image();
+    image.setName("image");
+    image.setUrl(new URL("https://www.google.com"));
+
     product1 = new Product();
     product1.setId(1L);
     product1.setName("Product 1");
     product1.setDescription("Description 1");
     product1.setCategory(category);
-    product1.setMainImage(new URL("https://www.google.com"));
+    product1.setMainImage(image);
 
     product2 = new Product();
     product2.setId(2L);
@@ -139,7 +140,7 @@ class ProductServiceImplTest {
     changedProduct.setName("Product 1");
     changedProduct.setDescription("Description 1");
     changedProduct.setCategory(category);
-    changedProduct.setMainImage(new URL("https://www.google.com"));
+    changedProduct.setMainImage(image);
 
     ProductDto changedProductDto =
         new ProductDto(
