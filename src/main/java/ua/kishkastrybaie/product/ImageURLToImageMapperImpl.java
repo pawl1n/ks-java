@@ -23,7 +23,9 @@ class ImageURLToImageMapperImpl {
         .orElseGet(
             () -> {
               Image image = new Image();
-              image.setName(Paths.get(imageUrl.getPath()).getFileName().toString());
+              String filename = Paths.get(imageUrl.getPath()).getFileName().toString();
+              String filenameWithoutExtension = filename.substring(0, filename.lastIndexOf('.'));
+              image.setName(filenameWithoutExtension);
               image.setUrl(imageUrl);
               return image;
             });
