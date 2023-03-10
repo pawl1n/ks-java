@@ -11,7 +11,7 @@ import ua.kishkastrybaie.category.CategoryDto;
 import ua.kishkastrybaie.shared.ErrorDto;
 
 @RestController
-@RequestMapping("/api/v1/variations")
+@RequestMapping("/api/variations")
 @RequiredArgsConstructor
 public class VariationController {
   private final VariationService variationService;

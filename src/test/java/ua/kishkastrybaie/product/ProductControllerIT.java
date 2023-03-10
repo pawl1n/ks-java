@@ -51,7 +51,7 @@ class ProductControllerIT {
             .body(authenticationRequest)
             .contentType(ContentType.JSON)
             .when()
-            .post("/api/v1/auth/login")
+            .post("/api/auth/login")
             .then()
             .statusCode(HttpStatus.OK.value())
             .body("token", notNullValue())
@@ -74,7 +74,7 @@ class ProductControllerIT {
 
   @Test
   void shouldGetAll() {
-    given().when().get("/api/v1/products").then().statusCode(HttpStatus.OK.value());
+    given().when().get("/api/products").then().statusCode(HttpStatus.OK.value());
   }
 
   @Test
@@ -87,7 +87,7 @@ class ProductControllerIT {
   void shouldGetOne() {
     given()
         .when()
-        .get("/api/v1/products/1")
+        .get("/api/products/1")
         .then()
         .statusCode(HttpStatus.OK.value())
         .body(
@@ -115,7 +115,7 @@ class ProductControllerIT {
   void shouldGetCategory() {
     given()
         .when()
-        .get("/api/v1/products/1/category")
+        .get("/api/products/1/category")
         .then()
         .statusCode(HttpStatus.OK.value())
         .body("id", equalTo(1), "name", equalTo("category"), "parentCategoryId", equalTo(null));
@@ -130,7 +130,7 @@ class ProductControllerIT {
         .body(productRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .post("/api/v1/products")
+        .post("/api/products")
         .then()
         .statusCode(HttpStatus.UNAUTHORIZED.value());
   }
@@ -147,7 +147,7 @@ class ProductControllerIT {
         .body(productRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .post("/api/v1/products")
+        .post("/api/products")
         .then()
         .statusCode(HttpStatus.NOT_FOUND.value())
         .body("message", equalTo("Category not found with id: 1"));
@@ -164,7 +164,7 @@ class ProductControllerIT {
         .body(productRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .post("/api/v1/products")
+        .post("/api/products")
         .then()
         .statusCode(HttpStatus.CREATED.value())
         .body("id", equalTo(1), "name", equalTo("product"), "description", equalTo("description"));
@@ -178,7 +178,7 @@ class ProductControllerIT {
         .body(productRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .put("/api/v1/products/1")
+        .put("/api/products/1")
         .then()
         .statusCode(HttpStatus.UNAUTHORIZED.value());
   }
@@ -193,7 +193,7 @@ class ProductControllerIT {
         .body(productRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .put("/api/v1/products/1")
+        .put("/api/products/1")
         .then()
         .statusCode(HttpStatus.NOT_FOUND.value())
         .body("message", equalTo("Product not found with id: 1"));
@@ -215,7 +215,7 @@ class ProductControllerIT {
         .body(productRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .put("/api/v1/products/1")
+        .put("/api/products/1")
         .then()
         .statusCode(HttpStatus.OK.value())
         .body("id", equalTo(1), "name", equalTo("changed"), "description", equalTo("changed"));
@@ -233,7 +233,7 @@ class ProductControllerIT {
         .auth()
         .oauth2(token)
         .when()
-        .delete("/api/v1/products/1")
+        .delete("/api/products/1")
         .then()
         .statusCode(HttpStatus.NO_CONTENT.value());
   }
