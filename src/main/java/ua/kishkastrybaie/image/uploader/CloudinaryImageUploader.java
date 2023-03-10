@@ -20,6 +20,11 @@ import org.springframework.util.StringUtils;
 @Slf4j
 public class CloudinaryImageUploader implements ImageUploader {
 
+  private static final int IMAGE_WIDTH = 150;
+  private static final int IMAGE_HEIGHT = 150;
+  private static final String IMAGE_CROP = "scale";
+  private static final String IMAGE_FORMAT = "webp";
+
   private final Cloudinary cloudinary;
 
   public CloudinaryImageUploader(
@@ -34,21 +39,34 @@ public class CloudinaryImageUploader implements ImageUploader {
   }
 
   @Override
-  public URL upload(String base64encodedImage, String name) {
+  public URL upload(String base64encodedImage, String filename) {
+    if (!StringUtils.hasText(base64encodedImage)) {
+      throw new ImageUploadException("Base64 encoded image is empty");
+    }
+    if (!StringUtils.hasText(filename)) {
+      throw new ImageUploadException("Filename is empty");
+    }
+
+    String publicId = StringUtils.replace(filename, " ", "_");
+    EagerTransformation transformation =
+        new EagerTransformation()
+            .width(IMAGE_WIDTH)
+            .height(IMAGE_HEIGHT)
+            .crop(IMAGE_CROP)
+            .fetchFormat(IMAGE_FORMAT);
+
+    Map<String, Object> options = new HashMap<>();
+    options.put("public_id", publicId);
+    options.put("eager", List.of(transformation));
+
+    File tempFile = getTempFile(base64encodedImage, filename);
+
     try {
-      String publicId = StringUtils.replace(name, " ", "_");
-      EagerTransformation transformation =
-          new EagerTransformation().width(150).height(150).crop("scale").fetchFormat("webp");
-
-      Map<String, Object> options = new HashMap<>();
-      options.put("public_id", publicId);
-      options.put("eager", List.of(transformation));
-
-      File tempFile = getTempFile(base64encodedImage, name);
-
       Map<?, ?> res = cloudinary.uploader().upload(tempFile, options);
 
-      log.info("Uploaded file: {}", res.get("secure_url"));
+      log.info("Uploaded file: {}", res.get("url"));
+
+      Files.delete(tempFile.toPath());
 
       return new URL(res.get("url").toString());
 
@@ -57,14 +75,18 @@ public class CloudinaryImageUploader implements ImageUploader {
     }
   }
 
-  private File getTempFile(String base64encodedImage, String name) throws IOException {
+  private File getTempFile(String base64encodedImage, String name) {
     byte[] decodedBytes = Base64.getDecoder().decode(base64encodedImage);
 
-    Path tempFilePath = Files.createTempFile("", name);
-    File tempFile = tempFilePath.toFile();
+    try {
+      Path tempFilePath = Files.createTempFile("", name);
+      File tempFile = tempFilePath.toFile();
 
-    Files.write(tempFilePath, decodedBytes);
+      Files.write(tempFilePath, decodedBytes);
+      return tempFile;
 
-    return tempFile;
+    } catch (IOException exception) {
+      throw new ImageUploadException(exception.getMessage());
+    }
   }
 }
