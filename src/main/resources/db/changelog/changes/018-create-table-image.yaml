@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      author: andrii
+      id: 018-create-table-image
+      changes:
+        - createTable:
+            schemaName: main
+            tableName: image
+            columns:
+              - column:
+                  name: id
+                  type: bigInt
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: url
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: true
+        - createSequence:
+            schemaName: main
+            sequenceName: image_seq

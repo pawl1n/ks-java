@@ -50,3 +50,9 @@ databaseChangeLog:
   - include:
       file: changes/017-add-role-column-to-user.yaml
       relativeToChangelogFile: true
+  - include:
+      file: changes/018-create-table-image.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/019-alter-table-product-change-main-image.yaml
+      relativeToChangelogFile: true
