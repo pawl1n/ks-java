@@ -1,4 +1,4 @@
-package ua.kishkastrybaie.image;
+package ua.kishkastrybaie.image.uploader;
 
 import lombok.extern.slf4j.Slf4j;
 
