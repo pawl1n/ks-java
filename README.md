@@ -14,7 +14,7 @@ The project uses [Maven](https://maven.apache.org/) for dependency management, s
 
 ### Environment Variables
 
-To run the project, you should set up environment variables for the [database](#Database) and [CDN](#Images).
+To run the project, you should set up environment variables for the [database](#database) and [CDN](#saving-images).
 
 You can then run the application using the following command:
 ```
@@ -61,7 +61,7 @@ The API provides endpoints for managing products, categories, and images.
 
 `GET /api/images/{id}` - Retrieves a specific image by ID.
 
-`POST /api/images` - Creates a new image. Details in the [Images](#images) section
+`POST /api/images` - Creates a new image. Details in the [Images](#saving-images) section
 
 `PUT /api/images/{id}` - Updates an existing image.
 
@@ -89,7 +89,7 @@ To connect the project to the database, you should insert these environment vari
 * `PGDATABASE` - Database name
 
 
-## Images
+## Saving Images
 
 All the created images are stored in the [Cloudinary](https://cloudinary.com/).
 
