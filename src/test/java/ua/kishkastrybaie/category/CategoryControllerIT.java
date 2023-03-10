@@ -49,7 +49,7 @@ class CategoryControllerIT {
             .body(authenticationRequest)
             .contentType(ContentType.JSON)
             .when()
-            .post("/api/v1/auth/login")
+            .post("/api/auth/login")
             .then()
             .statusCode(HttpStatus.OK.value())
             .body("token", notNullValue())
@@ -70,7 +70,7 @@ class CategoryControllerIT {
 
   @Test
   void shouldGetAll() {
-    given().when().get("/api/v1/categories").then().statusCode(HttpStatus.OK.value());
+    given().when().get("/api/categories").then().statusCode(HttpStatus.OK.value());
   }
 
   @Test
@@ -83,7 +83,7 @@ class CategoryControllerIT {
   void shouldGetOne() {
     given()
         .when()
-        .get("/api/v1/categories/1")
+        .get("/api/categories/1")
         .then()
         .statusCode(HttpStatus.OK.value())
         .body("id", equalTo(1), "name", equalTo("category"), "parentCategory", equalTo(null));
@@ -97,7 +97,7 @@ class CategoryControllerIT {
         .body(categoryRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .post("/api/v1/products")
+        .post("/api/products")
         .then()
         .statusCode(HttpStatus.UNAUTHORIZED.value());
   }
@@ -112,7 +112,7 @@ class CategoryControllerIT {
         .body(categoryRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .post("/api/v1/categories")
+        .post("/api/categories")
         .then()
         .statusCode(HttpStatus.NOT_FOUND.value())
         .body("message", equalTo("Category not found with id: 1"));
@@ -128,7 +128,7 @@ class CategoryControllerIT {
         .body(categoryRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .post("/api/v1/categories")
+        .post("/api/categories")
         .then()
         .statusCode(HttpStatus.CREATED.value())
         .body("id", equalTo(1), "name", equalTo("category"));
@@ -142,7 +142,7 @@ class CategoryControllerIT {
         .body(categoryRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .put("/api/v1/categories/1")
+        .put("/api/categories/1")
         .then()
         .statusCode(HttpStatus.UNAUTHORIZED.value());
   }
@@ -157,7 +157,7 @@ class CategoryControllerIT {
         .body(categoryRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .put("/api/v1/categories/1")
+        .put("/api/categories/1")
         .then()
         .statusCode(HttpStatus.NOT_FOUND.value())
         .body("message", equalTo("Category not found with id: 1"));
@@ -179,7 +179,7 @@ class CategoryControllerIT {
         .body(categoryRequestDto)
         .contentType(ContentType.JSON)
         .when()
-        .put("/api/v1/categories/1")
+        .put("/api/categories/1")
         .then()
         .statusCode(HttpStatus.OK.value())
         .body("id", equalTo(1), "name", equalTo("changed"));
@@ -197,7 +197,7 @@ class CategoryControllerIT {
         .auth()
         .oauth2(token)
         .when()
-        .delete("/api/v1/categories/1")
+        .delete("/api/categories/1")
         .then()
         .statusCode(HttpStatus.NO_CONTENT.value());
   }

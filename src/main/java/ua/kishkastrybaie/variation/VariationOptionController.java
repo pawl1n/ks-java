@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.kishkastrybaie.shared.ErrorDto;
 
 @RestController
-@RequestMapping("/api/v1/variation-options")
+@RequestMapping("/api/variation-options")
 @RequiredArgsConstructor
 public class VariationOptionController {
   private final VariationOptionService variationOptionService;

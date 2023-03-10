@@ -10,7 +10,7 @@ import ua.kishkastrybaie.product.ProductItemDto;
 import ua.kishkastrybaie.shared.ErrorDto;
 
 @RestController
-@RequestMapping("/api/v1/product-variations")
+@RequestMapping("/api/product-variations")
 @RequiredArgsConstructor
 public class ProductItemController {
   private final ProductItemService productItemService;

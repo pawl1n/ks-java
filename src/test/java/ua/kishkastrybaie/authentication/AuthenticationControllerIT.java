@@ -14,11 +14,9 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
-import ua.kishkastrybaie.authentication.AuthenticationRequest;
-import ua.kishkastrybaie.authentication.RegisterRequest;
-import ua.kishkastrybaie.user.UserRepository;
 import ua.kishkastrybaie.user.Role;
 import ua.kishkastrybaie.user.User;
+import ua.kishkastrybaie.user.UserRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -57,7 +55,7 @@ class AuthenticationControllerIT {
         .body(registerRequest)
         .contentType(ContentType.JSON)
         .when()
-        .post("/api/v1/auth/register")
+        .post("/api/auth/register")
         .then()
         .statusCode(HttpStatus.OK.value())
         .body("token", notNullValue());
@@ -70,7 +68,7 @@ class AuthenticationControllerIT {
         .body(authenticationRequest)
         .contentType(ContentType.JSON)
         .when()
-        .post("/api/v1/auth/login")
+        .post("/api/auth/login")
         .then()
         .statusCode(HttpStatus.OK.value())
         .body("token", notNullValue());

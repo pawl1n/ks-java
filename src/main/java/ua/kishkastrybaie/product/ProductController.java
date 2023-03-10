@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.kishkastrybaie.category.CategoryDto;
 
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping("/api/products")
 @RequiredArgsConstructor
 @Slf4j
 public class ProductController {
