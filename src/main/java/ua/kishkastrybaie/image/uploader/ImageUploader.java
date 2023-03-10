@@ -1,4 +1,4 @@
-package ua.kishkastrybaie.image;
+package ua.kishkastrybaie.image.uploader;
 
 import java.net.URL;
 

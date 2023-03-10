@@ -4,6 +4,7 @@ import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
+import ua.kishkastrybaie.image.uploader.ImageUploader;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +39,21 @@ public class ImageServiceImpl implements ImageService {
 
   @Override
   public ImageDto replace(Long id, ImageRequestDto imageRequestDto) {
-    return null;
+    Image image =
+        imageRepository
+            .findById(id)
+            .map(
+                i -> {
+                  i.setName(imageRequestDto.name());
+                  i.setDescription(imageRequestDto.description());
+                  URL url =
+                      imageUploader.upload(imageRequestDto.base64Image(), imageRequestDto.name());
+                  i.setUrl(url);
+                  return imageRepository.save(i);
+                })
+            .orElseThrow(() -> new ImageNotFoundException(id));
+
+    return imageModelAssembler.toModel(image);
   }
 
   @Override

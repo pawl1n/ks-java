@@ -45,7 +45,7 @@ class ProductServiceImplTest {
 
     image = new Image();
     image.setName("image");
-    image.setUrl(new URL("https://www.google.com"));
+    image.setUrl(new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
 
     product1 = new Product();
     product1.setId(1L);
@@ -60,12 +60,20 @@ class ProductServiceImplTest {
 
     productDto1 =
         new ProductDto(
-            1L, "Product 1", "Description 1", "Category 1", new URL("https://www.google.com"));
+            1L,
+            "Product 1",
+            "Description 1",
+            "Category 1",
+            new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
 
     productDto2 = new ProductDto(2L, "Product 2", null, null, null);
 
     productRequestDto =
-        new ProductRequestDto("Product 1", "Description 1", 1L, new URL("https://www.google.com"));
+        new ProductRequestDto(
+            "Product 1",
+            "Description 1",
+            1L,
+            new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
   }
 
   @Test
@@ -144,7 +152,11 @@ class ProductServiceImplTest {
 
     ProductDto changedProductDto =
         new ProductDto(
-            2L, "Product 1", "Description 1", "Category 1", new URL("https://www.google.com"));
+            2L,
+            "Product 1",
+            "Description 1",
+            "Category 1",
+            new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
 
     given(productMapper.toDomain(productRequestDto)).willReturn(product1);
     given(productRepository.findById(2L)).willReturn(Optional.of(product2));
