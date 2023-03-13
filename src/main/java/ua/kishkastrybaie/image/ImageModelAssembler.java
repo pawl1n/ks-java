@@ -29,6 +29,6 @@ public class ImageModelAssembler implements RepresentationModelAssembler<Image, 
   public CollectionModel<ImageDto> toCollectionModel(@NonNull Iterable<? extends Image> images) {
     return RepresentationModelAssembler.super
         .toCollectionModel(images)
-        .add(linkTo(methodOn(ImageController.class).all()).withSelfRel());
+        .add(linkTo(methodOn(ImageController.class).all(null)).withSelfRel());
   }
 }

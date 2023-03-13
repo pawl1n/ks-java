@@ -2,6 +2,8 @@ package ua.kishkastrybaie.image;
 
 import java.net.URL;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import ua.kishkastrybaie.image.uploader.ImageUploader;
@@ -12,10 +14,11 @@ public class ImageServiceImpl implements ImageService {
   private final ImageRepository imageRepository;
   private final ImageModelAssembler imageModelAssembler;
   private final ImageUploader imageUploader;
+  private final PagedResourcesAssembler<Image> pagedResourcesAssembler;
 
   @Override
-  public CollectionModel<ImageDto> findAll() {
-    return imageModelAssembler.toCollectionModel(imageRepository.findAll());
+  public CollectionModel<ImageDto> findAll(Pageable pageable) {
+    return pagedResourcesAssembler.toModel(imageRepository.findAll(pageable), imageModelAssembler);
   }
 
   @Override
@@ -26,6 +29,10 @@ public class ImageServiceImpl implements ImageService {
 
   @Override
   public ImageDto create(ImageRequestDto imageRequestDto) {
+    if (imageRepository.existsByName(imageRequestDto.name())) {
+      throw new ImageNameAlreadyExistsException(imageRequestDto.name());
+    }
+
     Image image = new Image();
     image.setName(imageRequestDto.name());
     image.setDescription(imageRequestDto.description());
