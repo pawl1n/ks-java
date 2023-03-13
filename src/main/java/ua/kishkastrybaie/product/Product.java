@@ -32,11 +32,10 @@ public class Product {
 
   @Column private String description;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.MERGE)
   private Image mainImage;
 
-  @ManyToOne(cascade = CascadeType.ALL)
-  private Category category;
+  @ManyToOne private Category category;
 
   @OneToMany(mappedBy = "product")
   private Set<ProductItem> productItems;
