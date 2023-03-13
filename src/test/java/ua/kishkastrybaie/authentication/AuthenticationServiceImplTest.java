@@ -53,10 +53,10 @@ class AuthenticationServiceImplTest {
     given(tokenService.generateToken(authentication)).willReturn("token");
 
     // when
-    AuthenticationResponse response = authenticationService.register(registerRequest);
+    AuthenticationDto response = authenticationService.register(registerRequest);
 
     // then
-    then(response).isNotNull().isEqualTo(new AuthenticationResponse("token"));
+    then(response).isNotNull().isEqualTo(new AuthenticationDto("token"));
     verify(passwordEncoder).encode("password");
     verify(userRepository).save(user);
     verify(authenticationManager)
@@ -75,10 +75,10 @@ class AuthenticationServiceImplTest {
     given(tokenService.generateToken(authentication)).willReturn("token");
 
     // when
-    AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
+    AuthenticationDto response = authenticationService.authenticate(authenticationRequest);
 
     // then
-    then(response).isNotNull().isEqualTo(new AuthenticationResponse("token"));
+    then(response).isNotNull().isEqualTo(new AuthenticationDto("token"));
     verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
     verify(tokenService).generateToken(authentication);
   }

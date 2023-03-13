@@ -1,12 +1,10 @@
 package ua.kishkastrybaie.authentication;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -16,14 +14,14 @@ public class AuthenticationController {
   private final AuthenticationService authenticationService;
 
   @PostMapping("/register")
-  public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+  public ResponseEntity<AuthenticationDto> register(@Valid @RequestBody RegisterRequest request) {
     log.info("Register request: {}", request.email());
 
     return ResponseEntity.ok(authenticationService.register(request));
   }
 
   @PostMapping("/login")
-  public ResponseEntity<AuthenticationResponse> authenticate(
+  public ResponseEntity<AuthenticationDto> authenticate(
       @RequestBody AuthenticationRequest request) {
     log.info("Authenticate request: {}", request.email());
 

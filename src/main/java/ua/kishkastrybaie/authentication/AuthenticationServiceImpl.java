@@ -19,7 +19,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final PasswordEncoder passwordEncoder;
 
   @Override
-  public AuthenticationResponse register(RegisterRequest request) {
+  public AuthenticationDto register(RegisterRequest request) {
     User userDetails =
         User.builder()
             .firstName(request.firstName())
@@ -41,7 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   @Override
-  public AuthenticationResponse authenticate(AuthenticationRequest request) {
+  public AuthenticationDto authenticate(AuthenticationRequest request) {
     Authentication authentication =
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.email(), request.password()));
@@ -49,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     return authenticationResponse(authentication);
   }
 
-  private AuthenticationResponse authenticationResponse(Authentication authentication) {
-    return new AuthenticationResponse(tokenService.generateToken(authentication));
+  private AuthenticationDto authenticationResponse(Authentication authentication) {
+    return new AuthenticationDto(tokenService.generateToken(authentication));
   }
 }
