@@ -1,4 +1,4 @@
-package ua.kishkastrybaie.order.cart;
+package ua.kishkastrybaie.cart;
 
 import org.mapstruct.Mapper;
 
