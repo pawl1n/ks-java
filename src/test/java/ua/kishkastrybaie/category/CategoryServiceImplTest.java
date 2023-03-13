@@ -57,7 +57,7 @@ class CategoryServiceImplTest {
         .willReturn(categoryDtoCollectionModel);
 
     // when
-    CollectionModel<CategoryDto> actual = categoryService.findAll();
+    CollectionModel<CategoryDto> actual = categoryService.findAll(null);
 
     // then
     then(actual).isNotNull().isEqualTo(categoryDtoCollectionModel);

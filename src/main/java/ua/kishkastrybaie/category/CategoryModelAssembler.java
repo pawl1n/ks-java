@@ -31,6 +31,6 @@ public class CategoryModelAssembler implements RepresentationModelAssembler<Cate
       @NonNull Iterable<? extends Category> categories) {
     return RepresentationModelAssembler.super
         .toCollectionModel(categories)
-        .add(linkTo(methodOn(CategoryController.class).all()).withSelfRel());
+        .add(linkTo(methodOn(CategoryController.class).all(null)).withSelfRel());
   }
 }

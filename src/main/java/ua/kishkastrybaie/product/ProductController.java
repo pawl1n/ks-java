@@ -1,7 +1,10 @@
 package ua.kishkastrybaie.product;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +19,10 @@ public class ProductController {
   private final ProductService productService;
 
   @GetMapping
-  public ResponseEntity<CollectionModel<ProductDto>> all() {
+  public ResponseEntity<CollectionModel<ProductDto>> all(@PageableDefault Pageable pageable) {
     log.info("Get all products");
 
-    CollectionModel<ProductDto> responseDto = productService.findAll();
+    CollectionModel<ProductDto> responseDto = productService.findAll(pageable);
     return ResponseEntity.ok(responseDto);
   }
 
@@ -40,7 +43,7 @@ public class ProductController {
   }
 
   @PostMapping
-  public ResponseEntity<ProductDto> save(@RequestBody ProductRequestDto productRequestDto) {
+  public ResponseEntity<ProductDto> save(@Valid @RequestBody ProductRequestDto productRequestDto) {
     log.info("Save product: {}", productRequestDto);
 
     ProductDto responseDto = productService.create(productRequestDto);
@@ -50,7 +53,7 @@ public class ProductController {
 
   @PutMapping("/{id}")
   public ResponseEntity<ProductDto> replace(
-      @PathVariable Long id, @RequestBody ProductRequestDto productRequestDto) {
+      @PathVariable Long id, @Valid @RequestBody ProductRequestDto productRequestDto) {
     log.info("Replace product by id: {}", id);
 
     ProductDto responseDto = productService.replace(id, productRequestDto);

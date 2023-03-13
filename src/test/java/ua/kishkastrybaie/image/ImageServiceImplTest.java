@@ -56,7 +56,7 @@ class ImageServiceImplTest {
     given(imageModelAssembler.toCollectionModel(images)).willReturn(imageDtoCollectionModel);
 
     // when
-    CollectionModel<ImageDto> actualResult = imageService.findAll();
+    CollectionModel<ImageDto> actualResult = imageService.findAll(null);
 
     // then
     then(actualResult).isEqualTo(imageDtoCollectionModel);

@@ -1,3 +1,6 @@
 package ua.kishkastrybaie.image;
 
-public record ImageRequestDto(String name, String description, String base64Image) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record ImageRequestDto(
+    @NotBlank String name, String description, @NotBlank String base64Image) {}

@@ -2,6 +2,8 @@ package ua.kishkastrybaie.category;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +13,12 @@ public class CategoryServiceImpl implements CategoryService {
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
   private final CategoryModelAssembler categoryModelAssembler;
+  private final PagedResourcesAssembler<Category> pagedResourcesAssembler;
 
   @Override
-  public CollectionModel<CategoryDto> findAll() {
-    return categoryModelAssembler.toCollectionModel(categoryRepository.findAll());
+  public CollectionModel<CategoryDto> findAll(Pageable pageable) {
+    return pagedResourcesAssembler.toModel(
+        categoryRepository.findAll(pageable), categoryModelAssembler);
   }
 
   @Override

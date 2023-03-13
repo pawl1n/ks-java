@@ -1,3 +1,5 @@
 package ua.kishkastrybaie.category;
 
-public record CategoryRequestDto(String name, Long parentCategory) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record CategoryRequestDto(@NotBlank String name, Long parentCategory) {}

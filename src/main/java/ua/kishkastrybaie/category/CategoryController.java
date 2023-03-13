@@ -1,7 +1,10 @@
 package ua.kishkastrybaie.category;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +18,10 @@ public class CategoryController {
   private final CategoryService categoryService;
 
   @GetMapping
-  public ResponseEntity<CollectionModel<CategoryDto>> all() {
+  public ResponseEntity<CollectionModel<CategoryDto>> all(@PageableDefault Pageable pageable) {
     log.info("Get all categories");
 
-    CollectionModel<CategoryDto> responseDto = categoryService.findAll();
+    CollectionModel<CategoryDto> responseDto = categoryService.findAll(pageable);
     return ResponseEntity.ok(responseDto);
   }
 
@@ -39,7 +42,8 @@ public class CategoryController {
   }
 
   @PostMapping
-  public ResponseEntity<CategoryDto> save(@RequestBody CategoryRequestDto categoryRequestDto) {
+  public ResponseEntity<CategoryDto> save(
+      @Valid @RequestBody CategoryRequestDto categoryRequestDto) {
     log.info("Save category: {}", categoryRequestDto);
 
     CategoryDto responseDto = categoryService.create(categoryRequestDto);
@@ -49,7 +53,7 @@ public class CategoryController {
 
   @PutMapping("/{id}")
   public ResponseEntity<CategoryDto> update(
-      @PathVariable Long id, @RequestBody CategoryRequestDto categoryRequestDto) {
+      @PathVariable Long id, @Valid @RequestBody CategoryRequestDto categoryRequestDto) {
     log.info("Update category by id: {}", id);
 
     CategoryDto responseDto = categoryService.replace(id, categoryRequestDto);
