@@ -1,10 +1,11 @@
 package ua.kishkastrybaie.product;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import ua.kishkastrybaie.category.CategoryDto;
 
 public interface ProductService {
-  CollectionModel<ProductDto> findAll();
+  CollectionModel<ProductDto> findAll(Pageable pageable);
 
   ProductDto findById(Long id);
 

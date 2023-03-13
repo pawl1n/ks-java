@@ -4,7 +4,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.*;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -31,6 +31,6 @@ public class ProductModelAssembler implements RepresentationModelAssembler<Produ
       @NonNull Iterable<? extends Product> products) {
     return RepresentationModelAssembler.super
         .toCollectionModel(products)
-        .add(linkTo(methodOn(ProductController.class).all()).withSelfRel());
+        .add(linkTo(methodOn(ProductController.class).all(null)).withSelfRel());
   }
 }

@@ -87,7 +87,7 @@ class ProductServiceImplTest {
     given(productModelAssembler.toCollectionModel(products)).willReturn(productDtoCollectionModel);
 
     // when
-    CollectionModel<ProductDto> response = productService.findAll();
+    CollectionModel<ProductDto> response = productService.findAll(null);
 
     // then
     then(response).hasSize(2).usingRecursiveComparison().isEqualTo(productDtoCollectionModel);

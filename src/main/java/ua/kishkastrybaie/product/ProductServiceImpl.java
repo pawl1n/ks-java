@@ -2,6 +2,8 @@ package ua.kishkastrybaie.product;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import ua.kishkastrybaie.category.Category;
@@ -16,10 +18,12 @@ public class ProductServiceImpl implements ProductService {
   private final CategoryModelAssembler categoryModelAssembler;
   private final ProductModelAssembler productModelAssembler;
   private final ProductMapper productMapper;
+  private final PagedResourcesAssembler<Product> pagedResourcesAssembler;
 
   @Override
-  public CollectionModel<ProductDto> findAll() {
-    return productModelAssembler.toCollectionModel(productRepository.findAll());
+  public CollectionModel<ProductDto> findAll(Pageable pageable) {
+    return pagedResourcesAssembler.toModel(
+        productRepository.findAll(pageable), productModelAssembler);
   }
 
   @Override
