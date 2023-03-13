@@ -1,9 +1,10 @@
 package ua.kishkastrybaie.category;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 
 public interface CategoryService {
-  CollectionModel<CategoryDto> findAll();
+  CollectionModel<CategoryDto> findAll(Pageable pageable);
 
   CategoryDto findById(Long id);
 
