@@ -2,8 +2,7 @@ package ua.kishkastrybaie.security;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -24,7 +23,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -35,13 +33,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import ua.kishkastrybaie.user.UserRepository;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-  private final UserRepository userRepository;
+  private static final String[] PUBLIC = new String[] {"/api/auth/**"};
+  private static final String[] PUBLIC_GET =
+      new String[] {"/api/products/**", "/api/categories/**", "/api/", "/**"};
   private RSAKey rsaKey;
 
   @Bean
@@ -51,14 +50,6 @@ public class SecurityConfiguration {
     authProvider.setPasswordEncoder(passwordEncoder());
 
     return new ProviderManager(authProvider);
-  }
-
-  @Bean
-  public UserDetailsService userDetailsService() {
-    return (String username) ->
-        userRepository
-            .findByEmailEqualsIgnoreCase(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
 
   @Bean
@@ -73,9 +64,9 @@ public class SecurityConfiguration {
         .cors(Customizer.withDefaults())
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers(MatcherPatterns.PUBLIC)
+                auth.requestMatchers(PUBLIC)
                     .permitAll()
-                    .requestMatchers(GET, MatcherPatterns.PUBLIC_GET)
+                    .requestMatchers(GET, PUBLIC_GET)
                     .permitAll()
                     .anyRequest()
                     .authenticated())
@@ -89,7 +80,7 @@ public class SecurityConfiguration {
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-    configuration.setAllowedMethods(List.of(GET.name(), POST.name()));
+    configuration.setAllowedMethods(List.of(GET.name(), POST.name(), PUT.name(), DELETE.name()));
     configuration.setAllowedHeaders(List.of(AUTHORIZATION, CONTENT_TYPE));
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
