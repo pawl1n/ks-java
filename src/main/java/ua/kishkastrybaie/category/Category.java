@@ -2,18 +2,13 @@ package ua.kishkastrybaie.category;
 
 import jakarta.persistence.*;
 import java.util.Set;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-import ua.kishkastrybaie.variation.Variation;
 
 @Entity
 @Table(name = "product_category", schema = "main")
 @Getter
 @Setter
-@EqualsAndHashCode
-@ToString
 public class Category {
   @Id
   @GeneratedValue(generator = "category_seq")
@@ -34,7 +29,4 @@ public class Category {
 
   @Column(name = "name")
   private String name;
-
-  @OneToMany(mappedBy = "category")
-  private Set<Variation> variations;
 }

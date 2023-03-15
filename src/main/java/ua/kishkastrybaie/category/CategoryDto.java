@@ -15,7 +15,7 @@ import org.springframework.hateoas.server.core.Relation;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode(callSuper = true)
 public class CategoryDto extends RepresentationModel<CategoryDto> {
-  private Long id;
-  private String name;
-  private String parentCategory;
+  private final Long id;
+  private final String name;
+  private final String parentCategory;
 }
