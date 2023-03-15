@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
   Optional<Image> findImageByUrl(URL url);
+
   boolean existsByName(String name);
 }

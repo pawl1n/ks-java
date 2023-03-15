@@ -14,8 +14,8 @@ import org.springframework.hateoas.server.core.Relation;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode(callSuper = true)
 public class ImageDto extends RepresentationModel<ImageDto> {
-  private Long id;
-  private String name;
-  private String description;
-  private URL url;
+  private final Long id;
+  private final String name;
+  private final String description;
+  private final URL url;
 }

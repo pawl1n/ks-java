@@ -7,10 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,7 +19,7 @@ public class CloudinaryImageUploader implements ImageUploader {
 
   private static final int IMAGE_WIDTH = 150;
   private static final int IMAGE_HEIGHT = 150;
-  private static final String IMAGE_CROP = "scale";
+  private static final String IMAGE_CROP = "fill";
   private static final String IMAGE_FORMAT = "webp";
 
   private final Cloudinary cloudinary;
@@ -64,9 +61,19 @@ public class CloudinaryImageUploader implements ImageUploader {
     try {
       Map<?, ?> res = cloudinary.uploader().upload(tempFile, options);
 
-      log.info("Uploaded file: {}", res.get("url"));
+      log.info("Uploaded file: {}", res);
 
       Files.delete(tempFile.toPath());
+
+      if (res.get("eager") instanceof ArrayList<?> eagerMapArray) {
+        for (var eagerItem : eagerMapArray) {
+          if (eagerItem instanceof Map<?, ?> eagerMap
+              && eagerMap.get("format") instanceof String format
+              && (format.equals(IMAGE_FORMAT))) {
+            return new URL(eagerMap.get("url").toString());
+          }
+        }
+      }
 
       return new URL(res.get("url").toString());
 
