@@ -8,4 +8,8 @@ public class ImageNotFoundException extends RuntimeException {
     super("Image not found with id: " + id);
     log.error(getMessage());
   }
+
+  public ImageNotFoundException(String message) {
+      super(message);
+  }
 }
