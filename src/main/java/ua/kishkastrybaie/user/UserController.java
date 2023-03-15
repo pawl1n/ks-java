@@ -39,4 +39,16 @@ public class UserController {
 
     return ResponseEntity.ok(userDto);
   }
+
+  @PutMapping("/me/password")
+  public ResponseEntity<UserDto> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+    log.info("Change password");
+    UserDto userDto = userService.changePassword(changePasswordRequest);
+
+    if (userDto == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).build();
+    }
+
+    return ResponseEntity.ok(userDto);
+  }
 }
