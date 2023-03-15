@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
 import ua.kishkastrybaie.category.Category;
 import ua.kishkastrybaie.category.CategoryDto;
 import ua.kishkastrybaie.category.CategoryModelAssembler;
@@ -32,7 +33,7 @@ class ProductServiceImplTest {
   private static ProductRequestDto productRequestDto;
   private static Image image;
   @Mock private ProductRepository productRepository;
-  @Mock private ProductModelAssembler productModelAssembler;
+  @Mock private RepresentationModelAssembler<Product, ProductDto> productModelAssembler;
   @Mock private CategoryModelAssembler categoryModelAssembler;
   @Mock private ProductMapper productMapper;
   @InjectMocks private ProductServiceImpl productService;

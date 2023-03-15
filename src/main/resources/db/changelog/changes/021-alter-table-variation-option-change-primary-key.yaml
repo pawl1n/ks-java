@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 022-alter-table-variation-option-change-primary-key
+      author: andrii
+      changes:
+        - dropColumn:
+            schemaName: main
+            tableName: product_configuration
+            columnName: variation_option_id
+        - dropColumn:
+            schemaName: main
+            tableName: variation_option
+            columnName: id
+        - addPrimaryKey:
+            schemaName: main
+            tableName: variation_option
+            columnNames: variation_id, value
+        - addColumn:
+            schemaName: main
+            tableName: product_configuration
+            columns:
+              - column:
+                  name: variation_value
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: variation_id
+                  type: bigInt
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableSchemaName: main
+            baseTableName: product_configuration
+            baseColumnNames: variation_id, variation_value
+            referencedTableSchemaName: main
+            referencedTableName: variation_option
+            referencedColumnNames: variation_id, value
+            constraintName: product_configuration_variation_option_FK
+        - addUniqueConstraint:
+            schemaName: main
+            tableName: product_configuration
+            constraintName: variation_product_item_UN
+            columnNames: variation_id, product_item_id

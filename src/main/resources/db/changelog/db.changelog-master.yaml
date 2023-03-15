@@ -56,3 +56,12 @@ databaseChangeLog:
   - include:
       file: changes/019-alter-table-product-change-main-image.yaml
       relativeToChangelogFile: true
+  #  - include:
+  #      file: changes/020-alter-table-product_item-change-primary-key.yaml
+  #      relativeToChangelogFile: true
+  - include:
+      file: changes/020-alter-table-variation-drop-column-category_id.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/021-alter-table-variation-option-change-primary-key.yaml
+      relativeToChangelogFile: true

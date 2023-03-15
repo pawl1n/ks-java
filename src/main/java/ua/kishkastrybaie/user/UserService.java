@@ -6,4 +6,6 @@ public interface UserService extends UserDetailsService {
   UserDto getCurrentUser();
 
   UserDto update(UserRequestDto userRequestDto);
+
+  UserDto changePassword(ChangePasswordRequest changePasswordRequest);
 }

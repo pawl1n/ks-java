@@ -22,8 +22,8 @@ public class VariationModelAssembler
         .toDto(variation)
         .add(linkTo(methodOn(VariationController.class).one(variation.getId())).withSelfRel())
         .add(
-            linkTo(methodOn(VariationController.class).category(variation.getId()))
-                .withRel("category"));
+            linkTo(methodOn(VariationController.class).options(variation.getId()))
+                .withRel("options"));
   }
 
   @Override
@@ -32,6 +32,6 @@ public class VariationModelAssembler
       @NonNull Iterable<? extends Variation> variations) {
     return RepresentationModelAssembler.super
         .toCollectionModel(variations)
-        .add(linkTo(methodOn(VariationController.class).all()).withSelfRel());
+        .add(linkTo(methodOn(VariationController.class).all(null)).withSelfRel());
   }
 }

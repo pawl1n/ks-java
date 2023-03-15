@@ -21,8 +21,11 @@ public class ProductModelAssembler implements RepresentationModelAssembler<Produ
         .toDto(product)
         .add(linkTo(methodOn(ProductController.class).one(product.getId())).withSelfRel())
         .add(
-            linkTo(methodOn(ProductController.class).category(product.getId()))
-                .withRel("category"));
+            linkTo(methodOn(ProductController.class).category(product.getId())).withRel("category"))
+        .add(linkTo(methodOn(ProductController.class).image(product.getId())).withRel("mainImage"))
+        .add(
+            linkTo(methodOn(ProductController.class).variations(product.getId()))
+                .withRel("variations"));
   }
 
   @Override

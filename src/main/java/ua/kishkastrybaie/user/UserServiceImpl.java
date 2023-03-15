@@ -5,12 +5,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final UserModelAssembler userModelAssembler;
 
   @Override
   public UserDto getCurrentUser() {
@@ -24,16 +27,9 @@ public class UserServiceImpl implements UserService {
     User user =
         userRepository
             .findByEmailEqualsIgnoreCase(email)
-            .orElseThrow(
-                () -> new UsernameNotFoundException("User not found with email: " + email));
+            .orElseThrow(() -> new EmailNotFoundException(email));
 
-    return new UserDto(
-        user.getFirstName(),
-        user.getMiddleName(),
-        user.getLastName(),
-        user.getEmail(),
-        user.getPhoneNumber(),
-        user.getRole());
+    return userModelAssembler.toModel(user);
   }
 
   @Override
@@ -58,16 +54,36 @@ public class UserServiceImpl implements UserService {
 
                   return userRepository.save(u);
                 })
-            .orElseThrow(
-                () -> new UsernameNotFoundException("User not found with email: " + email));
+            .orElseThrow(() -> new EmailNotFoundException(email));
 
-    return new UserDto(
-        user.getFirstName(),
-        user.getMiddleName(),
-        user.getLastName(),
-        user.getEmail(),
-        user.getPhoneNumber(),
-        user.getRole());
+    return userModelAssembler.toModel(user);
+  }
+
+  @Override
+  public UserDto changePassword(ChangePasswordRequest changePasswordRequest) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null) {
+      return null;
+    }
+
+    if (changePasswordRequest.currentPassword().equals(changePasswordRequest.newPassword())) {
+      throw new BadCredentialsException("Current password and new password must be different");
+    }
+
+    String email = authentication.getName();
+
+    User user =
+        userRepository
+            .findByEmailEqualsIgnoreCase(email)
+            .orElseThrow(() -> new EmailNotFoundException(email));
+
+    if (!passwordEncoder.matches(changePasswordRequest.currentPassword(), user.getPassword())) {
+      throw new BadCredentialsException();
+    }
+
+    user.setPassword(passwordEncoder.encode(changePasswordRequest.newPassword()));
+
+    return userModelAssembler.toModel(userRepository.save(user));
   }
 
   @Override

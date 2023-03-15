@@ -14,9 +14,9 @@ import org.springframework.hateoas.server.core.Relation;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode(callSuper = true)
 public class ProductDto extends RepresentationModel<ProductDto> {
-  private Long id;
-  private String name;
-  private String description;
-  private String category;
-  private URL mainImage;
+  private final Long id;
+  private final String name;
+  private final String description;
+  private final String category;
+  private final URL mainImage;
 }
