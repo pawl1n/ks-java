@@ -1,9 +1,22 @@
 package ua.kishkastrybaie.user;
 
-public record UserDto(
-    String firstName,
-    String middleName,
-    String lastName,
-    String email,
-    String phoneNumber,
-    Role role) {}
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@ToString
+@Relation(itemRelation = "user", collectionRelation = "users")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode(callSuper = true)
+public class UserDto extends RepresentationModel<UserDto> {
+  private final String firstName;
+  private final String middleName;
+  private final String lastName;
+  private final String email;
+  private final String phoneNumber;
+  private final Role role;
+}
