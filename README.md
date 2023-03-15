@@ -43,6 +43,18 @@ The API provides endpoints for managing products, categories, and images.
 
 `GET /api/products/{id}/category` - Retrieves a category of the product.
 
+##### Product variations
+
+`GET /api/products/{id}/variations` - Retrieves a list of all product variationss.
+
+`GET /api/products/{id}/variations/{id}` - Retrieves a specific product variation by ID.
+
+`POST /api/products/id}/variations` - Creates a new product variation.
+
+`PUT /api/products/{id}/variations/{id}` - Updates an existing product variation.
+
+`DELETE /api/products/{id}/variations/{id}` - Deletes a product variation by ID.
+
 #### Categories
 
 `GET /api/categories` - Retrieves a list of all categories.
@@ -66,6 +78,30 @@ The API provides endpoints for managing products, categories, and images.
 `PUT /api/images/{id}` - Updates an existing image.
 
 `DELETE /api/images/{id}` - Deletes an image by ID.
+
+#### Variations
+
+`GET /api/variations` - Retrieves a list of all variations.
+
+`GET /api/variations/{id}` - Retrieves a specific variation by ID.
+
+`POST /api/variations` - Creates a new variation.
+
+`PUT /api/variations/{id}` - Updates an existing variation.
+
+`DELETE /api/variations/{id}` - Deletes a variation by ID.
+
+##### Variation options
+
+`GET /api/variations/{id}/options` - Retrieves a list of all variation options.
+
+`GET /api/variations/{id}/options/{id}` - Retrieves a specific variation option by ID.
+
+`POST /api/variations/id}/options` - Creates a new variation option.
+
+`PUT /api/variations/{id}/options/{id}` - Updates an existing variation option.
+
+`DELETE /api/variations/{id}/options/{id}` - Deletes a variation option by ID.
 
 #### Authentication
 
