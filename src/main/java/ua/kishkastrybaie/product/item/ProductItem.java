@@ -1,10 +1,11 @@
-package ua.kishkastrybaie.variation;
+package ua.kishkastrybaie.product.item;
 
 import jakarta.persistence.*;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import ua.kishkastrybaie.product.Product;
+import ua.kishkastrybaie.variation.option.VariationOption;
 
 @Entity
 @Table(name = "product_item", schema = "main")
@@ -29,10 +30,14 @@ public class ProductItem {
 
   @Column private Integer stock;
 
-  @ManyToMany(cascade = CascadeType.ALL)
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "product_configuration",
+      schema = "main",
       joinColumns = {@JoinColumn(name = "product_item_id")},
-      inverseJoinColumns = {@JoinColumn(name = "variation_option_id")})
-  private Set<VariationOption> variationOption;
+      inverseJoinColumns = {
+        @JoinColumn(name = "variation_value"),
+        @JoinColumn(name = "variation_id")
+      })
+  private Set<VariationOption> variationOptions;
 }

@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 021-alter-table-variation-drop-column-category_id
+      author: andrii
+      changes:
+        - dropColumn:
+            schemaName: main
+            tableName: variation
+            columnName: category_id

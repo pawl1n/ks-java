@@ -1,15 +1,17 @@
 package ua.kishkastrybaie.variation;
 
 import jakarta.persistence.*;
-import java.util.Set;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import ua.kishkastrybaie.category.Category;
+import lombok.ToString;
 
 @Entity
 @Table(name = "variation", schema = "main")
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 public class Variation {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "variation_seq")
@@ -21,13 +23,6 @@ public class Variation {
   @Column(nullable = false)
   private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "category_id")
-  private Category category;
-
   @Column(nullable = false)
   private String name;
-
-  @OneToMany(mappedBy = "variation")
-  private Set<VariationOption> variationOptions;
 }
