@@ -12,7 +12,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceImplTest {
@@ -24,6 +29,7 @@ class CategoryServiceImplTest {
   @Mock private CategoryMapper categoryMapper;
   @Mock private CategoryModelAssembler categoryModelAssembler;
   @Mock private CategoryRepository categoryRepository;
+  @Mock private PagedResourcesAssembler<Category> pagedResourcesAssembler;
   @InjectMocks private CategoryServiceImpl categoryService;
 
   @BeforeEach
@@ -48,21 +54,21 @@ class CategoryServiceImplTest {
   @Test
   void shouldFindAll() {
     // given
-    List<Category> categories = List.of(category1, category2);
+    Page<Category> categories = new PageImpl<>(List.of(category1, category2));
+    PagedModel<CategoryDto> categoryDtoCollectionModel =
+            PagedModel.of(List.of(categoryDto1, categoryDto2), new PagedModel.PageMetadata(5, 0, 1));
 
-    CollectionModel<CategoryDto> categoryDtoCollectionModel =
-        CollectionModel.of(List.of(categoryDto1, categoryDto2));
-    given(categoryRepository.findAll()).willReturn(categories);
-    given(categoryModelAssembler.toCollectionModel(categories))
+    given(categoryRepository.findAll(PageRequest.ofSize(5))).willReturn(categories);
+    given(pagedResourcesAssembler.toModel(categories, categoryModelAssembler))
         .willReturn(categoryDtoCollectionModel);
 
     // when
-    CollectionModel<CategoryDto> actual = categoryService.findAll(null);
+    CollectionModel<CategoryDto> actual = categoryService.findAll(PageRequest.ofSize(5));
 
     // then
     then(actual).isNotNull().isEqualTo(categoryDtoCollectionModel);
-    verify(categoryRepository).findAll();
-    verify(categoryModelAssembler).toCollectionModel(categories);
+    verify(categoryRepository).findAll(PageRequest.ofSize(5));
+    verify(pagedResourcesAssembler).toModel(categories, categoryModelAssembler);
   }
 
   @Test
@@ -124,7 +130,14 @@ class CategoryServiceImplTest {
 
     given(categoryMapper.toDomain(categoryRequestDto)).willReturn(category1);
     given(categoryRepository.findById(2L)).willReturn(Optional.of(category2));
-    given(categoryRepository.save(changedCategory)).willReturn(changedCategory);
+    given(
+            categoryRepository.save(
+                argThat(
+                    category ->
+                        category.getId().equals(2L)
+                            && category.getName().equals(categoryRequestDto.name())
+                            && category.getParentCategory() == null)))
+        .willReturn(changedCategory);
     given(categoryModelAssembler.toModel(changedCategory)).willReturn(changedCategoryDto);
 
     // when
@@ -134,7 +147,7 @@ class CategoryServiceImplTest {
     then(actual).isEqualTo(changedCategoryDto);
     verify(categoryMapper).toDomain(categoryRequestDto);
     verify(categoryRepository).findById(2L);
-    verify(categoryRepository).save(changedCategory);
+    verify(categoryRepository).save(any());
     verify(categoryModelAssembler).toModel(changedCategory);
   }
 

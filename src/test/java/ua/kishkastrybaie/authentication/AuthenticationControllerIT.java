@@ -49,11 +49,12 @@ class AuthenticationControllerIT {
       executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   void shouldRegister() {
     RegisterRequest registerRequest =
-        new RegisterRequest("user@user", "user", "user", "user@user", "11111111111", "user");
+        new RegisterRequest("user@user", "user", "user", "user@user", "380111111111", "longPassword");
 
     RestAssured.given()
         .body(registerRequest)
         .contentType(ContentType.JSON)
+            .log().all()
         .when()
         .post("/api/auth/register")
         .then()

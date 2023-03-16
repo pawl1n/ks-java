@@ -15,8 +15,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.hateoas.PagedModel;
 import ua.kishkastrybaie.category.Category;
 import ua.kishkastrybaie.category.CategoryDto;
 import ua.kishkastrybaie.category.CategoryModelAssembler;
@@ -33,9 +37,10 @@ class ProductServiceImplTest {
   private static ProductRequestDto productRequestDto;
   private static Image image;
   @Mock private ProductRepository productRepository;
-  @Mock private RepresentationModelAssembler<Product, ProductDto> productModelAssembler;
+  @Mock private ProductModelAssembler productModelAssembler;
   @Mock private CategoryModelAssembler categoryModelAssembler;
   @Mock private ProductMapper productMapper;
+  @Mock private PagedResourcesAssembler<Product> pagedResourcesAssembler;
   @InjectMocks private ProductServiceImpl productService;
 
   @BeforeEach
@@ -80,20 +85,21 @@ class ProductServiceImplTest {
   @Test
   void shouldFindAll() {
     // given
-    List<Product> products = List.of(product1, product2);
-    CollectionModel<ProductDto> productDtoCollectionModel =
-        CollectionModel.of(List.of(productDto1, productDto2));
+    Page<Product> products = new PageImpl<>(List.of(product1, product2));
+    PagedModel<ProductDto> productDtoCollectionModel =
+        PagedModel.of(List.of(productDto1, productDto2), new PagedModel.PageMetadata(5, 0, 2));
 
-    given(productRepository.findAll()).willReturn(products);
-    given(productModelAssembler.toCollectionModel(products)).willReturn(productDtoCollectionModel);
+    given(productRepository.findAll(PageRequest.ofSize(5))).willReturn(products);
+    given(pagedResourcesAssembler.toModel(products, productModelAssembler))
+        .willReturn(productDtoCollectionModel);
 
     // when
-    CollectionModel<ProductDto> response = productService.findAll(null);
+    CollectionModel<ProductDto> response = productService.findAll(PageRequest.ofSize(5));
 
     // then
     then(response).hasSize(2).usingRecursiveComparison().isEqualTo(productDtoCollectionModel);
-    verify(productRepository).findAll();
-    verify(productModelAssembler).toCollectionModel(products);
+    verify(productRepository).findAll(PageRequest.ofSize(5));
+    verify(pagedResourcesAssembler).toModel(products, productModelAssembler);
   }
 
   @Test
@@ -161,7 +167,14 @@ class ProductServiceImplTest {
 
     given(productMapper.toDomain(productRequestDto)).willReturn(product1);
     given(productRepository.findById(2L)).willReturn(Optional.of(product2));
-    given(productRepository.save(changedProduct)).willReturn(changedProduct);
+    given(
+            productRepository.save(
+                argThat(
+                    product ->
+                        product.getId().equals(2L)
+                            && product.getName().equals(productRequestDto.name())
+                            && product.getDescription().equals(productRequestDto.description()))))
+        .willReturn(changedProduct);
     given(productModelAssembler.toModel(changedProduct)).willReturn(changedProductDto);
 
     // when
@@ -171,7 +184,7 @@ class ProductServiceImplTest {
     then(response).usingRecursiveComparison().isEqualTo(changedProductDto);
     verify(productMapper).toDomain(productRequestDto);
     verify(productRepository).findById(2L);
-    verify(productRepository).save(changedProduct);
+    verify(productRepository).save(any());
     verify(productModelAssembler).toModel(changedProduct);
   }
 
