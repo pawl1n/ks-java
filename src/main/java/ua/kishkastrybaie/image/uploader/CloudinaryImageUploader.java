@@ -9,12 +9,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
 @Slf4j
+@EnableConfigurationProperties(CloudinaryImageUploaderProperties.class)
 public class CloudinaryImageUploader implements ImageUploader {
 
   private static final int IMAGE_WIDTH = 150;
@@ -24,14 +25,11 @@ public class CloudinaryImageUploader implements ImageUploader {
 
   private final Cloudinary cloudinary;
 
-  public CloudinaryImageUploader(
-      @Value("${cloudinary.cloud-name}") String cloudName,
-      @Value("${cloudinary.api-key}") String apiKey,
-      @Value("${cloudinary.api-secret}") String apiSecret) {
+  public CloudinaryImageUploader(CloudinaryImageUploaderProperties properties) {
     Map<String, String> config = new HashMap<>();
-    config.put("cloud_name", cloudName);
-    config.put("api_key", apiKey);
-    config.put("api_secret", apiSecret);
+    config.put("cloud_name", properties.getCloudName());
+    config.put("api_key", properties.getApiKey());
+    config.put("api_secret", properties.getApiSecret());
     cloudinary = new Cloudinary(config);
   }
 
