@@ -26,7 +26,7 @@ public class ProductItemModelAssembler
         .add(
             linkTo(
                     methodOn(ProductItemController.class)
-                        .variation(productItem.getProduct().getId(), productItem.getId()))
+                        .one(productItem.getProduct().getId(), productItem.getId()))
                 .withSelfRel());
   }
 

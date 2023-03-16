@@ -25,7 +25,7 @@ public class ProductModelAssembler implements RepresentationModelAssembler<Produ
             linkTo(methodOn(ProductController.class).category(product.getId())).withRel("category"))
         .add(linkTo(methodOn(ProductController.class).image(product.getId())).withRel("mainImage"))
         .add(
-            linkTo(methodOn(ProductItemController.class).variations(product.getId()))
+            linkTo(methodOn(ProductItemController.class).all(product.getId()))
                 .withRel("variations"));
   }
 

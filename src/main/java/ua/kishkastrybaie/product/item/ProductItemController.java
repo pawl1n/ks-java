@@ -15,17 +15,28 @@ import org.springframework.web.bind.annotation.*;
 public class ProductItemController {
     private final ProductItemService productItemService;
 
-    @GetMapping
-    public ResponseEntity<CollectionModel<ProductItemDto>> variations(@PathVariable Long productId) {
+  @GetMapping
+  public ResponseEntity<CollectionModel<ProductItemDto>> all(@PathVariable Long productId) {
         log.info("Get product variations by id: {}", productId);
 
         CollectionModel<ProductItemDto> responseDto = productItemService.getProductVariations(productId);
         return ResponseEntity.ok(responseDto);
     }
 
+  @GetMapping("/{variationId}")
+  public ResponseEntity<ProductItemDto> one(
+      @PathVariable Long productId, @PathVariable Long variationId) {
+        log.info("Get variation by id: {} and variation id: {}", productId, variationId);
+
+        ProductItemDto responseDto = productItemService.getVariation(productId, variationId);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
     @PostMapping
-    public ResponseEntity<ProductItemDto> addVariation(
-            @PathVariable Long productId, @Valid @RequestBody ProductItemRequestDto productItemRequestDto) {
+    public ResponseEntity<ProductItemDto> save(
+            @PathVariable Long productId,
+            @Valid @RequestBody ProductItemRequestDto productItemRequestDto) {
         log.info("Add variation to product by id: {}", productId);
 
         ProductItemDto responseDto = productItemService.addVariation(productId, productItemRequestDto);
@@ -34,19 +45,8 @@ public class ProductItemController {
                 .body(responseDto);
     }
 
-    @GetMapping("/{variationId}")
-    public ResponseEntity<ProductItemDto> variation(
-            @PathVariable Long productId, @PathVariable Long variationId) {
-        log.info("Get variation by id: {} and variation id: {}", productId, variationId);
-
-        ProductItemDto responseDto = productItemService.getVariation(productId, variationId);
-
-        return ResponseEntity.ok(responseDto);
-    }
-
-    @DeleteMapping("/{variationId}")
-    public ResponseEntity<Void> deleteVariation(
-            @PathVariable Long productId, @PathVariable Long variationId) {
+  @DeleteMapping("/{variationId}")
+  public ResponseEntity<Void> delete(@PathVariable Long productId, @PathVariable Long variationId) {
         log.info("Delete variation by id: {} and variation id: {}", productId, variationId);
 
         productItemService.deleteVariation(productId, variationId);
@@ -54,11 +54,11 @@ public class ProductItemController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{variationId}")
-    public ResponseEntity<ProductItemDto> replaceVariation(
-            @PathVariable Long productId,
-            @PathVariable Long variationId,
-            @Valid @RequestBody ProductItemRequestDto productItemRequestDto) {
+  @PutMapping("/{variationId}")
+  public ResponseEntity<ProductItemDto> replace(
+      @PathVariable Long productId,
+      @PathVariable Long variationId,
+      @Valid @RequestBody ProductItemRequestDto productItemRequestDto) {
         log.info("Replace variation by id: {} and variation id: {}", productId, variationId);
 
         ProductItemDto responseDto =
