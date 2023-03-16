@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.kishkastrybaie.category.CategoryDto;
 import ua.kishkastrybaie.image.ImageDto;
-import ua.kishkastrybaie.product.item.ProductItemDto;
-import ua.kishkastrybaie.product.item.ProductItemRequestDto;
 
 @RestController
 @RequestMapping("/api/products")
@@ -78,58 +76,5 @@ public class ProductController {
 
     productService.deleteById(id);
     return ResponseEntity.noContent().build();
-  }
-
-  @GetMapping("/{id}/variations")
-  public ResponseEntity<CollectionModel<ProductItemDto>> variations(@PathVariable Long id) {
-    log.info("Get product variations by id: {}", id);
-
-    CollectionModel<ProductItemDto> responseDto = productService.getProductVariations(id);
-    return ResponseEntity.ok(responseDto);
-  }
-
-  @PostMapping("/{id}/variations")
-  public ResponseEntity<ProductItemDto> addVariation(
-      @PathVariable Long id, @Valid @RequestBody ProductItemRequestDto productItemRequestDto) {
-    log.info("Add variation to product by id: {}", id);
-
-    ProductItemDto responseDto = productService.addVariation(id, productItemRequestDto);
-
-    return ResponseEntity.created(responseDto.getRequiredLink(IanaLinkRelations.SELF).toUri())
-        .body(responseDto);
-  }
-
-  @GetMapping("/{id}/variations/{variationId}")
-  public ResponseEntity<ProductItemDto> variation(
-      @PathVariable Long id, @PathVariable Long variationId) {
-    log.info("Get variation by id: {} and variation id: {}", id, variationId);
-
-    ProductItemDto responseDto = productService.getVariation(id, variationId);
-
-    return ResponseEntity.ok(responseDto);
-  }
-
-  @DeleteMapping("/{id}/variations/{variationId}")
-  public ResponseEntity<Void> deleteVariation(
-      @PathVariable Long id, @PathVariable Long variationId) {
-    log.info("Delete variation by id: {} and variation id: {}", id, variationId);
-
-    productService.deleteVariation(id, variationId);
-
-    return ResponseEntity.noContent().build();
-  }
-
-  @PutMapping("/{id}/variations/{variationId}")
-  public ResponseEntity<ProductItemDto> replaceVariation(
-      @PathVariable Long id,
-      @PathVariable Long variationId,
-      @Valid @RequestBody ProductItemRequestDto productItemRequestDto) {
-    log.info("Replace variation by id: {} and variation id: {}", id, variationId);
-
-    ProductItemDto responseDto =
-        productService.replaceVariation(id, variationId, productItemRequestDto);
-
-    return ResponseEntity.created(responseDto.getRequiredLink(IanaLinkRelations.SELF).toUri())
-        .body(responseDto);
   }
 }

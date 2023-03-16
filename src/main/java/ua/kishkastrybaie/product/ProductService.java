@@ -4,8 +4,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import ua.kishkastrybaie.category.CategoryDto;
 import ua.kishkastrybaie.image.ImageDto;
-import ua.kishkastrybaie.product.item.ProductItemDto;
-import ua.kishkastrybaie.product.item.ProductItemRequestDto;
 
 public interface ProductService {
   CollectionModel<ProductDto> findAll(Pageable pageable);
@@ -21,14 +19,4 @@ public interface ProductService {
   CategoryDto getProductCategory(Long id);
 
   ImageDto getProductImage(Long id);
-
-  CollectionModel<ProductItemDto> getProductVariations(Long id);
-
-  ProductItemDto getVariation(Long id, Long variationId);
-
-  ProductItemDto addVariation(Long id, ProductItemRequestDto productItemRequestDto);
-
-  ProductItemDto replaceVariation(Long id, Long variationId, ProductItemRequestDto productItemRequestDto);
-
-  void deleteVariation(Long id, Long variationId);
 }

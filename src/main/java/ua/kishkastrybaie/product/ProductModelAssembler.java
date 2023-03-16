@@ -8,6 +8,7 @@ import org.springframework.hateoas.*;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import ua.kishkastrybaie.product.item.ProductItemController;
 
 @Component
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class ProductModelAssembler implements RepresentationModelAssembler<Produ
             linkTo(methodOn(ProductController.class).category(product.getId())).withRel("category"))
         .add(linkTo(methodOn(ProductController.class).image(product.getId())).withRel("mainImage"))
         .add(
-            linkTo(methodOn(ProductController.class).variations(product.getId()))
+            linkTo(methodOn(ProductItemController.class).variations(product.getId()))
                 .withRel("variations"));
   }
 
