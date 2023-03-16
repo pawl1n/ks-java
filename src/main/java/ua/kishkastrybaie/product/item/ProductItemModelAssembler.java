@@ -10,7 +10,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import ua.kishkastrybaie.product.ProductController;
 
 @Component
 @RequiredArgsConstructor
@@ -26,8 +25,8 @@ public class ProductItemModelAssembler
         .toDto(productItem)
         .add(
             linkTo(
-                    methodOn(ProductController.class)
-                        .variation(productItem.getProduct().getId(), productItem.getId()))
+                    methodOn(ProductItemController.class)
+                        .one(productItem.getProduct().getId(), productItem.getId()))
                 .withSelfRel());
   }
 
