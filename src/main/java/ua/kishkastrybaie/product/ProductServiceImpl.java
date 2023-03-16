@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.kishkastrybaie.category.Category;
@@ -25,7 +24,7 @@ public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
   private final CategoryModelAssembler categoryModelAssembler;
   private final ProductMapper productMapper;
-  private final RepresentationModelAssembler<Product, ProductDto> productModelAssembler;
+  private final ProductModelAssembler productModelAssembler;
   private final PagedResourcesAssembler<Product> pagedResourcesAssembler;
   private final ImageModelAssembler imageModelAssembler;
 

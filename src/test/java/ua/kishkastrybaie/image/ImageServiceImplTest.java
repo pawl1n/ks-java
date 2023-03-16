@@ -15,7 +15,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import ua.kishkastrybaie.image.uploader.ImageUploader;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +31,7 @@ class ImageServiceImplTest {
   @Mock private ImageRepository imageRepository;
   @Mock private ImageModelAssembler imageModelAssembler;
   @Mock private ImageUploader imageUploader;
+  @Mock private PagedResourcesAssembler<Image> pagedResourcesAssembler;
   @InjectMocks private ImageServiceImpl imageService;
 
   @BeforeAll
@@ -49,19 +55,20 @@ class ImageServiceImplTest {
   @Test
   void shouldFindAll() {
     // given
-    List<Image> images = List.of(image);
-    CollectionModel<ImageDto> imageDtoCollectionModel = CollectionModel.of(List.of(imageDto));
+    Page<Image> images = new PageImpl<>(List.of(image));
+    PagedModel<ImageDto> imageDtoCollectionModel =
+            PagedModel.of(List.of(imageDto), new PagedModel.PageMetadata(5, 0, 1));
 
-    given(imageRepository.findAll()).willReturn(images);
-    given(imageModelAssembler.toCollectionModel(images)).willReturn(imageDtoCollectionModel);
+    given(imageRepository.findAll(PageRequest.ofSize(5))).willReturn(images);
+    given(pagedResourcesAssembler.toModel(images, imageModelAssembler)).willReturn(imageDtoCollectionModel);
 
     // when
-    CollectionModel<ImageDto> actualResult = imageService.findAll(null);
+    CollectionModel<ImageDto> actualResult = imageService.findAll(PageRequest.ofSize(5));
 
     // then
     then(actualResult).isEqualTo(imageDtoCollectionModel);
-    verify(imageRepository).findAll();
-    verify(imageModelAssembler).toCollectionModel(images);
+    verify(imageRepository).findAll(PageRequest.ofSize(5));
+    verify(pagedResourcesAssembler).toModel(images, imageModelAssembler);
   }
 
   @Test
