@@ -10,7 +10,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import ua.kishkastrybaie.variation.VariationController;
 
 @Component
 @RequiredArgsConstructor
@@ -26,8 +25,8 @@ public class VariationOptionModelAssembler
         .toDto(variationOption)
         .add(
             linkTo(
-                    methodOn(VariationController.class)
-                        .option(variationOption.getVariation().getId(), variationOption.getValue()))
+                    methodOn(VariationOptionController.class)
+                        .one(variationOption.getVariation().getId(), variationOption.getValue()))
                 .withSelfRel());
   }
 

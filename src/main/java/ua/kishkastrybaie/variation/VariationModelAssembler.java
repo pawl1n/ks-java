@@ -8,6 +8,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import ua.kishkastrybaie.variation.option.VariationOptionController;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class VariationModelAssembler
         .toDto(variation)
         .add(linkTo(methodOn(VariationController.class).one(variation.getId())).withSelfRel())
         .add(
-            linkTo(methodOn(VariationController.class).options(variation.getId()))
+            linkTo(methodOn(VariationOptionController.class).all(variation.getId()))
                 .withRel("options"));
   }
 
