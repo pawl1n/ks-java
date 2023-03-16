@@ -20,7 +20,7 @@
         <liquibase-core.version>4.20.0</liquibase-core.version>
         <lombok.version>1.18.26</lombok.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
-        <springdoc-openapi.version>2.0.2</springdoc-openapi.version>
+        <springdoc-openapi.version>2.0.3</springdoc-openapi.version>
         <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
         <cloudinary-http44.version>1.33.0</cloudinary-http44.version>
     </properties>
@@ -88,10 +88,6 @@
         </dependency>
 
         <!-- documentation -->
-        <dependency>
-            <groupId>org.springframework.restdocs</groupId>
-            <artifactId>spring-restdocs-mockmvc</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -200,6 +196,11 @@
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
                             <version>${mapstruct.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>${project.parent.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
