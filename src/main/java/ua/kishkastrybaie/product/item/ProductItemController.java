@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/aoi/products/{productId}/variations")
+@RequestMapping("/api/products/{productId}/variations")
 @RequiredArgsConstructor
 @Slf4j
 public class ProductItemController {
