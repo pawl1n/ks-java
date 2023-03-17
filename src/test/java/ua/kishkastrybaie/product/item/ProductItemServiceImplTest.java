@@ -30,10 +30,7 @@ import ua.kishkastrybaie.product.ProductRepository;
 import ua.kishkastrybaie.variation.Variation;
 import ua.kishkastrybaie.variation.VariationNotFoundException;
 import ua.kishkastrybaie.variation.VariationRepository;
-import ua.kishkastrybaie.variation.option.VariationOption;
-import ua.kishkastrybaie.variation.option.VariationOptionDto;
-import ua.kishkastrybaie.variation.option.VariationOptionId;
-import ua.kishkastrybaie.variation.option.VariationOptionRepository;
+import ua.kishkastrybaie.variation.option.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductItemServiceImplTest {
@@ -44,6 +41,7 @@ class ProductItemServiceImplTest {
   ProductItemDto productItemDto2;
   ProductItemRequestDto productItemRequestDto1;
   Variation variation;
+  VariationOption variationOption;
 
   @Mock private ProductItemModelAssembler representationModelAssembler;
   @Mock private ProductItemRepository productItemRepository;
@@ -59,7 +57,7 @@ class ProductItemServiceImplTest {
     variation.setId(1L);
     variation.setName("name");
 
-    VariationOption variationOption = new VariationOption();
+    variationOption = new VariationOption();
     variationOption.setVariation(variation);
     variationOption.setValue("value");
 
@@ -209,7 +207,8 @@ class ProductItemServiceImplTest {
     given(productRepository.existsById(1L)).willReturn(true);
     given(variationRepository.existsById(1L)).willReturn(true);
     given(variationRepository.getReferenceById(1L)).willReturn(variation);
-    given(variationOptionRepository.existsById(new VariationOptionId(variation, "value"))).willReturn(true);
+    given(variationOptionRepository.existsById(new VariationOptionId(variation, "value")))
+        .willReturn(true);
     given(productRepository.getReferenceById(1L)).willReturn(product);
     given(
             productItemRepository.save(
@@ -219,8 +218,7 @@ class ProductItemServiceImplTest {
                             && productItem.getProduct().equals(productItem1.getProduct())
                             && productItem.getSku().equals(productItem1.getSku())
                             && productItem.getStock().equals(productItem1.getStock())
-                            && productItem
-                                .getVariationOptions().size() == 1)))
+                            && productItem.getVariationOptions().size() == 1)))
         .willReturn(productItem1);
     given(representationModelAssembler.toModel(productItem1)).willReturn(productItemDto1);
 
@@ -255,12 +253,188 @@ class ProductItemServiceImplTest {
     when(variationRepository.existsById(1L)).thenReturn(false);
 
     // then
-    thenThrownBy(() -> productItemServiceImpl.create(1L, productItemRequestDto1)).isInstanceOf(VariationNotFoundException.class);
+    thenThrownBy(() -> productItemServiceImpl.create(1L, productItemRequestDto1))
+        .isInstanceOf(VariationNotFoundException.class);
     verify(productRepository).existsById(1L);
     verify(variationRepository).existsById(1L);
     verifyNoMoreInteractions(variationRepository);
     verifyNoInteractions(variationOptionRepository);
     verifyNoInteractions(productItemRepository);
+    verifyNoInteractions(representationModelAssembler);
+  }
+
+  @Test
+  void shouldNotCreateWhenInvalidVariationOptionId() {
+    // given
+    given(productRepository.existsById(1L)).willReturn(true);
+    given(variationRepository.existsById(1L)).willReturn(true);
+    given(variationRepository.getReferenceById(1L)).willReturn(variation);
+
+    // when
+    when(variationOptionRepository.existsById(new VariationOptionId(variation, "value")))
+        .thenReturn(false);
+
+    // then
+    thenThrownBy(() -> productItemServiceImpl.create(1L, productItemRequestDto1))
+        .isInstanceOf(VariationOptionNotFoundException.class);
+    verifyNoMoreInteractions(variationOptionRepository);
+    verifyNoInteractions(productItemRepository);
+    verifyNoInteractions(representationModelAssembler);
+  }
+
+  @Test
+  void shouldReplace() {
+    // given
+    given(productRepository.existsById(1L)).willReturn(true);
+    given(variationRepository.existsById(1L)).willReturn(true);
+    given(variationRepository.getReferenceById(1L)).willReturn(variation);
+    given(variationOptionRepository.existsById(new VariationOptionId(variation, "value")))
+        .willReturn(true);
+    given(productItemRepository.findByIdAndProductId(2L, 1L)).willReturn(Optional.of(productItem2));
+    given(
+            productItemRepository.save(
+                argThat(
+                    productItem ->
+                        productItem.getId().equals(2L)
+                            && productItem.getPrice().equals(productItem1.getPrice())
+                            && productItem.getProduct().equals(productItem1.getProduct())
+                            && productItem.getSku().equals(productItem1.getSku())
+                            && productItem.getStock().equals(productItem1.getStock())
+                            && productItem.getVariationOptions().size() == 1)))
+        .willReturn(productItem1);
+    given(representationModelAssembler.toModel(productItem1)).willReturn(productItemDto1);
+
+    // when
+    ProductItemDto actualResult = productItemServiceImpl.replace(1L, 2L, productItemRequestDto1);
+
+    // then
+    then(actualResult).isEqualTo(productItemDto1);
+  }
+
+  @Test
+  void shouldNotReplaceWhenInvalidProductId() {
+    // given
+
+    // when
+    when(productRepository.existsById(1L)).thenReturn(false);
+
+    // then
+    thenThrownBy(() -> productItemServiceImpl.replace(1L, 1L, productItemRequestDto1))
+        .isInstanceOf(ProductNotFoundException.class);
+    verify(productRepository).existsById(1L);
+    verifyNoInteractions(productItemRepository);
+    verifyNoInteractions(representationModelAssembler);
+  }
+
+  @Test
+  void shouldNotReplaceWhenInvalidVariationId() {
+    // given
+    given(productRepository.existsById(1L)).willReturn(true);
+
+    // when
+    when(variationRepository.existsById(1L)).thenReturn(false);
+
+    // then
+    thenThrownBy(() -> productItemServiceImpl.replace(1L, 1L, productItemRequestDto1))
+        .isInstanceOf(VariationNotFoundException.class);
+    verify(productRepository).existsById(1L);
+    verify(variationRepository).existsById(1L);
+    verifyNoMoreInteractions(variationRepository);
+    verifyNoInteractions(variationOptionRepository);
+    verifyNoInteractions(productItemRepository);
+    verifyNoInteractions(representationModelAssembler);
+  }
+
+  @Test
+  void shouldNotReplaceWhenInvalidVariationOptionId() {
+    // given
+    given(productRepository.existsById(1L)).willReturn(true);
+    given(variationRepository.existsById(1L)).willReturn(true);
+    given(variationRepository.getReferenceById(1L)).willReturn(variation);
+
+    // when
+    when(variationOptionRepository.existsById(new VariationOptionId(variation, "value")))
+        .thenReturn(false);
+
+    // then
+    thenThrownBy(() -> productItemServiceImpl.replace(1L, 1L, productItemRequestDto1))
+        .isInstanceOf(VariationOptionNotFoundException.class);
+    verifyNoMoreInteractions(variationOptionRepository);
+    verifyNoInteractions(productItemRepository);
+    verifyNoInteractions(representationModelAssembler);
+  }
+
+  @Test
+  void shouldNotReplaceWhenInvalidProductItemId() {
+    // given
+    given(productRepository.existsById(1L)).willReturn(true);
+    given(variationRepository.existsById(1L)).willReturn(true);
+    given(variationRepository.getReferenceById(1L)).willReturn(variation);
+    given(variationOptionRepository.existsById(new VariationOptionId(variation, "value")))
+        .willReturn(true);
+    given(variationOptionRepository.getReferenceById(new VariationOptionId(variation, "value")))
+        .willReturn(variationOption);
+
+    // when
+    when(productItemRepository.findByIdAndProductId(1L, 1L)).thenReturn(Optional.empty());
+
+    // then
+    thenThrownBy(() -> productItemServiceImpl.replace(1L, 1L, productItemRequestDto1))
+        .isInstanceOf(ProductItemNotFoundException.class);
+    verifyNoMoreInteractions(productItemRepository);
+    verifyNoInteractions(representationModelAssembler);
+  }
+
+  @Test
+  void shouldDelete() {
+    // given
+    given(productRepository.existsById(1L)).willReturn(true);
+    given(productItemRepository.findByIdAndProductId(1L, 1L)).willReturn(Optional.of(productItem1));
+
+    // when
+    productItemServiceImpl.delete(1L, 1L);
+
+    // then
+    verify(productItemRepository).delete(productItem1);
+    verifyNoMoreInteractions(productRepository);
+    verifyNoMoreInteractions(productItemRepository);
+    verifyNoInteractions(variationRepository);
+    verifyNoInteractions(variationOptionRepository);
+    verifyNoInteractions(representationModelAssembler);
+  }
+
+  @Test
+  void shouldNotDeleteWhenInvalidProductId() {
+    // given
+
+    // when
+    when(productRepository.existsById(1L)).thenReturn(false);
+
+    // then
+    thenThrownBy(() -> productItemServiceImpl.delete(1L, 1L))
+        .isInstanceOf(ProductNotFoundException.class);
+    verifyNoMoreInteractions(productRepository);
+    verifyNoInteractions(productItemRepository);
+    verifyNoInteractions(variationRepository);
+    verifyNoInteractions(variationOptionRepository);
+    verifyNoInteractions(representationModelAssembler);
+  }
+
+  @Test
+  void shouldNotDeleteWhenInvalidProductItemId() {
+    // given
+    given(productRepository.existsById(1L)).willReturn(true);
+
+    // when
+    when(productItemRepository.findByIdAndProductId(1L, 1L)).thenReturn(Optional.empty());
+
+    // then
+    thenThrownBy(() -> productItemServiceImpl.delete(1L, 1L))
+        .isInstanceOf(ProductNotFoundException.class);
+    verifyNoMoreInteractions(productRepository);
+    verifyNoMoreInteractions(productItemRepository);
+    verifyNoInteractions(variationRepository);
+    verifyNoInteractions(variationOptionRepository);
     verifyNoInteractions(representationModelAssembler);
   }
 }
