@@ -1,7 +1,12 @@
 package ua.kishkastrybaie.variation.option;
 
 public class VariationOptionNotFoundException extends RuntimeException {
-  public VariationOptionNotFoundException(Long id) {
-    super("Variation option with id " + id + " not found");
+  public VariationOptionNotFoundException(VariationOptionId id) {
+    super(
+        "Variation option with variation id "
+            + id.getVariation().getId()
+            + " and value "
+            + id.getValue()
+            + " not found");
   }
 }

@@ -30,7 +30,9 @@ public class VariationOptionServiceImpl implements VariationOptionService {
     return variationOptionModelAssembler.toModel(
         variationOptionRepository
             .findById(new VariationOptionId(variation, value))
-            .orElseThrow(() -> new VariationOptionNotFoundException(id)));
+            .orElseThrow(
+                () ->
+                    new VariationOptionNotFoundException(new VariationOptionId(variation, value))));
   }
 
   @Override
@@ -61,7 +63,9 @@ public class VariationOptionServiceImpl implements VariationOptionService {
                   v.setValue(variationOptionRequestDto.value());
                   return variationOptionRepository.save(v);
                 })
-            .orElseThrow(() -> new VariationOptionNotFoundException(id));
+            .orElseThrow(
+                () ->
+                    new VariationOptionNotFoundException(new VariationOptionId(variation, value)));
 
     return variationOptionModelAssembler.toModel(variationOptionRepository.save(variationOption));
   }
