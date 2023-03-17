@@ -3,48 +3,71 @@ package ua.kishkastrybaie.product.item;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.kishkastrybaie.product.Product;
 import ua.kishkastrybaie.product.ProductNotFoundException;
 import ua.kishkastrybaie.product.ProductRepository;
 import ua.kishkastrybaie.variation.Variation;
+import ua.kishkastrybaie.variation.VariationNotFoundException;
 import ua.kishkastrybaie.variation.VariationRepository;
 import ua.kishkastrybaie.variation.option.VariationOption;
 import ua.kishkastrybaie.variation.option.VariationOptionId;
+import ua.kishkastrybaie.variation.option.VariationOptionNotFoundException;
 import ua.kishkastrybaie.variation.option.VariationOptionRepository;
 
 @Service
 @RequiredArgsConstructor
 public class ProductItemServiceImpl implements ProductItemService {
   private final ProductItemRepository productItemRepository;
-  private final RepresentationModelAssembler<ProductItem, ProductItemDto> productItemModelAssembler;
+  private final ProductItemModelAssembler productItemModelAssembler;
   private final VariationOptionRepository variationOptionRepository;
   private final VariationRepository variationRepository;
   private final ProductRepository productRepository;
+  private final PagedResourcesAssembler<ProductItem> pagedResourcesAssembler;
 
   @Override
-  public CollectionModel<ProductItemDto> getProductVariations(Long productId) {
-    return productItemModelAssembler.toCollectionModel(
-        productItemRepository.findAllByProductId(productId));
+  public CollectionModel<ProductItemDto> findAllByProductId(Long productId, Pageable pageable) {
+    if (!productRepository.existsById(productId)) {
+      throw new ProductNotFoundException(productId);
+    }
+
+    return pagedResourcesAssembler.toModel(
+        productItemRepository.findAllByProductId(productId, pageable), productItemModelAssembler);
+  }
+
+  @Override
+  public ProductItemDto findByProductIdAndId(Long productId, Long variationId) {
+    if (!productRepository.existsById(productId)) {
+      throw new ProductNotFoundException(productId);
+    }
+
+    ProductItem productItem =
+            productItemRepository
+                    .findByIdAndProductId(variationId, productId)
+                    .orElseThrow((() -> new ProductItemNotFoundException(variationId)));
+    return productItemModelAssembler.toModel(productItem);
   }
 
   @Override
   @Transactional
-  public ProductItemDto addVariation(Long productId, ProductItemRequestDto productItemRequestDto) {
+  public ProductItemDto create(Long productId, ProductItemRequestDto requestDto) {
+    if (!productRepository.existsById(productId)) {
+      throw new ProductNotFoundException(productId);
+    }
 
-    Set<VariationOption> variationOptions =
-        getVariationOptions(productItemRequestDto.variationOptions());
+    Set<VariationOption> variationOptions = getVariationOptions(requestDto.variationOptions());
 
     Product product = productRepository.getReferenceById(productId);
 
     ProductItem productItem = new ProductItem();
     productItem.setProduct(product);
-    productItem.setPrice(productItemRequestDto.price());
-    productItem.setStock(productItemRequestDto.stock());
-    productItem.setSku(productItemRequestDto.sku());
+    productItem.setPrice(requestDto.price());
+    productItem.setStock(requestDto.stock());
+    productItem.setSku(requestDto.sku());
     productItem.setVariationOptions(variationOptions);
 
     return productItemModelAssembler.toModel(productItemRepository.save(productItem));
@@ -52,22 +75,22 @@ public class ProductItemServiceImpl implements ProductItemService {
 
   @Override
   @Transactional
-  public ProductItemDto replaceVariation(
-      Long productId, Long productItemId, ProductItemRequestDto productItemRequestDto) {
+  public ProductItemDto replace(
+      Long productId, Long productItemId, ProductItemRequestDto requestDto) {
+    if (!productRepository.existsById(productId)) {
+      throw new ProductNotFoundException(productId);
+    }
 
-    Set<VariationOption> variationOptions =
-        getVariationOptions(productItemRequestDto.variationOptions());
-
-    Product product = productRepository.getReferenceById(productId);
+    Set<VariationOption> variationOptions = getVariationOptions(requestDto.variationOptions());
 
     ProductItem productItem =
         productItemRepository
-            .findByIdAndProduct(productItemId, product)
+            .findByIdAndProductId(productItemId, productId)
             .orElseThrow(() -> new ProductItemNotFoundException(productItemId));
 
-    productItem.setPrice(productItemRequestDto.price());
-    productItem.setStock(productItemRequestDto.stock());
-    productItem.setSku(productItemRequestDto.sku());
+    productItem.setPrice(requestDto.price());
+    productItem.setStock(requestDto.stock());
+    productItem.setSku(requestDto.sku());
     productItem.setVariationOptions(variationOptions);
 
     return productItemModelAssembler.toModel(productItemRepository.save(productItem));
@@ -75,23 +98,16 @@ public class ProductItemServiceImpl implements ProductItemService {
 
   @Override
   @Transactional
-  public void deleteVariation(Long productId, Long variationId) {
-    Product product = productRepository.getReferenceById(productId);
+  public void delete(Long productId, Long variationId) {
+    if (!productRepository.existsById(productId)) {
+      throw new ProductNotFoundException(productId);
+    }
+
     ProductItem productItem =
         productItemRepository
-            .findByIdAndProduct(variationId, product)
+            .findByIdAndProductId(variationId, productId)
             .orElseThrow(() -> new ProductNotFoundException(productId));
     productItemRepository.delete(productItem);
-  }
-
-  @Override
-  public ProductItemDto getVariation(Long productId, Long variationId) {
-    Product product = productRepository.getReferenceById(productId);
-    ProductItem productItem =
-        productItemRepository
-            .findByIdAndProduct(variationId, product)
-            .orElseThrow((() -> new ProductItemNotFoundException(variationId)));
-    return productItemModelAssembler.toModel(productItem);
   }
 
   private Set<VariationOption> getVariationOptions(
@@ -100,10 +116,20 @@ public class ProductItemServiceImpl implements ProductItemService {
     return variationOptions.stream()
         .map(
             variationOption -> {
+              if (!variationRepository.existsById(variationOption.variationId())) {
+                throw new VariationNotFoundException(variationOption.variationId());
+              }
+
               Variation variation =
                   variationRepository.getReferenceById(variationOption.variationId());
+
               VariationOptionId variationOptionId =
                   new VariationOptionId(variation, variationOption.value());
+
+              if (!variationOptionRepository.existsById(variationOptionId)) {
+                throw new VariationOptionNotFoundException(variationOptionId);
+              }
+
               return variationOptionRepository.getReferenceById(variationOptionId);
             })
         .collect(Collectors.toSet());

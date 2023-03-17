@@ -1,15 +1,16 @@
 package ua.kishkastrybaie.product.item;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 
 public interface ProductItemService {
-    CollectionModel<ProductItemDto> getProductVariations(Long id);
+  CollectionModel<ProductItemDto> findAllByProductId(Long productId, Pageable pageable);
 
-    ProductItemDto getVariation(Long id, Long variationId);
+  ProductItemDto findByProductIdAndId(Long productId, Long variationId);
 
-    ProductItemDto addVariation(Long id, ProductItemRequestDto productItemRequestDto);
+  ProductItemDto create(Long productId, ProductItemRequestDto requestDto);
 
-    ProductItemDto replaceVariation(Long id, Long variationId, ProductItemRequestDto productItemRequestDto);
+  ProductItemDto replace(Long productId, Long variationId, ProductItemRequestDto requestDto);
 
-    void deleteVariation(Long id, Long variationId);
+  void delete(Long productId, Long variationId);
 }
