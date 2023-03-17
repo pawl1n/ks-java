@@ -1,3 +1,5 @@
+![build and test](https://github.com/pawl1n/ks-java/actions/workflows/maven.yml/badge.svg)
+
 # E-commerce Backend API
 
 This project provides the backend API for an e-commerce website.
