@@ -29,7 +29,8 @@ The API provides endpoints for managing products, categories, and images.
 
 ### The following endpoints are currently available:
 
-#### Products
+<details>
+<summary>Products</summary>
 
 `GET /api/products` - Retrieves a list of all products.
 
@@ -43,7 +44,10 @@ The API provides endpoints for managing products, categories, and images.
 
 `GET /api/products/{id}/category` - Retrieves a category of the product.
 
-##### Product variations
+</details>
+
+<details>
+<summary>Product variations</summary>
 
 `GET /api/products/{id}/variations` - Retrieves a list of all product variationss.
 
@@ -55,7 +59,10 @@ The API provides endpoints for managing products, categories, and images.
 
 `DELETE /api/products/{id}/variations/{id}` - Deletes a product variation by ID.
 
-#### Categories
+</details>
+
+<details>
+<summary>Categories</summary>
 
 `GET /api/categories` - Retrieves a list of all categories.
 
@@ -67,7 +74,10 @@ The API provides endpoints for managing products, categories, and images.
 
 `DELETE /api/categories/{id}` - Deletes a category by ID.
 
-#### Images
+</details>
+
+<details>
+<summary>Images</summary>
 
 `GET /api/images` - Retrieves a list of all images.
 
@@ -79,7 +89,11 @@ The API provides endpoints for managing products, categories, and images.
 
 `DELETE /api/images/{id}` - Deletes an image by ID.
 
-#### Variations
+</details>
+
+
+<details>
+<summary>Variations</summary>
 
 `GET /api/variations` - Retrieves a list of all variations.
 
@@ -91,7 +105,10 @@ The API provides endpoints for managing products, categories, and images.
 
 `DELETE /api/variations/{id}` - Deletes a variation by ID.
 
-##### Variation options
+</details>
+
+<details>
+<summary>Variation options</summary>
 
 `GET /api/variations/{id}/options` - Retrieves a list of all variation options.
 
@@ -103,11 +120,16 @@ The API provides endpoints for managing products, categories, and images.
 
 `DELETE /api/variations/{id}/options/{id}` - Deletes a variation option by ID.
 
-#### Authentication
+</details>
+
+<details>
+<summary>Authentication</summary>
 
 `POST /api/auth/login` - Login user and generate JWT token.
 
 `POST /api/auth/register` - Register new user with role user.
+
+</details>
 
 ## Database
 
