@@ -54,7 +54,6 @@ class AuthenticationControllerIT {
     RestAssured.given()
         .body(registerRequest)
         .contentType(ContentType.JSON)
-            .log().all()
         .when()
         .post("/api/auth/register")
         .then()
