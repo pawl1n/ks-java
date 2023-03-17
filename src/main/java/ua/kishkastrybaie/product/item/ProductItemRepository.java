@@ -1,13 +1,12 @@
 package ua.kishkastrybaie.product.item;
 
 import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;import org.springframework.data.domain.Pageable;import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ua.kishkastrybaie.product.Product;
 
 @Repository
 public interface ProductItemRepository extends JpaRepository<ProductItem, Long> {
-  Iterable<ProductItem> findAllByProductId(Long id);
+  Page<ProductItem> findAllByProductId(Long productId, Pageable pageable);
 
-  Optional<ProductItem> findByIdAndProduct(Long id, Product product);
+  Optional<ProductItem> findByIdAndProductId(Long id, Long productId);
 }
