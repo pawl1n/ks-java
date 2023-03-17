@@ -10,6 +10,6 @@ import ua.kishkastrybaie.variation.Variation;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class VariationOptionId implements Serializable {
-    private transient Variation variation;
+    private Variation variation;
     private String value;
 }
