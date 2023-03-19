@@ -2,7 +2,6 @@ package ua.kishkastrybaie.product;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
@@ -16,10 +15,10 @@ import ua.kishkastrybaie.image.Image;
 import ua.kishkastrybaie.image.ImageDto;
 import ua.kishkastrybaie.image.ImageModelAssembler;
 import ua.kishkastrybaie.image.ImageNotFoundException;
+import ua.kishkastrybaie.shared.AuthorizationService;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
   private final CategoryModelAssembler categoryModelAssembler;
@@ -27,11 +26,17 @@ public class ProductServiceImpl implements ProductService {
   private final ProductModelAssembler productModelAssembler;
   private final PagedResourcesAssembler<Product> pagedResourcesAssembler;
   private final ImageModelAssembler imageModelAssembler;
+  private final AuthorizationService authorizationService;
 
   @Override
   public CollectionModel<ProductDto> findAll(Pageable pageable) {
+    if (authorizationService.isAdmin()) {
+      return pagedResourcesAssembler.toModel(
+          productRepository.findAll(pageable), productModelAssembler);
+    }
+
     return pagedResourcesAssembler.toModel(
-        productRepository.findAll(pageable), productModelAssembler);
+        productRepository.findAllByProductItemsIsNotNull(pageable), productModelAssembler);
   }
 
   @Override

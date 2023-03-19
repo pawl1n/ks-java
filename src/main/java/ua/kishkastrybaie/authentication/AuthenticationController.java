@@ -14,17 +14,23 @@ public class AuthenticationController {
   private final AuthenticationService authenticationService;
 
   @PostMapping("/register")
-  public ResponseEntity<AuthenticationDto> register(@Valid @RequestBody RegisterRequest request) {
+  public ResponseEntity<TokenDto> register(@Valid @RequestBody RegisterRequest request) {
     log.info("Register request: {}", request.email());
 
     return ResponseEntity.ok(authenticationService.register(request));
   }
 
   @PostMapping("/login")
-  public ResponseEntity<AuthenticationDto> authenticate(
-      @RequestBody AuthenticationRequest request) {
+  public ResponseEntity<TokenDto> authenticate(@RequestBody AuthenticationRequest request) {
     log.info("Authenticate request: {}", request.email());
 
     return ResponseEntity.ok(authenticationService.authenticate(request));
+  }
+
+  @PostMapping("/refresh")
+  public ResponseEntity<TokenDto> refresh(@RequestBody RefreshRequest request) {
+    log.info("Refresh request");
+
+    return ResponseEntity.ok(authenticationService.refresh(request));
   }
 }

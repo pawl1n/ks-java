@@ -1,7 +1,9 @@
 package ua.kishkastrybaie.authentication;
 
 public interface AuthenticationService {
-  AuthenticationDto register(RegisterRequest request);
+  TokenDto register(RegisterRequest request);
 
-  AuthenticationDto authenticate(AuthenticationRequest request);
+  TokenDto authenticate(AuthenticationRequest request);
+
+  TokenDto refresh(RefreshRequest request);
 }
