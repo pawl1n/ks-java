@@ -1,25 +1,40 @@
 package ua.kishkastrybaie.authentication;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.stereotype.Service;
 import ua.kishkastrybaie.user.Role;
 import ua.kishkastrybaie.user.User;
 import ua.kishkastrybaie.user.UserRepository;
 
 @Service
-@RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
   private final UserRepository userRepository;
   private final TokenService tokenService;
   private final AuthenticationManager authenticationManager;
   private final PasswordEncoder passwordEncoder;
+  private final JwtAuthenticationProvider jwtAuthenticationProvider;
+
+  public AuthenticationServiceImpl(
+      UserRepository userRepository,
+      TokenService tokenService,
+      AuthenticationManager authenticationManager,
+      PasswordEncoder passwordEncoder,
+      @Qualifier("refreshToken") JwtAuthenticationProvider jwtAuthenticationProvider) {
+    this.userRepository = userRepository;
+    this.tokenService = tokenService;
+    this.authenticationManager = authenticationManager;
+    this.passwordEncoder = passwordEncoder;
+    this.jwtAuthenticationProvider = jwtAuthenticationProvider;
+  }
 
   @Override
-  public AuthenticationDto register(RegisterRequest request) {
+  public TokenDto register(RegisterRequest request) {
     User userDetails =
         User.builder()
             .firstName(request.firstName())
@@ -37,19 +52,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
-    return authenticationResponse(authentication);
+    return tokenService.generateToken(authentication);
   }
 
   @Override
-  public AuthenticationDto authenticate(AuthenticationRequest request) {
+  public TokenDto authenticate(AuthenticationRequest request) {
     Authentication authentication =
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
-    return authenticationResponse(authentication);
+    return tokenService.generateToken(authentication);
   }
 
-  private AuthenticationDto authenticationResponse(Authentication authentication) {
-    return new AuthenticationDto(tokenService.generateToken(authentication));
+  @Override
+  public TokenDto refresh(RefreshRequest request) {
+    Authentication authentication =
+        jwtAuthenticationProvider.authenticate(
+            new BearerTokenAuthenticationToken(request.refreshToken()));
+
+    return tokenService.generateToken(authentication);
   }
 }

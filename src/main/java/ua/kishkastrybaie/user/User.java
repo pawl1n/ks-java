@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 public class User implements UserDetails {
   @Id
   @GeneratedValue(generator = "user_seq")
@@ -55,7 +54,7 @@ public class User implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority(role.name()));
+    return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
   }
 
   @Override
