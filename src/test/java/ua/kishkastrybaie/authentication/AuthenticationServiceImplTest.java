@@ -3,10 +3,10 @@ package ua.kishkastrybaie.authentication;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,6 +14,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import ua.kishkastrybaie.user.Role;
 import ua.kishkastrybaie.user.User;
 import ua.kishkastrybaie.user.UserRepository;
@@ -26,6 +28,7 @@ class AuthenticationServiceImplTest {
   @Mock TokenService tokenService;
   @Mock AuthenticationManager authenticationManager;
   @Mock Authentication authentication;
+  @Mock JwtAuthenticationProvider jwtAuthenticationProvider;
   @InjectMocks AuthenticationServiceImpl authenticationService;
 
   @Test
@@ -47,21 +50,17 @@ class AuthenticationServiceImplTest {
             Role.USER);
 
     given(passwordEncoder.encode("password")).willReturn("password");
-    given(userRepository.save(user)).willReturn(user);
+    given(userRepository.save(ArgumentMatchers.any())).willReturn(user);
     given(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
         .willReturn(authentication);
-    given(tokenService.generateToken(authentication)).willReturn("token");
+    given(tokenService.generateToken(authentication))
+        .willReturn(new TokenDto("accessToken", "refreshToken"));
 
     // when
-    AuthenticationDto response = authenticationService.register(registerRequest);
+    TokenDto response = authenticationService.register(registerRequest);
 
     // then
-    then(response).isNotNull().isEqualTo(new AuthenticationDto("token"));
-    verify(passwordEncoder).encode("password");
-    verify(userRepository).save(user);
-    verify(authenticationManager)
-        .authenticate(new UsernamePasswordAuthenticationToken("email@email.com", "password"));
-    verify(tokenService).generateToken(authentication);
+    then(response).isNotNull().isEqualTo(new TokenDto("accessToken", "refreshToken"));
   }
 
   @Test
@@ -72,14 +71,29 @@ class AuthenticationServiceImplTest {
 
     given(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
         .willReturn(authentication);
-    given(tokenService.generateToken(authentication)).willReturn("token");
+    given(tokenService.generateToken(authentication))
+        .willReturn(new TokenDto("accessToken", "refreshToken"));
 
     // when
-    AuthenticationDto response = authenticationService.authenticate(authenticationRequest);
+    TokenDto response = authenticationService.authenticate(authenticationRequest);
 
     // then
-    then(response).isNotNull().isEqualTo(new AuthenticationDto("token"));
-    verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
-    verify(tokenService).generateToken(authentication);
+    then(response).isNotNull().isEqualTo(new TokenDto("accessToken", "refreshToken"));
+  }
+
+  @Test
+  void shouldRefresh() {
+    // given
+    RefreshRequest refreshRequest = new RefreshRequest("refreshToken");
+
+    given(jwtAuthenticationProvider.authenticate(any(BearerTokenAuthenticationToken.class))).willReturn(authentication);
+    given(tokenService.generateToken(authentication)).willReturn(new TokenDto("accessToken", "refreshToken"));
+
+    // when
+    TokenDto response = authenticationService.refresh(refreshRequest);
+
+    // then
+    then(response).isNotNull().isEqualTo(new TokenDto("accessToken", "refreshToken"));
+
   }
 }

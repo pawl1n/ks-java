@@ -1,12 +1,11 @@
 package ua.kishkastrybaie.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.kishkastrybaie.shared.AuthorizationService;
 
 @Service
 @RequiredArgsConstructor
@@ -14,68 +13,34 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final UserModelAssembler userModelAssembler;
+  private final AuthorizationService authorizationService;
 
   @Override
   public UserDto getCurrentUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null) {
-      return null;
-    }
-
-    String email = authentication.getName();
-
-    User user =
-        userRepository
-            .findByEmailEqualsIgnoreCase(email)
-            .orElseThrow(() -> new EmailNotFoundException(email));
-
-    return userModelAssembler.toModel(user);
+    return userModelAssembler.toModel(authorizationService.getAuthenticatedUser());
   }
 
   @Override
   public UserDto update(UserRequestDto userRequestDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null) {
-      return null;
-    }
+    User user = authorizationService.getAuthenticatedUser();
 
-    String email = authentication.getName();
+    user.setFirstName(userRequestDto.firstName());
+    user.setMiddleName(userRequestDto.middleName());
+    user.setLastName(userRequestDto.lastName());
+    user.setEmail(userRequestDto.email());
+    user.setPhoneNumber(userRequestDto.phoneNumber());
 
-    User user =
-        userRepository
-            .findByEmailEqualsIgnoreCase(email)
-            .map(
-                u -> {
-                  u.setFirstName(userRequestDto.firstName());
-                  u.setMiddleName(userRequestDto.middleName());
-                  u.setLastName(userRequestDto.lastName());
-                  u.setEmail(userRequestDto.email());
-                  u.setPhoneNumber(userRequestDto.phoneNumber());
-
-                  return userRepository.save(u);
-                })
-            .orElseThrow(() -> new EmailNotFoundException(email));
-
+    userRepository.save(user);
     return userModelAssembler.toModel(user);
   }
 
   @Override
   public UserDto changePassword(ChangePasswordRequest changePasswordRequest) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null) {
-      return null;
-    }
-
     if (changePasswordRequest.currentPassword().equals(changePasswordRequest.newPassword())) {
       throw new BadCredentialsException("Current password and new password must be different");
     }
 
-    String email = authentication.getName();
-
-    User user =
-        userRepository
-            .findByEmailEqualsIgnoreCase(email)
-            .orElseThrow(() -> new EmailNotFoundException(email));
+    User user = authorizationService.getAuthenticatedUser();
 
     if (!passwordEncoder.matches(changePasswordRequest.currentPassword(), user.getPassword())) {
       throw new BadCredentialsException();

@@ -49,7 +49,8 @@ class AuthenticationControllerIT {
       executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   void shouldRegister() {
     RegisterRequest registerRequest =
-        new RegisterRequest("user@user", "user", "user", "user@user", "380111111111", "longPassword");
+        new RegisterRequest(
+            "user@user", "user", "user", "user@user", "380111111111", "longPassword");
 
     RestAssured.given()
         .body(registerRequest)
@@ -58,7 +59,8 @@ class AuthenticationControllerIT {
         .post("/api/auth/register")
         .then()
         .statusCode(HttpStatus.OK.value())
-        .body("token", notNullValue());
+        .body("accessToken", notNullValue())
+        .body("refreshToken", notNullValue());
   }
 
   @Test
@@ -71,7 +73,34 @@ class AuthenticationControllerIT {
         .post("/api/auth/login")
         .then()
         .statusCode(HttpStatus.OK.value())
-        .body("token", notNullValue());
+        .body("accessToken", notNullValue())
+        .body("refreshToken", notNullValue());
+  }
+
+  @Test
+  void shouldRefresh() {
+    AuthenticationRequest authenticationRequest = new AuthenticationRequest("admin@admin", "admin");
+    TokenDto tokens =
+        RestAssured.given()
+            .body(authenticationRequest)
+            .contentType(ContentType.JSON)
+            .when()
+            .post("/api/auth/login")
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .extract()
+            .as(TokenDto.class);
+
+    RefreshRequest refreshRequest = new RefreshRequest(tokens.refreshToken());
+    RestAssured.given()
+        .body(refreshRequest)
+        .contentType(ContentType.JSON)
+        .when()
+        .post("/api/auth/refresh")
+        .then()
+        .statusCode(HttpStatus.OK.value())
+        .body("accessToken", notNullValue())
+        .body("refreshToken", notNullValue());
   }
 
   @AfterAll

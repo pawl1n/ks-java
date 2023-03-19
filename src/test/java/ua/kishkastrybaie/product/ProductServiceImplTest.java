@@ -26,6 +26,7 @@ import ua.kishkastrybaie.category.CategoryDto;
 import ua.kishkastrybaie.category.CategoryModelAssembler;
 import ua.kishkastrybaie.category.CategoryNotFoundException;
 import ua.kishkastrybaie.image.Image;
+import ua.kishkastrybaie.shared.AuthorizationService;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -41,6 +42,7 @@ class ProductServiceImplTest {
   @Mock private CategoryModelAssembler categoryModelAssembler;
   @Mock private ProductMapper productMapper;
   @Mock private PagedResourcesAssembler<Product> pagedResourcesAssembler;
+  @Mock private AuthorizationService authorizationService;
   @InjectMocks private ProductServiceImpl productService;
 
   @BeforeEach
@@ -89,6 +91,7 @@ class ProductServiceImplTest {
     PagedModel<ProductDto> productDtoCollectionModel =
         PagedModel.of(List.of(productDto1, productDto2), new PagedModel.PageMetadata(5, 0, 2));
 
+    given(authorizationService.isAdmin()).willReturn(true);
     given(productRepository.findAll(PageRequest.ofSize(5))).willReturn(products);
     given(pagedResourcesAssembler.toModel(products, productModelAssembler))
         .willReturn(productDtoCollectionModel);
@@ -98,8 +101,25 @@ class ProductServiceImplTest {
 
     // then
     then(response).hasSize(2).usingRecursiveComparison().isEqualTo(productDtoCollectionModel);
-    verify(productRepository).findAll(PageRequest.ofSize(5));
-    verify(pagedResourcesAssembler).toModel(products, productModelAssembler);
+  }
+
+  @Test
+  void shouldFindAllWhenIsNotAdmin() {
+    // given
+    Page<Product> products = new PageImpl<>(List.of(product1, product2));
+    PagedModel<ProductDto> productDtoCollectionModel =
+        PagedModel.of(List.of(productDto1, productDto2), new PagedModel.PageMetadata(5, 0, 2));
+
+    given(authorizationService.isAdmin()).willReturn(false);
+    given(productRepository.findAllByProductItemsIsNotNull(PageRequest.ofSize(5))).willReturn(products);
+    given(pagedResourcesAssembler.toModel(products, productModelAssembler))
+        .willReturn(productDtoCollectionModel);
+
+    // when
+    CollectionModel<ProductDto> response = productService.findAll(PageRequest.ofSize(5));
+
+    // then
+    then(response).hasSize(2).usingRecursiveComparison().isEqualTo(productDtoCollectionModel);
   }
 
   @Test

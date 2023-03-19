@@ -50,9 +50,9 @@ class CategoryControllerIT {
             .post("/api/auth/login")
             .then()
             .statusCode(HttpStatus.OK.value())
-            .body("token", notNullValue())
+            .body("accessToken", notNullValue())
             .extract()
-            .path("token");
+            .path("accessToken");
   }
 
   @AfterEach
