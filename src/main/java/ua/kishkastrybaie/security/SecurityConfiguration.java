@@ -41,9 +41,10 @@ import ua.kishkastrybaie.user.Role;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-  private static final String[] PUBLIC = new String[] {"/api/auth/**"};
-  private static final String[] PUBLIC_GET =
+  private static final String[] PUBLIC_ENDPOINTS = new String[] {"/api/auth/**"};
+  private static final String[] PUBLIC_GET_ENDPOINTS =
       new String[] {"/api/products/**", "/api/categories/**", "/api/", "/**"};
+  private static final String[] USER_ENDPOINTS = new String[] {"/api/users/me/**"};
   private final KeyUtils keyUtils;
   private final JwtToUserConverter jwtToUserConverter;
 
@@ -68,15 +69,18 @@ public class SecurityConfiguration {
         .cors(Customizer.withDefaults())
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers(PUBLIC)
+                auth.requestMatchers(PUBLIC_ENDPOINTS)
                     .permitAll()
-                    .requestMatchers(GET, PUBLIC_GET)
+                    .requestMatchers(GET, PUBLIC_GET_ENDPOINTS)
                     .permitAll()
+                    .requestMatchers(USER_ENDPOINTS)
+                    .hasRole(Role.USER.name())
                     .anyRequest()
                     .hasRole(Role.ADMIN.name()))
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .oauth2ResourceServer(configurer -> configurer.jwt().jwtAuthenticationConverter(jwtToUserConverter))
+        .oauth2ResourceServer(
+            configurer -> configurer.jwt().jwtAuthenticationConverter(jwtToUserConverter))
         .build();
   }
 
@@ -96,6 +100,7 @@ public class SecurityConfiguration {
     configuration.setAllowedMethods(List.of(GET.name(), POST.name(), PUT.name(), DELETE.name()));
     configuration.setAllowedHeaders(List.of(AUTHORIZATION, CONTENT_TYPE));
     configuration.addExposedHeader("WWW-Authenticate");
+    configuration.addExposedHeader(CONTENT_TYPE);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
 
