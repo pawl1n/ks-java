@@ -2,6 +2,8 @@ package ua.kishkastrybaie.variation.option;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +16,15 @@ public class VariationOptionController {
   private final VariationOptionService variationOptionService;
 
   @GetMapping
-  public ResponseEntity<CollectionModel<VariationOptionDto>> all(@PathVariable Long variationId) {
-    return ResponseEntity.ok(variationOptionService.getVariationOptions(variationId));
+  public ResponseEntity<CollectionModel<VariationOptionDto>> all(
+      @PathVariable Long variationId, @PageableDefault Pageable pageable) {
+    return ResponseEntity.ok(variationOptionService.findAllByVariationId(variationId, pageable));
   }
 
   @GetMapping("/{value}")
   public ResponseEntity<VariationOptionDto> one(
       @PathVariable Long variationId, @PathVariable @NotNull String value) {
-    return ResponseEntity.ok(variationOptionService.getVariationOption(variationId, value));
+    return ResponseEntity.ok(variationOptionService.findByVariationIdAndValue(variationId, value));
   }
 
   @PostMapping
@@ -30,7 +33,7 @@ public class VariationOptionController {
       @RequestBody VariationOptionRequestDto variationOptionRequestDto) {
 
     VariationOptionDto variationOptionDto =
-        variationOptionService.createVariationOption(variationId, variationOptionRequestDto);
+        variationOptionService.create(variationId, variationOptionRequestDto);
 
     return ResponseEntity.created(
             variationOptionDto.getRequiredLink(IanaLinkRelations.SELF).toUri())
@@ -44,7 +47,7 @@ public class VariationOptionController {
       @RequestBody VariationOptionRequestDto variationOptionRequestDto) {
 
     VariationOptionDto variationOptionDto =
-        variationOptionService.updateVariationOption(variationId, value, variationOptionRequestDto);
+        variationOptionService.replace(variationId, value, variationOptionRequestDto);
 
     return ResponseEntity.ok(variationOptionDto);
   }
@@ -52,8 +55,8 @@ public class VariationOptionController {
   @DeleteMapping("/{value}")
   public ResponseEntity<Void> delete(
       @PathVariable Long variationId, @PathVariable @NotNull String value) {
-    variationOptionService.deleteVariationOption(variationId, value);
+    variationOptionService.delete(variationId, value);
 
     return ResponseEntity.noContent().build();
-    }
+  }
 }

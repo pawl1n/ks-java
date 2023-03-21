@@ -23,7 +23,7 @@ public class VariationModelAssembler
         .toDto(variation)
         .add(linkTo(methodOn(VariationController.class).one(variation.getId())).withSelfRel())
         .add(
-            linkTo(methodOn(VariationOptionController.class).all(variation.getId()))
+            linkTo(methodOn(VariationOptionController.class).all(variation.getId(), null))
                 .withRel("options"));
   }
 
