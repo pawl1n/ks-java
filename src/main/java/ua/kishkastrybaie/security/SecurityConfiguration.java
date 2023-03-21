@@ -2,6 +2,7 @@ package ua.kishkastrybaie.security;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
 import static org.springframework.http.HttpMethod.*;
 
 import java.util.HashMap;
@@ -99,8 +100,7 @@ public class SecurityConfiguration {
     configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:3030"));
     configuration.setAllowedMethods(List.of(GET.name(), POST.name(), PUT.name(), DELETE.name()));
     configuration.setAllowedHeaders(List.of(AUTHORIZATION, CONTENT_TYPE));
-    configuration.addExposedHeader("WWW-Authenticate");
-    configuration.addExposedHeader(CONTENT_TYPE);
+    configuration.addExposedHeader(WWW_AUTHENTICATE);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
 
