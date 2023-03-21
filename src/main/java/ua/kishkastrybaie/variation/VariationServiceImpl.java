@@ -4,15 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class VariationServiceImpl implements VariationService {
   private final VariationRepository variationRepository;
-  private final RepresentationModelAssembler<Variation, VariationDto> variationModelAssembler;
-  private final VariationMapper variationMapper;
+  private final VariationModelAssembler variationModelAssembler;
   private final PagedResourcesAssembler<Variation> pagedResourcesAssembler;
 
   @Override
@@ -29,7 +27,8 @@ public class VariationServiceImpl implements VariationService {
 
   @Override
   public VariationDto create(VariationRequestDto variationRequestDto) {
-    Variation variation = variationRepository.save(variationMapper.toDomain(variationRequestDto));
+    Variation variation = new Variation();
+    variation.setName(variationRequestDto.name());
 
     return variationModelAssembler.toModel(variationRepository.save(variation));
   }
@@ -51,7 +50,10 @@ public class VariationServiceImpl implements VariationService {
 
   @Override
   public void deleteById(Long id) {
-    Variation variation = variationRepository.getReferenceById(id);
-    variationRepository.delete(variation);
+    if (!variationRepository.existsById(id)) {
+      throw new VariationNotFoundException(id);
+    }
+
+    variationRepository.deleteById(id);
   }
 }

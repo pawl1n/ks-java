@@ -1,17 +1,16 @@
 package ua.kishkastrybaie.variation.option;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 
 public interface VariationOptionService {
-    CollectionModel<VariationOptionDto> getVariationOptions(Long id);
+  CollectionModel<VariationOptionDto> findAllByVariationId(Long variationId, Pageable pageable);
 
-    VariationOptionDto getVariationOption(Long id, String value);
+  VariationOptionDto findByVariationIdAndValue(Long variationId, String value);
 
-    VariationOptionDto createVariationOption(
-            Long variationId, VariationOptionRequestDto variationOptionRequestDto);
+  VariationOptionDto create(Long variationId, VariationOptionRequestDto requestDto);
 
-    VariationOptionDto updateVariationOption(
-            Long id, String value, VariationOptionRequestDto variationOptionRequestDto);
+  VariationOptionDto replace(Long variationId, String value, VariationOptionRequestDto requestDto);
 
-    void deleteVariationOption(Long variationId, String value);
+  void delete(Long variationId, String value);
 }

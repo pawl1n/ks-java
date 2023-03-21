@@ -8,6 +8,4 @@ public interface VariationOptionMapper {
   @VariationOptionToVariationOptionDto
   @Mapping(target = "variationId", source = "variation.id")
   VariationOptionDto toDto(VariationOption variationOption);
-
-  VariationOption toDomain(VariationOptionRequestDto variationOptionRequestDto);
 }

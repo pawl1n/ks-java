@@ -1,8 +1,9 @@
 package ua.kishkastrybaie.variation.option;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Service;
 import ua.kishkastrybaie.variation.Variation;
 import ua.kishkastrybaie.variation.VariationNotFoundException;
@@ -12,20 +13,28 @@ import ua.kishkastrybaie.variation.VariationRepository;
 @RequiredArgsConstructor
 public class VariationOptionServiceImpl implements VariationOptionService {
   private final VariationOptionRepository variationOptionRepository;
-  private final VariationOptionMapper variationOptionMapper;
-  private final RepresentationModelAssembler<VariationOption, VariationOptionDto>
-      variationOptionModelAssembler;
+  private final VariationOptionModelAssembler variationOptionModelAssembler;
+  private final PagedResourcesAssembler<VariationOption> pagedResourcesAssembler;
   private final VariationRepository variationRepository;
 
   @Override
-  public CollectionModel<VariationOptionDto> getVariationOptions(Long id) {
-    return variationOptionModelAssembler.toCollectionModel(
-        variationOptionRepository.findAllByVariationId(id));
+  public CollectionModel<VariationOptionDto> findAllByVariationId(
+      Long variationId, Pageable pageable) {
+    if (!variationRepository.existsById(variationId)) {
+        throw new VariationNotFoundException(variationId);
+    }
+
+    return pagedResourcesAssembler.toModel(
+        variationOptionRepository.findAllByVariationId(variationId, pageable),
+        variationOptionModelAssembler);
   }
 
   @Override
-  public VariationOptionDto getVariationOption(Long id, String value) {
-    Variation variation = variationRepository.getReferenceById(id);
+  public VariationOptionDto findByVariationIdAndValue(Long variationId, String value) {
+    if (!variationRepository.existsById(variationId)) {
+      throw new VariationNotFoundException(variationId);
+    }
+    Variation variation = variationRepository.getReferenceById(variationId);
 
     return variationOptionModelAssembler.toModel(
         variationOptionRepository
@@ -36,25 +45,29 @@ public class VariationOptionServiceImpl implements VariationOptionService {
   }
 
   @Override
-  public VariationOptionDto createVariationOption(
+  public VariationOptionDto create(
       Long variationId, VariationOptionRequestDto variationOptionRequestDto) {
-    Variation variation =
-        variationRepository
-            .findById(variationId)
-            .orElseThrow(() -> new VariationNotFoundException(variationId));
+    if (!variationRepository.existsById(variationId)) {
+      throw new VariationNotFoundException(variationId);
+    }
+    Variation variation = variationRepository.getReferenceById(variationId);
 
-    VariationOption variationOptionRequest =
-        variationOptionMapper.toDomain(variationOptionRequestDto);
+    VariationOption variationOptionRequest = new VariationOption();
     variationOptionRequest.setVariation(variation);
+    variationOptionRequest.setValue(variationOptionRequestDto.value());
 
     return variationOptionModelAssembler.toModel(
         variationOptionRepository.save(variationOptionRequest));
   }
 
   @Override
-  public VariationOptionDto updateVariationOption(
-      Long id, String value, VariationOptionRequestDto variationOptionRequestDto) {
-    Variation variation = variationRepository.getReferenceById(id);
+  public VariationOptionDto replace(
+      Long variationId, String value, VariationOptionRequestDto variationOptionRequestDto) {
+    if (!variationRepository.existsById(variationId)) {
+      throw new VariationNotFoundException(variationId);
+    }
+
+    Variation variation = variationRepository.getReferenceById(variationId);
     VariationOption variationOption =
         variationOptionRepository
             .findById(new VariationOptionId(variation, value))
@@ -71,11 +84,17 @@ public class VariationOptionServiceImpl implements VariationOptionService {
   }
 
   @Override
-  public void deleteVariationOption(Long id, String value) {
-    Variation variation = variationRepository.getReferenceById(id);
-    VariationOption variationOption =
-        variationOptionRepository.getReferenceById(new VariationOptionId(variation, value));
+  public void delete(Long variationId, String value) {
+    if (!variationRepository.existsById(variationId)) {
+      throw new VariationNotFoundException(variationId);
+    }
+    Variation variation = variationRepository.getReferenceById(variationId);
 
-    variationOptionRepository.delete(variationOption);
+    VariationOptionId variationOptionId = new VariationOptionId(variation, value);
+    if (!variationOptionRepository.existsById(variationOptionId)) {
+      throw new VariationOptionNotFoundException(variationOptionId);
+    }
+
+    variationOptionRepository.deleteById(variationOptionId);
   }
 }
