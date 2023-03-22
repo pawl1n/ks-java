@@ -1,4 +1,5 @@
-![build and test](https://github.com/pawl1n/ks-java/actions/workflows/maven.yml/badge.svg)
+[![build and test](https://github.com/pawl1n/ks-java/actions/workflows/maven.yml/badge.svg)](https://github.com/pawl1n/ks-java/actions/workflows/maven.yml)
+[![Qodana](https://github.com/pawl1n/ks-java/actions/workflows/qodana.yml/badge.svg)](https://github.com/pawl1n/ks-java/actions/workflows/qodana.yml)
 
 # E-commerce Backend API
 
@@ -127,9 +128,11 @@ The API provides endpoints for managing products, categories, and images.
 <details>
 <summary>Authentication</summary>
 
-`POST /api/auth/login` - Login user and generate JWT token.
+`POST /api/auth/login` - Login user and generate JWT tokens.
 
 `POST /api/auth/register` - Register new user with role user.
+
+`POST /api/auth/refresh` - Refresh access token.
 
 </details>
 
