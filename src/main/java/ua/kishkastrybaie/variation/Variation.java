@@ -1,6 +1,7 @@
 package ua.kishkastrybaie.variation;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import lombok.Setter;
 @Table(name = "variation", schema = "main")
 @Getter
 @Setter
-public class Variation {
+public class Variation implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "variation_seq")
   @SequenceGenerator(
