@@ -7,9 +7,9 @@ import org.springframework.hateoas.server.core.Relation;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 @Relation(itemRelation = "variation", collectionRelation = "variations")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@AllArgsConstructor
 public class VariationDto extends RepresentationModel<VariationDto> {
   private Long id;
   private String name;

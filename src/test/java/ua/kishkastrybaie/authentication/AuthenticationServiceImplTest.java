@@ -94,6 +94,5 @@ class AuthenticationServiceImplTest {
 
     // then
     then(response).isNotNull().isEqualTo(new TokenDto("accessToken", "refreshToken"));
-
   }
 }

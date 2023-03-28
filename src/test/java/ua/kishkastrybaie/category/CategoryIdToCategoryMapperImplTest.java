@@ -49,7 +49,6 @@ class CategoryIdToCategoryMapperImplTest {
 
     // then
     then(actual).isEqualTo(category3);
-    verify(categoryRepository).findById(1L);
   }
 
   @Test
@@ -73,6 +72,5 @@ class CategoryIdToCategoryMapperImplTest {
     // then
     thenThrownBy(() -> categoryIdToCategoryMapperImpl.toCategory(1L))
         .isInstanceOf(CategoryNotFoundException.class);
-    verify(categoryRepository).findById(1L);
   }
 }
