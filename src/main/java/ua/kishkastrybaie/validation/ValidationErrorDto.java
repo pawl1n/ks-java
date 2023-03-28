@@ -1,7 +1,8 @@
-package ua.kishkastrybaie.shared;
+package ua.kishkastrybaie.validation;
 
 import java.util.Map;
 import lombok.Getter;
+import ua.kishkastrybaie.shared.ErrorDto;
 
 @Getter
 public class ValidationErrorDto extends ErrorDto {
