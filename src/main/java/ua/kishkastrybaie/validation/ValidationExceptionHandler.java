@@ -1,4 +1,4 @@
-package ua.kishkastrybaie.shared;
+package ua.kishkastrybaie.validation;
 
 import java.util.HashMap;
 import java.util.Map;
