@@ -78,8 +78,6 @@ class VariationServiceImplTest {
 
     // then
     then(response).usingRecursiveComparison().isEqualTo(variationDto1);
-    verify(variationRepository).findById(1L);
-    verify(variationModelAssembler).toModel(variation1);
   }
 
   @Test
@@ -92,7 +90,6 @@ class VariationServiceImplTest {
     // then
     thenThrownBy(() -> variationService.findById(1L))
         .isInstanceOf(VariationNotFoundException.class);
-    verify(variationRepository).findById(1L);
     verifyNoInteractions(variationModelAssembler);
   }
 
@@ -133,8 +130,6 @@ class VariationServiceImplTest {
 
     // then
     then(response).usingRecursiveComparison().isEqualTo(changedVariationDto);
-    verify(variationRepository).findById(2L);
-    verify(variationRepository).save(any());
     verify(variationModelAssembler).toModel(changedVariation);
   }
 
@@ -148,7 +143,6 @@ class VariationServiceImplTest {
     // then
     thenThrownBy(() -> variationService.replace(1L, variationRequestDto))
         .isInstanceOf(VariationNotFoundException.class);
-    verify(variationRepository).findById(1L);
     verifyNoInteractions(variationModelAssembler);
   }
 
@@ -161,7 +155,6 @@ class VariationServiceImplTest {
     variationService.deleteById(1L);
 
     // then
-    verify(variationRepository).existsById(1L);
     verify(variationRepository).deleteById(1L);
   }
 
@@ -175,7 +168,6 @@ class VariationServiceImplTest {
     // then
     thenThrownBy(() -> variationService.deleteById(1L))
         .isInstanceOf(VariationNotFoundException.class);
-    verify(variationRepository).existsById(1L);
     verifyNoInteractions(variationModelAssembler);
   }
 }

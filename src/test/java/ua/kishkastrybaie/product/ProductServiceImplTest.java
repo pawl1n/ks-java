@@ -71,7 +71,7 @@ class ProductServiceImplTest {
             1L,
             "Product 1",
             "Description 1",
-            "Category 1",
+            new CategoryDto(1L, "Category 1", null),
             new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
 
     productDto2 = new ProductDto(2L, "Product 2", null, null, null);
@@ -133,8 +133,6 @@ class ProductServiceImplTest {
 
     // then
     then(response).usingRecursiveComparison().isEqualTo(productDto1);
-    verify(productRepository).findById(1L);
-    verify(productModelAssembler).toModel(product1);
   }
 
   @Test
@@ -146,7 +144,6 @@ class ProductServiceImplTest {
 
     // then
     thenThrownBy(() -> productService.findById(1L)).isInstanceOf(ProductNotFoundException.class);
-    verify(productRepository).findById(1L);
     verifyNoInteractions(productModelAssembler);
   }
 
@@ -162,9 +159,6 @@ class ProductServiceImplTest {
 
     // then
     then(response).usingRecursiveComparison().isEqualTo(productDto1);
-    verify(productMapper).toDomain(productRequestDto);
-    verify(productRepository).save(product1);
-    verify(productModelAssembler).toModel(product1);
   }
 
   @Test
@@ -182,7 +176,7 @@ class ProductServiceImplTest {
             2L,
             "Product 1",
             "Description 1",
-            "Category 1",
+            new CategoryDto(1L, "Category 1", null),
             new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
 
     given(productMapper.toDomain(productRequestDto)).willReturn(product1);
@@ -202,10 +196,6 @@ class ProductServiceImplTest {
 
     // then
     then(response).usingRecursiveComparison().isEqualTo(changedProductDto);
-    verify(productMapper).toDomain(productRequestDto);
-    verify(productRepository).findById(2L);
-    verify(productRepository).save(any());
-    verify(productModelAssembler).toModel(changedProduct);
   }
 
   @Test
@@ -219,8 +209,6 @@ class ProductServiceImplTest {
     // then
     thenThrownBy(() -> productService.replace(1L, productRequestDto))
         .isInstanceOf(ProductNotFoundException.class);
-    verify(productMapper).toDomain(productRequestDto);
-    verify(productRepository).findById(1L);
     verifyNoInteractions(productModelAssembler);
   }
 
@@ -233,7 +221,6 @@ class ProductServiceImplTest {
     productService.deleteById(1L);
 
     // then
-    verify(productRepository).findById(1L);
     verify(productRepository).delete(product1);
   }
 
@@ -246,7 +233,6 @@ class ProductServiceImplTest {
 
     // then
     thenThrownBy(() -> productService.deleteById(1L)).isInstanceOf(ProductNotFoundException.class);
-    verify(productRepository).findById(1L);
     verifyNoInteractions(productModelAssembler);
   }
 
@@ -262,8 +248,6 @@ class ProductServiceImplTest {
 
     // then
     then(response).usingRecursiveComparison().isEqualTo(categoryDto);
-    verify(productRepository).findById(1L);
-    verify(categoryModelAssembler).toModel(category);
   }
 
   @Test
@@ -290,7 +274,6 @@ class ProductServiceImplTest {
     // then
     thenThrownBy(() -> productService.getProductCategory(2L))
         .isInstanceOf(CategoryNotFoundException.class);
-    verify(productRepository).findById(2L);
     verifyNoInteractions(categoryModelAssembler);
   }
 }

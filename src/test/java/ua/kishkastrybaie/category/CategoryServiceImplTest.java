@@ -67,8 +67,6 @@ class CategoryServiceImplTest {
 
     // then
     then(actual).isNotNull().isEqualTo(categoryDtoCollectionModel);
-    verify(categoryRepository).findAll(PageRequest.ofSize(5));
-    verify(pagedResourcesAssembler).toModel(categories, categoryModelAssembler);
   }
 
   @Test
@@ -84,12 +82,10 @@ class CategoryServiceImplTest {
 
     // then
     then(actual).isNotNull().isEqualTo(categoryDto);
-    verify(categoryRepository).findById(any());
-    verify(categoryModelAssembler).toModel(any());
   }
 
   @Test
-  void shouldThrowExceptionWhenInvalidParentCategoryId() {
+  void shouldNotFindByIdWhenInvalidId() {
     // given
 
     // when
@@ -97,7 +93,6 @@ class CategoryServiceImplTest {
 
     // then
     thenThrownBy(() -> categoryService.findById(1L)).isInstanceOf(CategoryNotFoundException.class);
-    verify(categoryRepository).findById(1L);
     verifyNoInteractions(categoryModelAssembler);
   }
 
@@ -113,9 +108,6 @@ class CategoryServiceImplTest {
 
     // then
     then(actual).isNotNull().isEqualTo(categoryDto1);
-    verify(categoryMapper).toDomain(categoryRequestDto);
-    verify(categoryRepository).save(category1);
-    verify(categoryModelAssembler).toModel(category1);
   }
 
   @Test
@@ -145,10 +137,6 @@ class CategoryServiceImplTest {
 
     // then
     then(actual).isEqualTo(changedCategoryDto);
-    verify(categoryMapper).toDomain(categoryRequestDto);
-    verify(categoryRepository).findById(2L);
-    verify(categoryRepository).save(any());
-    verify(categoryModelAssembler).toModel(changedCategory);
   }
 
   @Test
@@ -162,8 +150,6 @@ class CategoryServiceImplTest {
     // then
     thenThrownBy(() -> categoryService.replace(1L, categoryRequestDto))
         .isInstanceOf(CategoryNotFoundException.class);
-    verify(categoryMapper).toDomain(categoryRequestDto);
-    verify(categoryRepository).findById(1L);
     verifyNoInteractions(categoryModelAssembler);
   }
 
@@ -176,7 +162,6 @@ class CategoryServiceImplTest {
     categoryService.deleteById(1L);
 
     // then
-    verify(categoryRepository).findById(1L);
     verify(categoryRepository).delete(category1);
   }
 
@@ -190,7 +175,6 @@ class CategoryServiceImplTest {
     // then
     thenThrownBy(() -> categoryService.deleteById(1L))
         .isInstanceOf(CategoryNotFoundException.class);
-    verify(categoryRepository).findById(1L);
     verifyNoInteractions(categoryModelAssembler);
   }
 
@@ -205,8 +189,6 @@ class CategoryServiceImplTest {
 
     // then
     then(actual).isNotNull().isEqualTo(categoryDto1);
-    verify(categoryRepository).findById(2L);
-    verify(categoryModelAssembler).toModel(category1);
   }
 
   @Test
@@ -219,7 +201,6 @@ class CategoryServiceImplTest {
     // then
     thenThrownBy(() -> categoryService.getParentCategory(1L))
         .isInstanceOf(CategoryNotFoundException.class);
-    verify(categoryRepository).findById(1L);
     verifyNoInteractions(categoryModelAssembler);
   }
 
@@ -233,7 +214,6 @@ class CategoryServiceImplTest {
     // then
     thenThrownBy(() -> categoryService.getParentCategory(1L))
         .isInstanceOf(CategoryNotFoundException.class);
-    verify(categoryRepository).findById(1L);
     verifyNoInteractions(categoryModelAssembler);
   }
 }

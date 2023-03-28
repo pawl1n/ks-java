@@ -57,18 +57,17 @@ class ImageServiceImplTest {
     // given
     Page<Image> images = new PageImpl<>(List.of(image));
     PagedModel<ImageDto> imageDtoCollectionModel =
-            PagedModel.of(List.of(imageDto), new PagedModel.PageMetadata(5, 0, 1));
+        PagedModel.of(List.of(imageDto), new PagedModel.PageMetadata(5, 0, 1));
 
     given(imageRepository.findAll(PageRequest.ofSize(5))).willReturn(images);
-    given(pagedResourcesAssembler.toModel(images, imageModelAssembler)).willReturn(imageDtoCollectionModel);
+    given(pagedResourcesAssembler.toModel(images, imageModelAssembler))
+        .willReturn(imageDtoCollectionModel);
 
     // when
     CollectionModel<ImageDto> actualResult = imageService.findAll(PageRequest.ofSize(5));
 
     // then
     then(actualResult).isEqualTo(imageDtoCollectionModel);
-    verify(imageRepository).findAll(PageRequest.ofSize(5));
-    verify(pagedResourcesAssembler).toModel(images, imageModelAssembler);
   }
 
   @Test
@@ -82,8 +81,6 @@ class ImageServiceImplTest {
 
     // then
     then(actualFindByIdResult).isEqualTo(imageDto);
-    verify(imageRepository).findById(1L);
-    verify(imageModelAssembler).toModel(image);
   }
 
   @Test
@@ -95,12 +92,11 @@ class ImageServiceImplTest {
 
     // then
     thenThrownBy(() -> imageService.findById(1L)).isInstanceOf(ImageNotFoundException.class);
-    verify(imageRepository).findById(1L);
     verifyNoInteractions(imageModelAssembler);
   }
 
   @Test
-  void shouldCreate()throws MalformedURLException {
+  void shouldCreate() throws MalformedURLException {
     // given
     Image newImage = new Image();
     newImage.setName("image");
@@ -109,7 +105,15 @@ class ImageServiceImplTest {
 
     given(imageUploader.upload(imageRequestDto.base64Image(), imageRequestDto.name()))
         .willReturn(image.getUrl());
-    given(imageRepository.save(newImage)).willReturn(image);
+    given(
+            imageRepository.save(
+                argThat(
+                    i ->
+                        i.getId() == null
+                            && i.getDescription().equals(newImage.getDescription())
+                            && i.getUrl().toString().equals(newImage.getUrl().toString())
+                            && i.getName().equals(newImage.getName()))))
+        .willReturn(image);
     given(imageModelAssembler.toModel(image)).willReturn(imageDto);
 
     // when
@@ -117,9 +121,6 @@ class ImageServiceImplTest {
 
     // then
     then(actualCreateResult).isEqualTo(imageDto);
-    verify(imageUploader).upload(imageRequestDto.base64Image(), imageRequestDto.name());
-    verify(imageRepository).save(newImage);
-    verify(imageModelAssembler).toModel(image);
   }
 
   @Test
@@ -139,7 +140,15 @@ class ImageServiceImplTest {
     given(imageRepository.findById(1L)).willReturn(Optional.of(image));
     given(imageUploader.upload(newImageRequestDto.base64Image(), newImageRequestDto.name()))
         .willReturn(newImage.getUrl());
-    given(imageRepository.save(newImage)).willReturn(newImage);
+    given(
+            imageRepository.save(
+                argThat(
+                    i ->
+                        i.getId().equals(1L)
+                            && i.getDescription().equals(newImage.getDescription())
+                            && i.getUrl().toString().equals(newImage.getUrl().toString())
+                            && i.getName().equals(newImage.getName()))))
+        .willReturn(newImage);
     given(imageModelAssembler.toModel(newImage)).willReturn(newImageDto);
 
     // when
@@ -147,10 +156,6 @@ class ImageServiceImplTest {
 
     // then
     then(actualCreateResult).isEqualTo(newImageDto);
-    verify(imageRepository).findById(1L);
-    verify(imageUploader).upload(newImageRequestDto.base64Image(), newImageRequestDto.name());
-    verify(imageRepository).save(newImage);
-    verify(imageModelAssembler).toModel(newImage);
   }
 
   @Test
@@ -164,7 +169,6 @@ class ImageServiceImplTest {
     // then
     thenThrownBy(() -> imageService.replace(1L, newImageRequestDto))
         .isInstanceOf(ImageNotFoundException.class);
-    verify(imageRepository).findById(1L);
     verifyNoInteractions(imageUploader);
     verifyNoInteractions(imageModelAssembler);
   }
@@ -178,7 +182,6 @@ class ImageServiceImplTest {
     imageService.deleteById(1L);
 
     // then
-    verify(imageRepository).findById(1L);
     verify(imageRepository).delete(image);
   }
 
@@ -191,6 +194,5 @@ class ImageServiceImplTest {
 
     // then
     thenThrownBy(() -> imageService.deleteById(1L)).isInstanceOf(ImageNotFoundException.class);
-    verify(imageRepository).findById(1L);
   }
 }

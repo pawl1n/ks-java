@@ -5,13 +5,11 @@ import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
-@ToString
+@EqualsAndHashCode(callSuper = false)
 @Relation(itemRelation = "user", collectionRelation = "users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@EqualsAndHashCode(callSuper = true)
 public class UserDto extends RepresentationModel<UserDto> {
   private final String firstName;
   private final String middleName;

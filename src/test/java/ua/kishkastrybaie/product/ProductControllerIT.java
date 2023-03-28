@@ -97,7 +97,7 @@ class ProductControllerIT {
             equalTo("description"),
             "mainImage",
             equalTo(null),
-            "categoryId",
+            "category",
             equalTo(null));
   }
 

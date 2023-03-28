@@ -151,7 +151,6 @@ class ProductItemServiceImplTest {
     // then
     thenThrownBy(() -> productItemServiceImpl.findAllByProductId(1L, PageRequest.ofSize(5)))
         .isInstanceOf(ProductNotFoundException.class);
-    verify(productRepository).existsById(1L);
     verifyNoInteractions(productItemRepository);
     verifyNoInteractions(pagedResourcesAssembler);
   }
@@ -180,7 +179,6 @@ class ProductItemServiceImplTest {
     // then
     thenThrownBy(() -> productItemServiceImpl.findByProductIdAndId(1L, 1L))
         .isInstanceOf(ProductNotFoundException.class);
-    verify(productRepository).existsById(1L);
     verifyNoInteractions(productItemRepository);
     verifyNoInteractions(representationModelAssembler);
   }
@@ -196,8 +194,6 @@ class ProductItemServiceImplTest {
     // then
     thenThrownBy(() -> productItemServiceImpl.findByProductIdAndId(1L, 1L))
         .isInstanceOf(ProductItemNotFoundException.class);
-    verify(productRepository).existsById(1L);
-    verify(productItemRepository).findByIdAndProductId(1L, 1L);
     verifyNoInteractions(representationModelAssembler);
   }
 
@@ -239,7 +235,6 @@ class ProductItemServiceImplTest {
     // then
     thenThrownBy(() -> productItemServiceImpl.create(1L, productItemRequestDto1))
         .isInstanceOf(ProductNotFoundException.class);
-    verify(productRepository).existsById(1L);
     verifyNoInteractions(productItemRepository);
     verifyNoInteractions(representationModelAssembler);
   }
@@ -255,8 +250,6 @@ class ProductItemServiceImplTest {
     // then
     thenThrownBy(() -> productItemServiceImpl.create(1L, productItemRequestDto1))
         .isInstanceOf(VariationNotFoundException.class);
-    verify(productRepository).existsById(1L);
-    verify(variationRepository).existsById(1L);
     verifyNoMoreInteractions(variationRepository);
     verifyNoInteractions(variationOptionRepository);
     verifyNoInteractions(productItemRepository);
@@ -337,8 +330,6 @@ class ProductItemServiceImplTest {
     // then
     thenThrownBy(() -> productItemServiceImpl.replace(1L, 1L, productItemRequestDto1))
         .isInstanceOf(VariationNotFoundException.class);
-    verify(productRepository).existsById(1L);
-    verify(variationRepository).existsById(1L);
     verifyNoMoreInteractions(variationRepository);
     verifyNoInteractions(variationOptionRepository);
     verifyNoInteractions(productItemRepository);

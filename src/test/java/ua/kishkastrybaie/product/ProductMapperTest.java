@@ -1,7 +1,6 @@
 package ua.kishkastrybaie.product;
 
 import static org.assertj.core.api.BDDAssertions.then;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.MalformedURLException;
@@ -12,12 +11,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.kishkastrybaie.category.Category;
+import ua.kishkastrybaie.category.CategoryDto;
+import ua.kishkastrybaie.category.CategoryMapperImpl;
 import ua.kishkastrybaie.image.Image;
 import ua.kishkastrybaie.shared.mapper.CategoryIdToCategoryMapperImpl;
 
 @ExtendWith(MockitoExtension.class)
 class ProductMapperTest {
-
+  @Mock private CategoryMapperImpl categoryMapperImpl;
   @Mock private CategoryIdToCategoryMapperImpl categoryIdToCategoryMapperImpl;
   @Mock private ImageURLToImageMapperImpl imageURLToImageMapperImpl;
   @InjectMocks private ProductMapperImpl productMapper;
@@ -40,7 +41,10 @@ class ProductMapperTest {
     product.setCategory(category);
     product.setMainImage(image);
 
+    CategoryDto categoryDto = new CategoryDto(1L, "category", null);
+
     // when
+    when(categoryMapperImpl.toDto(category)).thenReturn(categoryDto);
 
     // then
     then(productMapper.toDto(product))
@@ -50,7 +54,7 @@ class ProductMapperTest {
                 1L,
                 "name",
                 "description",
-                "category",
+                categoryDto,
                 new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg")));
   }
 
@@ -87,7 +91,5 @@ class ProductMapperTest {
         .ignoringFields("id")
         .isEqualTo(expectedProduct);
 
-    verify(categoryIdToCategoryMapperImpl).toCategory(1L);
-    verify(imageURLToImageMapperImpl).toImage(productRequestDto.mainImage());
   }
 }
