@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.2</version>
+        <version>3.0.4</version>
         <relativePath/>
     </parent>
     <groupId>ua.kishka-strybaie</groupId>
@@ -20,9 +20,15 @@
         <liquibase-core.version>4.20.0</liquibase-core.version>
         <lombok.version>1.18.26</lombok.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
-        <springdoc-openapi.version>2.0.3</springdoc-openapi.version>
+        <springdoc-openapi.version>2.0.4</springdoc-openapi.version>
         <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
         <cloudinary-http44.version>1.33.0</cloudinary-http44.version>
+        <mockito-inline.version>5.2.0</mockito-inline.version>
+        <rest-assured.version>5.3.0</rest-assured.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <asciidoctor-maven-plugin.version>2.2.1</asciidoctor-maven-plugin.version>
+        <jboss-logging-annotations.version>2.2.1.Final</jboss-logging-annotations.version>
     </properties>
 
     <dependencies>
@@ -66,6 +72,11 @@
 
         <!-- helpers -->
         <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -86,6 +97,13 @@
             <artifactId>cloudinary-http44</artifactId>
             <version>${cloudinary-http44.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging-annotations</artifactId>
+            <version>${jboss-logging-annotations.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
 
         <!-- documentation -->
         <dependency>
@@ -97,11 +115,6 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-common</artifactId>
             <version>${springdoc-openapi.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator.version}</version>
         </dependency>
 
         <!-- security -->
@@ -136,11 +149,13 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
+            <version>${mockito-inline.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -150,7 +165,7 @@
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>${asciidoctor-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>generate-docs</id>
@@ -187,7 +202,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -213,7 +228,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>${maven-surefire-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>integration-tests</id>
