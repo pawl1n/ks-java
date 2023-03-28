@@ -1,11 +1,13 @@
 name: Qodana
+
 on:
   workflow_dispatch:
   pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
-
 jobs:
   qodana:
     permissions: write-all
@@ -14,10 +16,14 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: 'Qodana Scan'
+      - name: Qodana Scan
         uses: JetBrains/qodana-action@v2022.3.4
+        timeout-minutes: 30
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+        with:
+          use-caches: false
+
       - uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
