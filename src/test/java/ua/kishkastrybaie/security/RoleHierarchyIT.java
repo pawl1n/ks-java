@@ -2,6 +2,7 @@ package ua.kishkastrybaie.security;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ua.kishkastrybaie.authentication.AuthenticationRequest;
 import ua.kishkastrybaie.authentication.AuthenticationService;
+import ua.kishkastrybaie.category.CategoryRepository;
 import ua.kishkastrybaie.category.CategoryRequestDto;
 import ua.kishkastrybaie.user.Role;
 import ua.kishkastrybaie.user.User;
@@ -26,6 +28,7 @@ class RoleHierarchyIT {
   @Autowired private UserRepository userRepository;
   @Autowired private PasswordEncoder passwordEncoder;
   @Autowired private AuthenticationService authenticationService;
+  @Autowired private CategoryRepository categoryRepository;
   private String adminAccessToken = "";
   private String userAccessToken = "";
 
@@ -60,7 +63,12 @@ class RoleHierarchyIT {
     userAccessToken = authenticationService.authenticate(userAuthenticationRequest).accessToken();
   }
 
-  /** Should create category (POST requests to /api/categories require Admin role) */
+  @AfterAll
+  public void tearDown() {
+    userRepository.deleteAll();
+    categoryRepository.deleteAll();
+  }
+
   @Test
   void shouldAccessAdminEndpointWhenAdmin() {
     CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null);
