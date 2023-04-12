@@ -19,6 +19,7 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authorization.AuthorityAuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,6 +34,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -65,6 +67,10 @@ public class SecurityConfiguration {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    AuthorityAuthorizationManager<RequestAuthorizationContext> hasRoleUser =
+        AuthorityAuthorizationManager.hasRole(Role.USER.name());
+    hasRoleUser.setRoleHierarchy(roleHierarchy());
+
     return httpSecurity
         .csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
@@ -75,7 +81,7 @@ public class SecurityConfiguration {
                     .requestMatchers(GET, PUBLIC_GET_ENDPOINTS)
                     .permitAll()
                     .requestMatchers(USER_ENDPOINTS)
-                    .hasRole(Role.USER.name())
+                    .access(hasRoleUser)
                     .anyRequest()
                     .hasRole(Role.ADMIN.name()))
         .sessionManagement(
@@ -88,9 +94,10 @@ public class SecurityConfiguration {
   @Bean
   RoleHierarchy roleHierarchy() {
     Map<String, List<String>> roleHierarchyMap = new HashMap<>();
-    roleHierarchyMap.put(Role.ADMIN.name(), List.of(Role.USER.name()));
+    roleHierarchyMap.put(Role.ADMIN.withPrefix(), List.of(Role.USER.withPrefix()));
     RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
     roleHierarchy.setHierarchy(RoleHierarchyUtils.roleHierarchyFromMap(roleHierarchyMap));
+
     return roleHierarchy;
   }
 
@@ -106,7 +113,6 @@ public class SecurityConfiguration {
 
     return source;
   }
-
 
   @Bean
   @Primary
@@ -135,7 +141,8 @@ public class SecurityConfiguration {
   @Bean
   @Qualifier("refreshToken")
   JwtAuthenticationProvider jwtAuthenticationProvider() {
-    JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
+    JwtAuthenticationProvider jwtAuthenticationProvider =
+        new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
     jwtAuthenticationProvider.setJwtAuthenticationConverter(jwtToUserConverter);
     return jwtAuthenticationProvider;
   }
