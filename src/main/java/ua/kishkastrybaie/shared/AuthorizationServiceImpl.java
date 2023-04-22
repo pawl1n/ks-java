@@ -5,6 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ua.kishkastrybaie.user.Role;
 import ua.kishkastrybaie.user.User;
 
 @Service
@@ -15,7 +16,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     if (authentication == null) {
       return false;
     }
-    return authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+    return authentication.getAuthorities().contains(new SimpleGrantedAuthority(Role.ADMIN.withPrefix()));
   }
 
   @Override
@@ -26,5 +27,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     } else {
       throw new UsernameNotFoundException(principal.toString());
     }
+  }
+
+  @Override
+  public boolean isAuthenticated() {
+    return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
   }
 }

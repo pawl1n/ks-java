@@ -6,4 +6,6 @@ public interface AuthorizationService {
   boolean isAdmin();
 
   User getAuthenticatedUser();
+
+  boolean isAuthenticated();
 }

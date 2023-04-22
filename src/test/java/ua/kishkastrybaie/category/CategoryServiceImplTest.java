@@ -26,7 +26,6 @@ class CategoryServiceImplTest {
   private static CategoryDto categoryDto1;
   private static CategoryDto categoryDto2;
   private static CategoryRequestDto categoryRequestDto;
-  @Mock private CategoryMapper categoryMapper;
   @Mock private CategoryModelAssembler categoryModelAssembler;
   @Mock private CategoryRepository categoryRepository;
   @Mock private PagedResourcesAssembler<Category> pagedResourcesAssembler;
@@ -48,7 +47,7 @@ class CategoryServiceImplTest {
 
     categoryDto2 = new CategoryDto(2L, "Name", "Parent category");
 
-    categoryRequestDto = new CategoryRequestDto("Parent category", null);
+    categoryRequestDto = new CategoryRequestDto("Parent category", 1L);
   }
 
   @Test
@@ -56,7 +55,7 @@ class CategoryServiceImplTest {
     // given
     Page<Category> categories = new PageImpl<>(List.of(category1, category2));
     PagedModel<CategoryDto> categoryDtoCollectionModel =
-            PagedModel.of(List.of(categoryDto1, categoryDto2), new PagedModel.PageMetadata(5, 0, 1));
+        PagedModel.of(List.of(categoryDto1, categoryDto2), new PagedModel.PageMetadata(5, 0, 1));
 
     given(categoryRepository.findAll(PageRequest.ofSize(5))).willReturn(categories);
     given(pagedResourcesAssembler.toModel(categories, categoryModelAssembler))
@@ -99,15 +98,23 @@ class CategoryServiceImplTest {
   @Test
   void shouldCreate() {
     // given
-    given(categoryMapper.toDomain(categoryRequestDto)).willReturn(category1);
-    given(categoryRepository.save(category1)).willReturn(category1);
-    given(categoryModelAssembler.toModel(category1)).willReturn(categoryDto1);
+    given(categoryRepository.existsById(1L)).willReturn(true);
+    given(categoryRepository.getReferenceById(1L)).willReturn(category1);
+    given(
+            categoryRepository.save(
+                argThat(
+                    category ->
+                        category.getId() == null
+                            && category.getName().equals(categoryRequestDto.name())
+                            && category.getParentCategory().getId().equals(1L))))
+        .willReturn(category2);
+    given(categoryModelAssembler.toModel(category2)).willReturn(categoryDto2);
 
     // when
     CategoryDto actual = categoryService.create(categoryRequestDto);
 
     // then
-    then(actual).isNotNull().isEqualTo(categoryDto1);
+    then(actual).isNotNull().isEqualTo(categoryDto2);
   }
 
   @Test
@@ -116,11 +123,12 @@ class CategoryServiceImplTest {
     Category changedCategory = new Category();
     changedCategory.setId(2L);
     changedCategory.setName("Parent category");
-    changedCategory.setParentCategory(null);
+    changedCategory.setParentCategory(category1);
 
-    CategoryDto changedCategoryDto = new CategoryDto(2L, "New name", null);
+    CategoryDto changedCategoryDto = new CategoryDto(2L, "New name", "Parent category");
 
-    given(categoryMapper.toDomain(categoryRequestDto)).willReturn(category1);
+    given(categoryRepository.existsById(1L)).willReturn(true);
+    given(categoryRepository.getReferenceById(1L)).willReturn(category1);
     given(categoryRepository.findById(2L)).willReturn(Optional.of(category2));
     given(
             categoryRepository.save(
@@ -128,7 +136,7 @@ class CategoryServiceImplTest {
                     category ->
                         category.getId().equals(2L)
                             && category.getName().equals(categoryRequestDto.name())
-                            && category.getParentCategory() == null)))
+                            && category.getParentCategory().getId() == 1L)))
         .willReturn(changedCategory);
     given(categoryModelAssembler.toModel(changedCategory)).willReturn(changedCategoryDto);
 
@@ -142,7 +150,8 @@ class CategoryServiceImplTest {
   @Test
   void shouldNotReplaceWhenInvalidId() {
     // given
-    given(categoryMapper.toDomain(categoryRequestDto)).willReturn(category1);
+    given(categoryRepository.existsById(1L)).willReturn(true);
+    given(categoryRepository.getReferenceById(1L)).willReturn(category1);
 
     // when
     when(categoryRepository.findById(1L)).thenReturn(Optional.empty());

@@ -21,11 +21,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
-import ua.kishkastrybaie.category.Category;
-import ua.kishkastrybaie.category.CategoryDto;
-import ua.kishkastrybaie.category.CategoryModelAssembler;
-import ua.kishkastrybaie.category.CategoryNotFoundException;
+import ua.kishkastrybaie.category.*;
 import ua.kishkastrybaie.image.Image;
+import ua.kishkastrybaie.image.ImageRepository;
 import ua.kishkastrybaie.shared.AuthorizationService;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +38,8 @@ class ProductServiceImplTest {
   @Mock private ProductRepository productRepository;
   @Mock private ProductModelAssembler productModelAssembler;
   @Mock private CategoryModelAssembler categoryModelAssembler;
-  @Mock private ProductMapper productMapper;
+  @Mock private CategoryRepository categoryRepository;
+  @Mock private ImageRepository imageRepository;
   @Mock private PagedResourcesAssembler<Product> pagedResourcesAssembler;
   @Mock private AuthorizationService authorizationService;
   @InjectMocks private ProductServiceImpl productService;
@@ -111,7 +110,8 @@ class ProductServiceImplTest {
         PagedModel.of(List.of(productDto1, productDto2), new PagedModel.PageMetadata(5, 0, 2));
 
     given(authorizationService.isAdmin()).willReturn(false);
-    given(productRepository.findAllByProductItemsIsNotNull(PageRequest.ofSize(5))).willReturn(products);
+    given(productRepository.findAllByProductItemsIsNotNull(PageRequest.ofSize(5)))
+        .willReturn(products);
     given(pagedResourcesAssembler.toModel(products, productModelAssembler))
         .willReturn(productDtoCollectionModel);
 
@@ -150,8 +150,17 @@ class ProductServiceImplTest {
   @Test
   void shouldCreate() {
     // given
-    given(productMapper.toDomain(productRequestDto)).willReturn(product1);
-    given(productRepository.save(product1)).willReturn(product1);
+    given(categoryRepository.existsById(1L)).willReturn(true);
+    given(categoryRepository.getReferenceById(1L)).willReturn(category);
+    given(imageRepository.existsByUrl(productRequestDto.mainImage())).willReturn(true);
+    given(imageRepository.getReferenceByUrl(productRequestDto.mainImage())).willReturn(image);
+    given(
+            productRepository.save(
+                argThat(
+                    product ->
+                        product.getName().equals(productRequestDto.name())
+                            && product.getDescription().equals(productRequestDto.description()))))
+        .willReturn(product1);
     given(productModelAssembler.toModel(product1)).willReturn(productDto1);
 
     // when
@@ -179,7 +188,10 @@ class ProductServiceImplTest {
             new CategoryDto(1L, "Category 1", null),
             new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
 
-    given(productMapper.toDomain(productRequestDto)).willReturn(product1);
+    given(categoryRepository.existsById(1L)).willReturn(true);
+    given(categoryRepository.getReferenceById(1L)).willReturn(category);
+    given(imageRepository.existsByUrl(productRequestDto.mainImage())).willReturn(true);
+    given(imageRepository.getReferenceByUrl(productRequestDto.mainImage())).willReturn(image);
     given(productRepository.findById(2L)).willReturn(Optional.of(product2));
     given(
             productRepository.save(
@@ -201,7 +213,10 @@ class ProductServiceImplTest {
   @Test
   void shouldNotReplaceWhenInvalidId() {
     // given
-    given(productMapper.toDomain(productRequestDto)).willReturn(product1);
+    given(categoryRepository.existsById(1L)).willReturn(true);
+    given(categoryRepository.getReferenceById(1L)).willReturn(category);
+    given(imageRepository.existsByUrl(productRequestDto.mainImage())).willReturn(true);
+    given(imageRepository.getReferenceByUrl(productRequestDto.mainImage())).willReturn(image);
 
     // when
     when(productRepository.findById(1L)).thenReturn(Optional.empty());
