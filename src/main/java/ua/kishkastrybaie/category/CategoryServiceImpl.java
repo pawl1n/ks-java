@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
   private final CategoryRepository categoryRepository;
-  private final CategoryMapper categoryMapper;
   private final CategoryModelAssembler categoryModelAssembler;
   private final PagedResourcesAssembler<Category> pagedResourcesAssembler;
 
@@ -29,21 +28,24 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public CategoryDto create(CategoryRequestDto categoryRequestDto) {
-    Category category = categoryMapper.toDomain(categoryRequestDto);
+    Category category = new Category();
+    category.setName(categoryRequestDto.name());
+    category.setParentCategory(getCategory(categoryRequestDto.parentCategory()));
+
     return categoryModelAssembler.toModel(categoryRepository.save(category));
   }
 
   @Override
   public CategoryDto replace(Long id, CategoryRequestDto categoryRequestDto) {
-    Category categoryDetails = categoryMapper.toDomain(categoryRequestDto);
+    Category parentCategory = getCategory(categoryRequestDto.parentCategory());
 
     Category category =
         categoryRepository
             .findById(id)
             .map(
                 p -> {
-                  p.setName(categoryDetails.getName());
-                  p.setParentCategory(categoryDetails.getParentCategory());
+                  p.setName(categoryRequestDto.name());
+                  p.setParentCategory(parentCategory);
                   return categoryRepository.save(p);
                 })
             .orElseThrow(() -> new CategoryNotFoundException(id));
@@ -67,5 +69,16 @@ public class CategoryServiceImpl implements CategoryService {
             .orElseThrow(() -> new CategoryNotFoundException("No parent category for id: " + id));
 
     return categoryModelAssembler.toModel(parentCategory);
+  }
+
+  private Category getCategory(Long id) {
+    if (id != null) {
+      if (!categoryRepository.existsById(id)) {
+        throw new CategoryNotFoundException(id);
+      }
+      return categoryRepository.getReferenceById(id);
+    }
+
+    return null;
   }
 }
