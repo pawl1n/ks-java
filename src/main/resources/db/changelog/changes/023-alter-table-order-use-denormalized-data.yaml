@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 023-alter-table-order-use-denormalized-data
+      author: andrii
+      changes:
+        - addColumn:
+            schemaName: main
+            tableName: order
+            columns:
+              - column:
+                  name: customer_full_name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: text
+                  constraints:
+                    nullable: false
+        - dropNotNullConstraint:
+            schemaName: main
+            tableName: order
+            columnName: user_id

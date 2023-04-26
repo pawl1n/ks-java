@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 022-save-order-status-history
+      author: andrii
+      changes:
+        - addColumn:
+            schemaName: main
+            tableName: order_status
+            columns:
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigInt
+                  constraints:
+                    nullable: false
+                    foreignKeyName: order_status_FK
+                    references: main.order(id)
+        - dropColumn:
+            schemaName: main
+            tableName: order
+            columns:
+              - column:
+                  name: order_status_id
+              - column:
+                  name: date
+        - addColumn:
+            schemaName: main
+            tableName: order
+            columns:
+              - column:
+                  name: status
+                  type: text
+                  constraints:
+                    nullable: false

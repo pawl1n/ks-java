@@ -62,3 +62,21 @@ databaseChangeLog:
   - include:
       file: changes/021-alter-table-variation-option-change-primary-key.yaml
       relativeToChangelogFile: true
+  - include:
+      file: changes/022-save-order-status-history.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/023-alter-table-order-use-denormalized-data.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/024-drop-table-payment-type.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/025-drop-table-shipping-method.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/026-create-trigger-order-status-history.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/027-denormalize-user-email.yaml
+      relativeToChangelogFile: true

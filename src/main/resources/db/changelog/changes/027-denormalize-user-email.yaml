@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 027-denormalize-user-email
+      author: andrii
+      changes:
+        - dropColumn:
+            columnName: user_id
+            tableName: order
+            schemaName: main
+        - addColumn:
+            schemaName: main
+            tableName: order
+            columns:
+              - column:
+                  name: user_email
+                  type: text
+                  constraints:
+                    nullable: false
