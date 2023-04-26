@@ -8,6 +8,7 @@ import org.springframework.hateoas.server.core.Relation;
 import ua.kishkastrybaie.variation.option.VariationOptionDto;
 
 @Data
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Relation(itemRelation = "productItem", collectionRelation = "productItems")
