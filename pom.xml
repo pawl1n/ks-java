@@ -19,7 +19,7 @@
         <postgresql.version>42.6.0</postgresql.version>
         <liquibase-core.version>4.21.1</liquibase-core.version>
         <lombok.version>1.18.26</lombok.version>
-        <mapstruct.version>1.5.4.Final</mapstruct.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
         <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
         <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
         <cloudinary-http44.version>1.33.0</cloudinary-http44.version>
