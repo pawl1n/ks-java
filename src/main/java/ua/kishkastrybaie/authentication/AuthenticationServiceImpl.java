@@ -40,7 +40,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             .firstName(request.firstName())
             .middleName(request.middleName())
             .lastName(request.lastName())
-            .email(request.email())
+            .email(request.email().toLowerCase())
             .password(passwordEncoder.encode(request.password()))
             .phoneNumber(request.phoneNumber())
             .role(Role.USER)
