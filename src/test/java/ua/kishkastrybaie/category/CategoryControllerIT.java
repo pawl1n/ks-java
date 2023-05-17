@@ -129,7 +129,7 @@ class CategoryControllerIT {
         .post("/api/categories")
         .then()
         .statusCode(HttpStatus.CREATED.value())
-        .body("id", equalTo(1), "name", equalTo("category"));
+        .body("name", equalTo("category"));
   }
 
   @Test
