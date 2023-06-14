@@ -6,6 +6,8 @@ import org.springframework.hateoas.CollectionModel;
 public interface CategoryService {
   CollectionModel<CategoryDto> findAll(Pageable pageable);
 
+  CollectionModel<CategoryDto> findAllChildren(Long parentCategoryId);
+
   CategoryDto findById(Long id);
 
   CategoryDto create(CategoryRequestDto category);
@@ -13,6 +15,4 @@ public interface CategoryService {
   CategoryDto replace(Long id, CategoryRequestDto category);
 
   void deleteById(Long id);
-
-  CategoryDto getParentCategory(Long id);
 }

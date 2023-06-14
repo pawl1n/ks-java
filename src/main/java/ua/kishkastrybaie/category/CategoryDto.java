@@ -13,5 +13,5 @@ import org.springframework.hateoas.server.core.Relation;
 public class CategoryDto extends RepresentationModel<CategoryDto> {
   private final Long id;
   private final String name;
-  private final String parentCategory;
+  private final String path;
 }

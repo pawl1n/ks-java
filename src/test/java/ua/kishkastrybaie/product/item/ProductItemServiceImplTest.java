@@ -66,10 +66,8 @@ class ProductItemServiceImplTest {
         new ProductItemRequestDto.VariationOptionRequestDto("value", 1L);
 
     Category category = new Category();
-    category.setChildren(new HashSet<>());
     category.setId(1L);
     category.setName("Name");
-    category.setParentCategory(new Category());
 
     Image image = new Image();
     image.setDescription("The characteristics of someone or something");
