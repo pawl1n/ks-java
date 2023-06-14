@@ -1,6 +1,5 @@
 package ua.kishkastrybaie.category;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -27,10 +26,18 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
+  public CollectionModel<CategoryDto> findAllChildren(Long parentCategoryId) {
+    return categoryModelAssembler.toCollectionModel(
+        categoryRepository.findAllDescendants(parentCategoryId));
+  }
+
+  @Override
   public CategoryDto create(CategoryRequestDto categoryRequestDto) {
     Category category = new Category();
     category.setName(categoryRequestDto.name());
-    category.setParentCategory(getCategory(categoryRequestDto.parentCategory()));
+
+    Category parentCategory = getCategory(categoryRequestDto.parentCategory());
+    category.setParentCategory(parentCategory);
 
     return categoryModelAssembler.toModel(categoryRepository.save(category));
   }
@@ -45,7 +52,9 @@ public class CategoryServiceImpl implements CategoryService {
             .map(
                 p -> {
                   p.setName(categoryRequestDto.name());
+
                   p.setParentCategory(parentCategory);
+
                   return categoryRepository.save(p);
                 })
             .orElseThrow(() -> new CategoryNotFoundException(id));
@@ -58,17 +67,6 @@ public class CategoryServiceImpl implements CategoryService {
     Category category =
         categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
     categoryRepository.delete(category);
-  }
-
-  @Override
-  public CategoryDto getParentCategory(Long id) {
-    Category category =
-        categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
-    Category parentCategory =
-        Optional.ofNullable(category.getParentCategory())
-            .orElseThrow(() -> new CategoryNotFoundException("No parent category for id: " + id));
-
-    return categoryModelAssembler.toModel(parentCategory);
   }
 
   private Category getCategory(Long id) {
