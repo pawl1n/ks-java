@@ -170,4 +170,4 @@ To run unit tests, you can run this command:
 mvn test
 ```
 
-The integration tests use an H2 database. Need to be started manually with JUnit5.
+The integration tests use testcontainers. For testing, Docker should be installed and started.
