@@ -36,16 +36,16 @@ class CategoryServiceImplTest {
     category1 = new Category();
     category1.setId(1L);
     category1.setName("Parent category");
-    category1.setParentCategory(null);
+    //    category1.setPath("/");
 
     category2 = new Category();
     category2.setId(2L);
     category2.setName("Name");
-    category2.setParentCategory(category1);
+    //    category2.setPath("/1/");
 
-    categoryDto1 = new CategoryDto(1L, "Parent category", null);
+    categoryDto1 = new CategoryDto(1L, "Parent category", "/");
 
-    categoryDto2 = new CategoryDto(2L, "Name", "Parent category");
+    categoryDto2 = new CategoryDto(2L, "Name", "/1/");
 
     categoryRequestDto = new CategoryRequestDto("Parent category", 1L);
   }
@@ -102,11 +102,7 @@ class CategoryServiceImplTest {
     given(categoryRepository.getReferenceById(1L)).willReturn(category1);
     given(
             categoryRepository.save(
-                argThat(
-                    category ->
-                        category.getId() == null
-                            && category.getName().equals(categoryRequestDto.name())
-                            && category.getParentCategory().getId().equals(1L))))
+                argThat(category -> category.getName().equals(categoryRequestDto.name()))))
         .willReturn(category2);
     given(categoryModelAssembler.toModel(category2)).willReturn(categoryDto2);
 
@@ -114,7 +110,11 @@ class CategoryServiceImplTest {
     CategoryDto actual = categoryService.create(categoryRequestDto);
 
     // then
-    then(actual).isNotNull().isEqualTo(categoryDto2);
+    then(actual)
+        .isNotNull()
+        .usingRecursiveComparison()
+        .ignoringFields("path")
+        .isEqualTo(categoryDto2);
   }
 
   @Test
@@ -123,9 +123,9 @@ class CategoryServiceImplTest {
     Category changedCategory = new Category();
     changedCategory.setId(2L);
     changedCategory.setName("Parent category");
-    changedCategory.setParentCategory(category1);
+    //    changedCategory.setPath("/1/");
 
-    CategoryDto changedCategoryDto = new CategoryDto(2L, "New name", "Parent category");
+    CategoryDto changedCategoryDto = new CategoryDto(2L, "New name", "/1/");
 
     given(categoryRepository.existsById(1L)).willReturn(true);
     given(categoryRepository.getReferenceById(1L)).willReturn(category1);
@@ -135,8 +135,7 @@ class CategoryServiceImplTest {
                 argThat(
                     category ->
                         category.getId().equals(2L)
-                            && category.getName().equals(categoryRequestDto.name())
-                            && category.getParentCategory().getId() == 1L)))
+                            && category.getName().equals(categoryRequestDto.name()))))
         .willReturn(changedCategory);
     given(categoryModelAssembler.toModel(changedCategory)).willReturn(changedCategoryDto);
 
@@ -188,41 +187,20 @@ class CategoryServiceImplTest {
   }
 
   @Test
-  void shouldGetParentCategory() {
+  void shouldFindAllByParentCategoryId() {
     // given
-    given(categoryRepository.findById(2L)).willReturn(Optional.of(category2));
-    given(categoryModelAssembler.toModel(category1)).willReturn(categoryDto1);
+    List<Category> categories = List.of(category2);
+    CollectionModel<CategoryDto> categoryDtoCollectionModel =
+        CollectionModel.of(List.of(categoryDto2));
+
+    given(categoryRepository.findAllDescendants(1L)).willReturn(categories);
+    given(categoryModelAssembler.toCollectionModel(categories))
+        .willReturn(categoryDtoCollectionModel);
 
     // when
-    CategoryDto actual = categoryService.getParentCategory(2L);
+    CollectionModel<CategoryDto> actual = categoryService.findAllChildren(1L);
 
     // then
-    then(actual).isNotNull().isEqualTo(categoryDto1);
-  }
-
-  @Test
-  void shouldNotGetParentCategoryWhenInvalidId() {
-    // given
-
-    // when
-    when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
-
-    // then
-    thenThrownBy(() -> categoryService.getParentCategory(1L))
-        .isInstanceOf(CategoryNotFoundException.class);
-    verifyNoInteractions(categoryModelAssembler);
-  }
-
-  @Test
-  void shouldNotGetParentCategoryWhenNoParentCategory() {
-    // given
-
-    // when
-    when(categoryRepository.findById(1L)).thenReturn(Optional.of(category1));
-
-    // then
-    thenThrownBy(() -> categoryService.getParentCategory(1L))
-        .isInstanceOf(CategoryNotFoundException.class);
-    verifyNoInteractions(categoryModelAssembler);
+    then(actual).isNotNull().isEqualTo(categoryDtoCollectionModel);
   }
 }

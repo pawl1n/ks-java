@@ -1,0 +1,78 @@
+databaseChangeLog:
+  - changeSet:
+      id: 028-use-materialized-path-for-categories
+      author: andrii
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: CREATE EXTENSION ltree;
+        #        - dropColumn:
+        #            schemaName: main
+        #            tableName: product_category
+        #            columnName: parent_category_id
+        - addColumn:
+            schemaName: main
+            tableName: product_category
+            columns:
+              - column:
+                  name: path
+                  type: ltree
+                  constraints:
+                    nullable: false
+        - sql:
+            dbms: postgresql
+            endDelimiter: "@@"
+            sql:
+              CREATE function main.create_category_path()
+                  RETURNS trigger AS
+              $$
+              BEGIN
+                  IF NEW.parent_category_id IS NOT NULL THEN
+                      NEW.path =
+                              (SELECT path::text || '.' || NEW.id
+                               FROM main.product_category
+                               WHERE id = NEW.parent_category_id);
+                  ELSE
+                      NEW.path = NEW.id;
+                  END IF;
+                  
+                  RETURN NEW;
+              END;
+              $$ LANGUAGE plpgsql;
+              @@
+              CREATE TRIGGER create_category_path
+                  BEFORE INSERT
+                  ON main.product_category
+                  FOR EACH ROW
+              EXECUTE PROCEDURE main.create_category_path();
+              @@
+              CREATE FUNCTION main.update_category_path() RETURNS trigger
+              AS
+              $$
+              BEGIN
+                  IF OLD.parent_category_id = NEW.parent_category_id THEN
+                      RETURN NEW;
+                  END IF;
+                  
+                  IF NEW.parent_category_id IS NULL THEN
+                      NEW.path = NEW.id;
+                  ELSE
+                      NEW.path =
+                              (SELECT path::text || '.' || NEW.id
+                               FROM main.product_category
+                               WHERE id = NEW.parent_category_id);
+                  END IF;
+                  
+                  UPDATE main.product_category
+                  SET path = replace(path::text, OLD.path::text, NEW.path::text || '.' || id)::ltree
+                  WHERE path > OLD.path;
+                  
+                  RETURN NEW;
+              END;
+              $$ LANGUAGE plpgsql;
+              @@
+              CREATE TRIGGER update_category_path
+                  AFTER UPDATE
+                  ON main.product_category
+                  FOR EACH ROW
+              EXECUTE PROCEDURE main.update_category_path();

@@ -1,14 +1,18 @@
 package ua.kishkastrybaie.category;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "product_category", schema = "main")
 @Getter
 @Setter
+@ToString
 public class Category {
   @Id
   @GeneratedValue(generator = "category_seq")
@@ -20,13 +24,24 @@ public class Category {
   @Column(name = "id", unique = true, nullable = false, updatable = false)
   private Long id;
 
-  @ManyToOne
+  @Column(name = "name")
+  private String name;
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_category_id")
   private Category parentCategory;
 
   @OneToMany(mappedBy = "parentCategory")
-  private Set<Category> children;
+  private Set<Category> childrenCategories = new HashSet<>();
 
-  @Column(name = "name")
-  private String name;
+  @Column(name = "path", columnDefinition = "ltree", updatable = false, insertable = false)
+  @Setter(AccessLevel.NONE)
+  private String path;
+
+  @PreRemove
+  void preRemove() {
+      if (!getChildrenCategories().isEmpty()) {
+          throw new CategoryHasChildrenException(this.id);
+      }
+  }
 }

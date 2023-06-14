@@ -1,8 +1,7 @@
 package ua.kishkastrybaie.category;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -57,7 +56,7 @@ class CategoryControllerIT {
 
   @AfterEach
   public void afterEach() {
-    categoryRepository.deleteAll();
+    categoryRepository.deleteAllInBatch();
   }
 
   @AfterAll
@@ -75,8 +74,8 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product_category (id, name, parent_category_id)
-                  values (1, 'category', null);
+                  insert into main.product_category (id, name)
+                  values (1, 'category');
                   """)
   void shouldGetOne() {
     given()
@@ -129,7 +128,7 @@ class CategoryControllerIT {
         .post("/api/categories")
         .then()
         .statusCode(HttpStatus.CREATED.value())
-        .body("name", equalTo("category"));
+        .body("id", notNullValue(), "name", equalTo("category"));
   }
 
   @Test
@@ -165,8 +164,8 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product_category (id, name, parent_category_id)
-                  values (1, 'category', null);
+                  insert into main.product_category (id, name)
+                  values (1, 'category');
                   """)
   void shouldReplace() {
     CategoryRequestDto categoryRequestDto = new CategoryRequestDto("changed", null);
@@ -187,10 +186,10 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product_category (id, name, parent_category_id)
-                  values (1, 'category', null);
-                  """)
-  void delete() {
+        insert into main.product_category (id, name)
+        values (1, 'category');
+        """)
+  void shouldDelete() {
     given()
         .auth()
         .oauth2(token)
@@ -198,5 +197,18 @@ class CategoryControllerIT {
         .delete("/api/categories/1")
         .then()
         .statusCode(HttpStatus.NO_CONTENT.value());
+  }
+
+  @Test
+  @Sql(
+      statements =
+          """
+      insert into main.product_category (id, name, parent_category_id)
+      values (1, 'category', null),
+      (2, 'children', 1),
+      (3, 'grandchildren', 2);
+      """)
+  void shouldGetAllDescendents() {
+    given().when().get("/api/categories/1/children").then().statusCode(HttpStatus.OK.value());
   }
 }
