@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 024-drop-table-payment-type
+      author: andrii
+      changes:
+        - dropColumn:
+            schemaName: main
+            tableName: order
+            columnName: payment_type_id
+        - dropTable:
+            schemaName: main
+            tableName: payment_type
+        - addColumn:
+            schemaName: main
+            tableName: order
+            columns:
+              - column:
+                  name: payment_type
+                  type: text
+                  constraints:
+                    nullable: false

@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 025-drop-table-shipping-method
+      author: andrii
+      changes:
+        - dropColumn:
+            schemaName: main
+            tableName: order
+            columnName: shipping_method_id
+        - dropTable:
+            schemaName: main
+            tableName: shipping_method
+        - addColumn:
+            schemaName: main
+            tableName: order
+            columns:
+              - column:
+                  name: shipping_method
+                  type: text
+                  constraints:
+                    nullable: false

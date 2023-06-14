@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 026-create-trigger-order-status-history
+      author: andrii
+      changes:
+        - sql:
+            splitStatements: false
+            sql:
+              CREATE OR REPLACE FUNCTION main.save_order_history()
+                  RETURNS trigger
+              AS
+              $$
+              BEGIN
+                  IF NEW.status IS NULL AND NEW.status != OLD.status THEN
+                      INSERT INTO order_status (id, name, created_at, order_id)
+                      VALUES (nextval('main.order_status_seq'), NEW.status, now(), NEW.order_id);
+                  END IF;
+                  RETURN NEW;
+              END;
+              $$ LANGUAGE plpgsql;
+        - sql:
+            sql:
+              CREATE OR REPLACE TRIGGER save_order_history
+              AFTER INSERT
+              ON main.order
+              FOR EACH ROW
+              EXECUTE FUNCTION main.save_order_history();
