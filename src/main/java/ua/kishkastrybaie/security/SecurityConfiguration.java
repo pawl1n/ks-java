@@ -87,7 +87,7 @@ public class SecurityConfiguration {
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .oauth2ResourceServer(
-            configurer -> configurer.jwt().jwtAuthenticationConverter(jwtToUserConverter))
+            configurer -> configurer.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
         .build();
   }
 
