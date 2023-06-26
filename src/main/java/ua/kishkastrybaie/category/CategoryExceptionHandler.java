@@ -14,4 +14,16 @@ public class CategoryExceptionHandler {
     ErrorDto errorDto = new ErrorDto(exception.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDto);
   }
+
+  @ExceptionHandler(CategoryHasDescendantsException.class)
+  public ResponseEntity<ErrorDto> handleCategoryHasDescendantsException(CategoryHasDescendantsException exception) {
+    ErrorDto errorDto = new ErrorDto(exception.getMessage());
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDto);
+  }
+
+  @ExceptionHandler(CyclicCategoryPathException.class)
+  public ResponseEntity<ErrorDto> handleCyclicCategoryPathException(CyclicCategoryPathException exception) {
+    ErrorDto errorDto = new ErrorDto(exception.getMessage());
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDto);
+  }
 }

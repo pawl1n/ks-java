@@ -13,13 +13,15 @@ It is built using Spring Boot and provides RESTful API with the HATEOAS.
 
 To get started with the project, clone the repository and import it into your preferred IDE.
 
-The project uses [Maven](https://maven.apache.org/) for dependency management, so you must have Maven installed on your system.
+The project uses [Maven](https://maven.apache.org/) for dependency management, so you must have Maven installed on your
+system.
 
 ### Environment Variables
 
 To run the project, you should set up environment variables for the [database](#database) and [CDN](#saving-images).
 
 You can then run the application using the following command:
+
 ```
 mvn spring-boot:run
 ```
@@ -70,6 +72,8 @@ The API provides endpoints for managing products, categories, and images.
 `GET /api/categories` - Retrieves a list of all categories.
 
 `GET /api/categories/{id}` - Retrieves a specific category by ID.
+
+`GET /api/categories/{id}/descendants` - Retrieves descendants of category
 
 `POST /api/categories` - Creates a new category.
 
@@ -151,12 +155,12 @@ To connect the project to the database, you should insert these environment vari
 * `PGPORT` - Port (5432 by default)
 * `PGDATABASE` - Database name
 
-
 ## Saving Images
 
 All the created images are stored in the [Cloudinary](https://cloudinary.com/).
 
-The end client will receive a link to the saved image transformed into the [WebP](https://developers.google.com/speed/webp/) format.
+The end client will receive a link to the saved image transformed into
+the [WebP](https://developers.google.com/speed/webp/) format.
 
 To setup Cloudinary, you should insert these environment variables:
 
@@ -165,7 +169,9 @@ To setup Cloudinary, you should insert these environment variables:
 * `CDN_API_SECRET` - Api secret
 
 ## Testing
+
 To run unit tests, you can run this command:
+
 ```
 mvn test
 ```

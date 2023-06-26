@@ -33,11 +33,11 @@ public class CategoryController {
     return ResponseEntity.ok(responseDto);
   }
 
-  @GetMapping("/{id}/children")
-  public ResponseEntity<CollectionModel<CategoryDto>> children(@PathVariable Long id) {
-    log.info("Get category children by id: {}", id);
+  @GetMapping("/{id}/descendants")
+  public ResponseEntity<CollectionModel<CategoryDto>> descendants(@PathVariable Long id) {
+    log.info("Get category descendants by id: {}", id);
 
-    CollectionModel<CategoryDto> responseDto = categoryService.findAllChildren(id);
+    CollectionModel<CategoryDto> responseDto = categoryService.findAllDescendants(id);
     return ResponseEntity.ok(responseDto);
   }
 
