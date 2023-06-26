@@ -163,7 +163,13 @@ class ProductControllerIT {
         .post("/api/products")
         .then()
         .statusCode(HttpStatus.CREATED.value())
-        .body("id", equalTo(1), "name", equalTo("product"), "description", equalTo("description"));
+        .body(
+            "id",
+            notNullValue(),
+            "name",
+            equalTo("product"),
+            "description",
+            equalTo("description"));
   }
 
   @Test

@@ -2,6 +2,7 @@ package ua.kishkastrybaie.order;
 
 import jakarta.persistence.*;
 import java.util.Set;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,5 +50,16 @@ public class Order {
   private ShippingMethod shippingMethod;
 
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+  @Setter(AccessLevel.NONE)
   private Set<OrderItem> items;
+
+  /**
+   * Set items for order and set order for order items
+   *
+   * @param orderItems - order items
+   */
+  public void setItems(Set<OrderItem> orderItems) {
+    orderItems.forEach(item -> item.setOrder(this));
+    this.items = orderItems;
+  }
 }
