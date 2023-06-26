@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  api_service:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgresql_db
+    links:
+      - postgresql_db:postgresql_db
+    environment:
+      - PGHOST=postgresql_db
+      - PGUSER=postgres
+      - PGPORT=5432
+      - PGDATABASE=kishka-strybaie
+      - PGPASSWORD=test
+      - CDN_URL=test
+      - CDN_KEY=test
+      - CDN_SECRET=test
+  postgresql_db:
+    image: "postgres:15-alpine"
+    restart: always
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: kishka-strybaie
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test
+volumes:
+  db-data:
