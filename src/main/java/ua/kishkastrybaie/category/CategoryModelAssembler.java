@@ -21,8 +21,8 @@ public class CategoryModelAssembler implements RepresentationModelAssembler<Cate
         .toDto(category)
         .add(linkTo(methodOn(CategoryController.class).one(category.getId())).withSelfRel())
         .add(
-            linkTo(methodOn(CategoryController.class).children(category.getId()))
-                .withRel("children"));
+            linkTo(methodOn(CategoryController.class).descendants(category.getId()))
+                .withRel("descendants"));
   }
 
   @Override

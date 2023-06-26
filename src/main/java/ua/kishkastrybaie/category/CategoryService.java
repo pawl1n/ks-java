@@ -6,7 +6,7 @@ import org.springframework.hateoas.CollectionModel;
 public interface CategoryService {
   CollectionModel<CategoryDto> findAll(Pageable pageable);
 
-  CollectionModel<CategoryDto> findAllChildren(Long parentCategoryId);
+  CollectionModel<CategoryDto> findAllDescendants(Long parentCategoryId);
 
   CategoryDto findById(Long id);
 

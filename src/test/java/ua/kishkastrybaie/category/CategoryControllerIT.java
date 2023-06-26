@@ -186,9 +186,9 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-        insert into main.product_category (id, name)
-        values (1, 'category');
-        """)
+                  insert into main.product_category (id, name)
+                  values (1, 'category');
+                  """)
   void shouldDelete() {
     given()
         .auth()
@@ -203,12 +203,12 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-      insert into main.product_category (id, name, parent_category_id)
-      values (1, 'category', null),
-      (2, 'children', 1),
-      (3, 'grandchildren', 2);
-      """)
+                  insert into main.product_category (id, name, parent_category_id)
+                  values (1, 'category', null),
+                  (2, 'children', 1),
+                  (3, 'grandchildren', 2);
+                  """)
   void shouldGetAllDescendents() {
-    given().when().get("/api/categories/1/children").then().statusCode(HttpStatus.OK.value());
+    given().when().get("/api/categories/1/descendants").then().statusCode(HttpStatus.OK.value());
   }
 }
