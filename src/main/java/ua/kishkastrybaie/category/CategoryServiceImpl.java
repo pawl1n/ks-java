@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
+  @Transactional
   public CategoryDto create(CategoryRequestDto categoryRequestDto) {
     Category category = new Category();
     category.setName(categoryRequestDto.name());
@@ -43,6 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
+  @Transactional
   public CategoryDto replace(Long id, CategoryRequestDto categoryRequestDto) {
     Category parentCategory = getCategory(categoryRequestDto.parentCategory());
 
@@ -52,9 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
             .map(
                 p -> {
                   p.setName(categoryRequestDto.name());
-
                   p.setParentCategory(parentCategory);
-
                   return categoryRepository.save(p);
                 })
             .orElseThrow(() -> new CategoryNotFoundException(id));
@@ -63,6 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
+  @Transactional
   public void deleteById(Long id) {
     Category category =
         categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
