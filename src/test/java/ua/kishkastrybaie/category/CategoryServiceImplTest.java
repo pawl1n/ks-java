@@ -193,7 +193,7 @@ class CategoryServiceImplTest {
     CollectionModel<CategoryDto> categoryDtoCollectionModel =
         CollectionModel.of(List.of(categoryDto2));
 
-    given(categoryRepository.findAllDescendants(1L)).willReturn(categories);
+    given(categoryRepository.findAllDescendantsById(1L)).willReturn(categories);
     given(categoryModelAssembler.toCollectionModel(categories))
         .willReturn(categoryDtoCollectionModel);
 

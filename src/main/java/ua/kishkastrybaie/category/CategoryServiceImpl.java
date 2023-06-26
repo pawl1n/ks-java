@@ -28,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   public CollectionModel<CategoryDto> findAllChildren(Long parentCategoryId) {
     return categoryModelAssembler.toCollectionModel(
-        categoryRepository.findAllDescendants(parentCategoryId));
+        categoryRepository.findAllDescendantsById(parentCategoryId));
   }
 
   @Override
