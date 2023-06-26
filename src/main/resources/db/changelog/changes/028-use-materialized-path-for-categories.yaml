@@ -6,10 +6,6 @@ databaseChangeLog:
         - sql:
             dbms: postgresql
             sql: CREATE EXTENSION ltree;
-        #        - dropColumn:
-        #            schemaName: main
-        #            tableName: product_category
-        #            columnName: parent_category_id
         - addColumn:
             schemaName: main
             tableName: product_category
@@ -22,7 +18,7 @@ databaseChangeLog:
         - sql:
             dbms: postgresql
             endDelimiter: "@@"
-            sql:
+            sql: |
               CREATE function main.create_category_path()
                   RETURNS trigger AS
               $$
@@ -52,6 +48,13 @@ databaseChangeLog:
               BEGIN
                   IF OLD.parent_category_id = NEW.parent_category_id THEN
                       RETURN NEW;
+                  END IF;
+                  
+                  IF EXISTS(SELECT 1
+                            FROM main.product_category
+                            WHERE id = NEW.parent_category_id
+                              AND path <@ NEW.path) THEN
+                      RAISE EXCEPTION 'Invalid parent category id: Cyclic path detected';
                   END IF;
                   
                   IF NEW.parent_category_id IS NULL THEN
