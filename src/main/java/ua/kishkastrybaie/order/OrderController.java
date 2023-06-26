@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.kishkastrybaie.order.status.OrderStatus;
@@ -32,14 +33,9 @@ public class OrderController {
   @PostMapping
   public ResponseEntity<OrderDto> save(@RequestBody OrderRequestDto orderRequest) {
     log.info("Save order {}", orderRequest);
-    return ResponseEntity.ok(orderService.save(orderRequest));
-  }
-
-  @PutMapping("/{id}")
-  public ResponseEntity<OrderDto> replace(
-      @PathVariable Long id, @Valid @RequestBody OrderRequestDto orderRequest) {
-    log.info("Replace order {}", orderRequest);
-    return ResponseEntity.ok(orderService.replace(id, orderRequest));
+    OrderDto responseDto = orderService.save(orderRequest);
+    return ResponseEntity.created(responseDto.getRequiredLink(IanaLinkRelations.SELF).toUri())
+        .body(responseDto);
   }
 
   @PutMapping("/{id}/status")

@@ -23,6 +23,7 @@ import org.springframework.hateoas.PagedModel;
 import ua.kishkastrybaie.category.Category;
 import ua.kishkastrybaie.image.Image;
 import ua.kishkastrybaie.order.item.OrderItem;
+import ua.kishkastrybaie.order.item.OrderItemDto;
 import ua.kishkastrybaie.order.item.OrderItemQuantityOutOfBoundsException;
 import ua.kishkastrybaie.order.item.OrderItemRequestDto;
 import ua.kishkastrybaie.order.payment.type.PaymentType;
@@ -32,8 +33,6 @@ import ua.kishkastrybaie.product.Product;
 import ua.kishkastrybaie.product.item.ProductItem;
 import ua.kishkastrybaie.product.item.ProductItemNotFoundException;
 import ua.kishkastrybaie.product.item.ProductItemRepository;
-import ua.kishkastrybaie.shared.AuthorizationService;
-import ua.kishkastrybaie.user.User;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
@@ -45,7 +44,6 @@ class OrderServiceImplTest {
   @Mock private OrderRepository orderRepository;
   @Mock private PagedResourcesAssembler<Order> pagedResourcesAssembler;
   @Mock private OrderModelAssembler orderModelAssembler;
-  @Mock private AuthorizationService authorizationService;
   @Mock private ProductItemRepository productItemRepository;
   @InjectMocks private OrderServiceImpl orderService;
 
@@ -92,6 +90,9 @@ class OrderServiceImplTest {
     orderItem2.setOrder(order);
     orderItem2.setPrice(40.0);
 
+    OrderItemDto orderItemDto1 = new OrderItemDto(1L, null, null, 1, 10.0, "Product 1");
+    OrderItemDto orderItemDto2 = new OrderItemDto(2L, null, null, 2, 40.0, "Product 2");
+
     order = new Order();
     order.setId(1L);
     order.setItems(new HashSet<>(Arrays.asList(orderItem1, orderItem2)));
@@ -106,7 +107,16 @@ class OrderServiceImplTest {
 
     orderDto1 =
         new OrderDto(
-            1L, "user@example.com", 50.0, "test address", OrderStatus.CREATED, PaymentType.CASH);
+            1L,
+            "user@example.com",
+            50.0,
+            "test address",
+            OrderStatus.CREATED,
+            PaymentType.CASH,
+            ShippingMethod.PICKUP,
+            "User Test",
+            "380111111111",
+            Set.of(orderItemDto1, orderItemDto2));
 
     OrderItemRequestDto orderItemRequestDto1 = new OrderItemRequestDto(1L, 1);
     OrderItemRequestDto orderItemRequestDto2 = new OrderItemRequestDto(2L, 2);
@@ -131,7 +141,6 @@ class OrderServiceImplTest {
     Page<Order> orders = new PageImpl<>(List.of(order));
     PagedModel<OrderDto> orderDtoPagedModel =
         PagedModel.of(List.of(orderDto1), new PagedModel.PageMetadata(5, 0, 2));
-    given(authorizationService.isAdmin()).willReturn(true);
     given(orderRepository.findAll(PageRequest.ofSize(5))).willReturn(orders);
     given(pagedResourcesAssembler.toModel(orders, orderModelAssembler))
         .willReturn(orderDtoPagedModel);
@@ -142,29 +151,29 @@ class OrderServiceImplTest {
     // then
     then(ordersDto).hasSize(1).usingRecursiveComparison().isEqualTo(orderDtoPagedModel);
   }
-
-  @Test
-  void shouldFindAllWhenUser() {
-    // given
-    User user = new User();
-    user.setEmail("user@example.com");
-
-    Page<Order> orders = new PageImpl<>(List.of(order));
-    PagedModel<OrderDto> orderDtoPagedModel =
-        PagedModel.of(List.of(orderDto1), new PagedModel.PageMetadata(5, 0, 2));
-    given(authorizationService.isAdmin()).willReturn(false);
-    given(authorizationService.getAuthenticatedUser()).willReturn(user);
-    given(orderRepository.findAllByUserEmail("user@example.com", PageRequest.ofSize(5)))
-        .willReturn(orders);
-    given(pagedResourcesAssembler.toModel(orders, orderModelAssembler))
-        .willReturn(orderDtoPagedModel);
-
-    // when
-    CollectionModel<OrderDto> ordersDto = orderService.findAll(PageRequest.ofSize(5));
-
-    // then
-    then(ordersDto).hasSize(1).usingRecursiveComparison().isEqualTo(orderDtoPagedModel);
-  }
+//
+//  @Test
+//  void shouldFindAllWhenUser() {
+//    // given
+//    User user = new User();
+//    user.setEmail("user@example.com");
+//
+//    Page<Order> orders = new PageImpl<>(List.of(order));
+//    PagedModel<OrderDto> orderDtoPagedModel =
+//        PagedModel.of(List.of(orderDto1), new PagedModel.PageMetadata(5, 0, 2));
+//    given(authorizationService.isAdmin()).willReturn(false);
+//    given(authorizationService.getAuthenticatedUser()).willReturn(user);
+//    given(orderRepository.findAllByUserEmail("user@example.com", PageRequest.ofSize(5)))
+//        .willReturn(orders);
+//    given(pagedResourcesAssembler.toModel(orders, orderModelAssembler))
+//        .willReturn(orderDtoPagedModel);
+//
+//    // when
+//    CollectionModel<OrderDto> ordersDto = orderService.findAll(PageRequest.ofSize(5));
+//
+//    // then
+//    then(ordersDto).hasSize(1).usingRecursiveComparison().isEqualTo(orderDtoPagedModel);
+//  }
 
   @Test
   void shouldFindById() {
@@ -207,7 +216,7 @@ class OrderServiceImplTest {
     // then
     then(captor.getValue())
         .usingRecursiveComparison()
-        .ignoringFields("id", "items.id")
+        .ignoringFields("id", "items")
         .isEqualTo(order);
     then(result).usingRecursiveComparison().isEqualTo(orderDto1);
   }

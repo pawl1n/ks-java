@@ -46,7 +46,7 @@ import ua.kishkastrybaie.user.Role;
 public class SecurityConfiguration {
   private static final String[] PUBLIC_ENDPOINTS = new String[] {"/api/auth/**"};
   private static final String[] PUBLIC_GET_ENDPOINTS =
-      new String[] {"/api/products/**", "/api/categories/**", "/api/", "/**"};
+      new String[] {"/api/products/**", "/api/categories/**", "/api/", "/api/variations/**"};
   private static final String[] USER_ENDPOINTS = new String[] {"/api/users/me/**"};
   private final KeyUtils keyUtils;
   private final JwtToUserConverter jwtToUserConverter;

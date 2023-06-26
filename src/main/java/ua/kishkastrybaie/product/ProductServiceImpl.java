@@ -43,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
+  @Transactional
   public ProductDto create(ProductRequestDto productRequestDto) {
     Category category = getCategory(productRequestDto.category());
     Image image = getImage(productRequestDto.mainImage());
@@ -59,6 +60,7 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
+  @Transactional
   public ProductDto replace(Long id, ProductRequestDto productRequestDto) {
     Category category = getCategory(productRequestDto.category());
     Image image = getImage(productRequestDto.mainImage());

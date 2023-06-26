@@ -19,6 +19,7 @@ import ua.kishkastrybaie.product.item.ProductItem;
 import ua.kishkastrybaie.product.item.ProductItemNotFoundException;
 import ua.kishkastrybaie.product.item.ProductItemRepository;
 import ua.kishkastrybaie.shared.AuthorizationService;
+import ua.kishkastrybaie.user.User;
 
 @Service
 @RequiredArgsConstructor
@@ -30,20 +31,23 @@ public class OrderServiceImpl implements OrderService {
   private final ProductItemRepository productItemRepository;
 
   @Override
+  @Transactional
   public CollectionModel<OrderDto> findAll(Pageable pageable) {
-    Page<Order> orders;
-    if (!authorizationService.isAdmin()) {
-      orders =
-          orderRepository.findAllByUserEmail(
-              authorizationService.getAuthenticatedUser().getEmail(), pageable);
-    } else {
-      orders = orderRepository.findAll(pageable);
-    }
+    return pagedResourcesAssembler.toModel(orderRepository.findAll(pageable), orderModelAssembler);
+  }
+
+  @Override
+  @Transactional
+  public CollectionModel<OrderDto> findAllByUser(Pageable pageable, User user) {
+    Page<Order> orders =
+        orderRepository.findAllByUserEmail(
+            authorizationService.getAuthenticatedUser().getEmail(), pageable);
 
     return pagedResourcesAssembler.toModel(orders, orderModelAssembler);
   }
 
   @Override
+  @Transactional
   public OrderDto findById(Long id) {
     Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
     return orderModelAssembler.toModel(order);

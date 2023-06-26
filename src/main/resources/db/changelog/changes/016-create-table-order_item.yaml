@@ -21,6 +21,7 @@ databaseChangeLog:
                     referencedTableName: order
                     referencedColumnNames: id
                     nullable: false
+                    deleteCascade: true
               - column:
                   name: product_item_id
                   type: bigInt
