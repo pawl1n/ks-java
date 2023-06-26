@@ -54,6 +54,11 @@ public class CategoryServiceImpl implements CategoryService {
             .findById(id)
             .map(
                 p -> {
+                  if (categoryRepository.isCategoryAncestorOfOther(
+                      id, categoryRequestDto.parentCategory())) {
+                    throw new CyclicCategoryPathException(id, categoryRequestDto.parentCategory());
+                  }
+
                   p.setName(categoryRequestDto.name());
                   p.setParentCategory(parentCategory);
                   return categoryRepository.save(p);
