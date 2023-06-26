@@ -16,4 +16,16 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                   """,
       nativeQuery = true)
   List<Category> findAllDescendantsById(Long id);
+
+  @Query(
+      value =
+          """
+                  SELECT EXISTS(
+                       SELECT 1
+                       FROM main.product_category c1, main.product_category c2
+                       WHERE c1.id = ?1 AND c2.id = ?2 AND c1.path @> c2.path
+                  )
+                  """,
+      nativeQuery = true)
+  boolean isCategoryAncestorOfOther(Long categoryId, Long otherCategoryId);
 }
