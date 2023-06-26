@@ -211,4 +211,50 @@ class CategoryControllerIT {
   void shouldGetAllDescendents() {
     given().when().get("/api/categories/1/descendants").then().statusCode(HttpStatus.OK.value());
   }
+
+  @Test
+  @Sql(
+      statements =
+          """
+                  insert into main.product_category (id, name, parent_category_id)
+                  values (1, 'category', null),
+                  (2, 'children', 1),
+                  (3, 'grandchildren', 2);
+                  """)
+  void shouldNotMoveCategoryWhenMoveToDescendant() {
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 3L);
+
+    given()
+        .auth()
+        .oauth2(token)
+        .body(categoryRequestDto)
+        .contentType(ContentType.JSON)
+        .when()
+        .put("/api/categories/1")
+        .then()
+        .statusCode(HttpStatus.CONFLICT.value());
+  }
+
+  @Test
+  @Sql(
+          statements =
+                  """
+                          insert into main.product_category (id, name, parent_category_id)
+                          values (1, 'category', null),
+                          (2, 'children', 1),
+                          (3, 'grandchildren', 2);
+                          """)
+  void shouldNotMoveCategoryWhenMoveToItself() {
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 1L);
+
+    given()
+            .auth()
+            .oauth2(token)
+            .body(categoryRequestDto)
+            .contentType(ContentType.JSON)
+            .when()
+            .put("/api/categories/1")
+            .then()
+            .statusCode(HttpStatus.CONFLICT.value());
+  }
 }
