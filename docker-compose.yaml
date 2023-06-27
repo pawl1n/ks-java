@@ -14,7 +14,7 @@ services:
       - PGHOST=postgresql_db
       - PGUSER=postgres
       - PGPORT=5432
-      - PGDATABASE=kishka-strybaie
+      - PGDATABASE=ks-db
       - PGPASSWORD=test
       - CDN_URL=test
       - CDN_KEY=test
@@ -27,7 +27,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: kishka-strybaie
+      POSTGRES_DB: ks-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: test
 volumes:
