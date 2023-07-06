@@ -71,6 +71,10 @@ The API provides endpoints for managing products, categories, and images.
 
 `GET /api/categories` - Retrieves a list of all categories.
 
+`GET /api/categories/root` - Retrieves a list of all root categories.
+
+`GET /api/categories/tree` - Retrieves a tree of all categories.
+
 `GET /api/categories/{id}` - Retrieves a specific category by ID.
 
 `GET /api/categories/{id}/descendants` - Retrieves descendants of category
@@ -80,6 +84,13 @@ The API provides endpoints for managing products, categories, and images.
 `PUT /api/categories/{id}` - Updates an existing category.
 
 `DELETE /api/categories/{id}` - Deletes a category by ID.
+
+</details>
+
+<details>
+<summary>Orders</summary>
+
+WIP
 
 </details>
 
