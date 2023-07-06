@@ -36,12 +36,11 @@ class CategoryServiceImplTest {
     category1 = new Category();
     category1.setId(1L);
     category1.setName("Parent category");
-    //    category1.setPath("/");
 
     category2 = new Category();
     category2.setId(2L);
     category2.setName("Name");
-    //    category2.setPath("/1/");
+    category2.setParentCategory(category1);
 
     categoryDto1 = new CategoryDto(1L, "Parent category", "/");
 
@@ -63,6 +62,23 @@ class CategoryServiceImplTest {
 
     // when
     CollectionModel<CategoryDto> actual = categoryService.findAll(PageRequest.ofSize(5));
+
+    // then
+    then(actual).isNotNull().isEqualTo(categoryDtoCollectionModel);
+  }
+
+  @Test
+  void shouldFindRootCategories() {
+    // given
+    List<Category> categories = List.of(category1);
+    CollectionModel<CategoryDto> categoryDtoCollectionModel = CollectionModel.of(List.of(categoryDto1));
+
+    given(categoryRepository.findRootCategories()).willReturn(categories);
+    given(categoryModelAssembler.toCollectionModel(categories))
+            .willReturn(categoryDtoCollectionModel);
+
+    // when
+    CollectionModel<CategoryDto> actual = categoryService.findRootCategories();
 
     // then
     then(actual).isNotNull().isEqualTo(categoryDtoCollectionModel);

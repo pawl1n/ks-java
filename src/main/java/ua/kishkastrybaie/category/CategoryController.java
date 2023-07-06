@@ -1,5 +1,8 @@
 package ua.kishkastrybaie.category;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +12,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.kishkastrybaie.category.tree.CategoryTreeDto;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -21,8 +25,29 @@ public class CategoryController {
   public ResponseEntity<CollectionModel<CategoryDto>> all(@PageableDefault Pageable pageable) {
     log.info("Get all categories");
 
-    CollectionModel<CategoryDto> responseDto = categoryService.findAll(pageable);
+    CollectionModel<CategoryDto> responseDto =
+        categoryService
+            .findAll(pageable)
+            .add(linkTo(methodOn(CategoryController.class).all(pageable)).withSelfRel());
     return ResponseEntity.ok(responseDto);
+  }
+
+  @GetMapping("/root")
+  public ResponseEntity<CollectionModel<CategoryDto>> root() {
+    log.info("Get root categories");
+
+    CollectionModel<CategoryDto> responseDto =
+        categoryService
+            .findRootCategories()
+            .add(linkTo(methodOn(CategoryController.class).root()).withSelfRel());
+    return ResponseEntity.ok(responseDto);
+  }
+
+  @GetMapping("/tree")
+  public ResponseEntity<CollectionModel<CategoryTreeDto>> tree() {
+    log.info("Get root categories");
+
+    return ResponseEntity.ok(categoryService.getTree());
   }
 
   @GetMapping("/{id}")

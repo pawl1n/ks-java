@@ -1,11 +1,14 @@
 package ua.kishkastrybaie.category;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.kishkastrybaie.category.tree.CategoryTreeDto;
+import ua.kishkastrybaie.category.tree.CategoryTreeModelAssembler;
 
 @Service
 @RequiredArgsConstructor
@@ -13,11 +16,26 @@ public class CategoryServiceImpl implements CategoryService {
   private final CategoryRepository categoryRepository;
   private final CategoryModelAssembler categoryModelAssembler;
   private final PagedResourcesAssembler<Category> pagedResourcesAssembler;
+  private final CategoryTreeModelAssembler categoryTreeModelAssembler;
 
   @Override
   public CollectionModel<CategoryDto> findAll(Pageable pageable) {
     return pagedResourcesAssembler.toModel(
         categoryRepository.findAll(pageable), categoryModelAssembler);
+  }
+
+  @Override
+  @Transactional
+  public CollectionModel<CategoryDto> findRootCategories() {
+    return categoryModelAssembler.toCollectionModel(categoryRepository.findRootCategories());
+  }
+
+  @Override
+  @Transactional
+  public CollectionModel<CategoryTreeDto> getTree() {
+    List<Category> rootCategories = categoryRepository.findRootCategories();
+
+    return categoryTreeModelAssembler.toCollectionModel(rootCategories);
   }
 
   @Override

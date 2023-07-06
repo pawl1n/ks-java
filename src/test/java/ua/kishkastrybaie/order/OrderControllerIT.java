@@ -137,8 +137,6 @@ class OrderControllerIT {
         .get("/api/orders/1")
         .then()
         .statusCode(HttpStatus.OK.value())
-        .log()
-        .all()
         .body(
             "id",
             notNullValue(),

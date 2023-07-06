@@ -28,4 +28,14 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                   """,
       nativeQuery = true)
   boolean isCategoryAncestorOfOther(Long categoryId, Long otherCategoryId);
+
+  @Query(
+      value =
+          """
+                  SELECT id, name, parent_category_id, path
+                  FROM main.product_category
+                  WHERE parent_category_id IS NULL
+                  """,
+      nativeQuery = true)
+  List<Category> findRootCategories();
 }

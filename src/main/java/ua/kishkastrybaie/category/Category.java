@@ -32,7 +32,7 @@ public class Category {
   private Category parentCategory;
 
   @OneToMany(mappedBy = "parentCategory")
-  private Set<Category> descendantCategories = new HashSet<>();
+  private Set<Category> descendants = new HashSet<>();
 
   @Column(name = "path", columnDefinition = "ltree", updatable = false, insertable = false)
   @Setter(AccessLevel.NONE)
@@ -40,7 +40,7 @@ public class Category {
 
   @PreRemove
   void preRemove() {
-      if (!getDescendantCategories().isEmpty()) {
+      if (!getDescendants().isEmpty()) {
           throw new CategoryHasDescendantsException(this.id);
       }
   }
