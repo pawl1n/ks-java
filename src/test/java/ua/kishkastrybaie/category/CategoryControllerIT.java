@@ -74,6 +74,45 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
+                  insert into main.product_category (id, name, parent_category_id)
+                  values (1, 'category', null),
+                  (2, 'children', 1),
+                  (3, 'grandchildren', 2);
+                  """)
+  void shouldGetRootCategories() {
+    given()
+        .when()
+        .get("/api/categories/root")
+        .then()
+        .statusCode(HttpStatus.OK.value())
+        .body("_embedded.categories.size()", equalTo(1));
+  }
+
+  @Test
+  @Sql(
+      statements =
+          """
+                  insert into main.product_category (id, name, parent_category_id)
+                  values (1, 'category', null),
+                  (2, 'children', 1),
+                  (3, 'grandchildren', 2);
+                  """)
+  void shouldGetTree() {
+    given()
+        .when()
+        .get("/api/categories/tree")
+        .then()
+        .statusCode(HttpStatus.OK.value())
+        .body("_embedded.categories.size()", equalTo(1),
+              "_embedded.categories[0].descendants.size()", equalTo(1),
+              "_embedded.categories[0].descendants[0].descendants.size()", equalTo(1),
+              "_embedded.categories[0].descendants[0].descendants[0].descendants", empty());
+  }
+
+  @Test
+  @Sql(
+      statements =
+          """
                   insert into main.product_category (id, name)
                   values (1, 'category');
                   """)
@@ -237,8 +276,8 @@ class CategoryControllerIT {
 
   @Test
   @Sql(
-          statements =
-                  """
+      statements =
+          """
                           insert into main.product_category (id, name, parent_category_id)
                           values (1, 'category', null),
                           (2, 'children', 1),
@@ -248,13 +287,13 @@ class CategoryControllerIT {
     CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 1L);
 
     given()
-            .auth()
-            .oauth2(token)
-            .body(categoryRequestDto)
-            .contentType(ContentType.JSON)
-            .when()
-            .put("/api/categories/1")
-            .then()
-            .statusCode(HttpStatus.CONFLICT.value());
+        .auth()
+        .oauth2(token)
+        .body(categoryRequestDto)
+        .contentType(ContentType.JSON)
+        .when()
+        .put("/api/categories/1")
+        .then()
+        .statusCode(HttpStatus.CONFLICT.value());
   }
 }
