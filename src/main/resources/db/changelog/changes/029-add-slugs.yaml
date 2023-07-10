@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 029-add-slugs
+      author: andrii
+      changes:
+        - addColumn:
+            tableName: product
+            schemaName: main
+            columns:
+              - column:
+                  name: slug
+                  type: text
+                  constraints:
+                    nullable: false

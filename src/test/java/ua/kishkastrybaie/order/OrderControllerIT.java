@@ -70,6 +70,7 @@ class OrderControllerIT {
     Product product = new Product();
     product.setName("product");
     product.setDescription("description");
+    product.setSlug("product");
     product = productRepository.save(product);
 
     ProductItem productItem = new ProductItem();

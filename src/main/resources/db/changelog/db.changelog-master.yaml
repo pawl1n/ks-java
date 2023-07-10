@@ -83,3 +83,6 @@ databaseChangeLog:
   - include:
       file: changes/028-use-materialized-path-for-categories.yaml
       relativeToChangelogFile: true
+  - include:
+      file: changes/029-add-slugs.yaml
+      relativeToChangelogFile: true

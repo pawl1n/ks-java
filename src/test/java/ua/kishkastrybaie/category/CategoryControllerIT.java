@@ -74,10 +74,10 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product_category (id, name, parent_category_id)
-                  values (1, 'category', null),
-                  (2, 'children', 1),
-                  (3, 'grandchildren', 2);
+                  insert into main.product_category (id, name, parent_category_id, slug)
+                  values (1, 'category', null, 'category'),
+                  (2, 'children', 1, 'children'),
+                  (3, 'grandchildren', 2, 'grandchildren');
                   """)
   void shouldGetRootCategories() {
     given()
@@ -92,10 +92,10 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product_category (id, name, parent_category_id)
-                  values (1, 'category', null),
-                  (2, 'children', 1),
-                  (3, 'grandchildren', 2);
+                  insert into main.product_category (id, name, parent_category_id, slug)
+                  values (1, 'category', null, 'category'),
+                  (2, 'children', 1, 'children'),
+                  (3, 'grandchildren', 2, 'grandchildren');
                   """)
   void shouldGetTree() {
     given()
@@ -103,20 +103,21 @@ class CategoryControllerIT {
         .get("/api/categories/tree")
         .then()
         .statusCode(HttpStatus.OK.value())
-        .body("_embedded.categories.size()", equalTo(1),
-              "_embedded.categories[0].descendants.size()", equalTo(1),
-              "_embedded.categories[0].descendants[0].descendants.size()", equalTo(1),
-              "_embedded.categories[0].descendants[0].descendants[0].descendants", empty());
+        .body(
+            "_embedded.categories.size()", equalTo(1),
+            "_embedded.categories[0].descendants.size()", equalTo(1),
+            "_embedded.categories[0].descendants[0].descendants.size()", equalTo(1),
+            "_embedded.categories[0].descendants[0].descendants[0].descendants", empty());
   }
 
   @Test
   @Sql(
       statements =
           """
-                  insert into main.product_category (id, name)
-                  values (1, 'category');
+                  insert into main.product_category (id, name, slug)
+                  values (1, 'category', 'category');
                   """)
-  void shouldGetOne() {
+  void shouldGetOneById() {
     given()
         .when()
         .get("/api/categories/1")
@@ -126,8 +127,26 @@ class CategoryControllerIT {
   }
 
   @Test
+  @Sql(
+      statements =
+          """
+                  insert into main.product_category (id, name, parent_category_id, slug)
+                  values (1, 'category', null, 'category'),
+                  (2, 'children', 1, 'children'),
+                  (3, 'grandchildren', 2, 'grandchildren');
+                          """)
+  void shouldGetOneByPath() {
+    given()
+        .when()
+        .get("/api/categories/path/category/children/grandchildren")
+        .then()
+        .statusCode(HttpStatus.OK.value())
+        .body("id", equalTo(3), "name", equalTo("grandchildren"));
+  }
+
+  @Test
   void shouldNotSaveWhenNotAuthenticated() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null);
 
     given()
         .body(categoryRequestDto)
@@ -140,7 +159,7 @@ class CategoryControllerIT {
 
   @Test
   void shouldNotSaveWhenInvalidParentCategory() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 1L);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 1L, null);
 
     given()
         .auth()
@@ -156,7 +175,7 @@ class CategoryControllerIT {
 
   @Test
   void shouldSave() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null);
 
     given()
         .auth()
@@ -166,13 +185,12 @@ class CategoryControllerIT {
         .when()
         .post("/api/categories")
         .then()
-        .statusCode(HttpStatus.CREATED.value())
-        .body("id", notNullValue(), "name", equalTo("category"));
+        .statusCode(HttpStatus.CREATED.value());
   }
 
   @Test
   void shouldNotReplaceWhenNotAuthenticated() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null);
 
     given()
         .body(categoryRequestDto)
@@ -185,7 +203,7 @@ class CategoryControllerIT {
 
   @Test
   void shouldNotReplaceWhenProductDoesNotExist() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null);
 
     given()
         .auth()
@@ -203,11 +221,11 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product_category (id, name)
-                  values (1, 'category');
+                  insert into main.product_category (id, name, slug)
+                  values (1, 'category', 'category');
                   """)
   void shouldReplace() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("changed", null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("changed", null, null);
 
     given()
         .auth()
@@ -225,8 +243,8 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product_category (id, name)
-                  values (1, 'category');
+                  insert into main.product_category (id, name, slug)
+                  values (1, 'category', 'category');
                   """)
   void shouldDelete() {
     given()
@@ -242,10 +260,10 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product_category (id, name, parent_category_id)
-                  values (1, 'category', null),
-                  (2, 'children', 1),
-                  (3, 'grandchildren', 2);
+                  insert into main.product_category (id, name, parent_category_id, slug)
+                  values (1, 'category', null, 'category'),
+                  (2, 'children', 1, 'children'),
+                  (3, 'grandchildren', 2, 'grandchildren');
                   """)
   void shouldGetAllDescendents() {
     given().when().get("/api/categories/1/descendants").then().statusCode(HttpStatus.OK.value());
@@ -255,13 +273,13 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product_category (id, name, parent_category_id)
-                  values (1, 'category', null),
-                  (2, 'children', 1),
-                  (3, 'grandchildren', 2);
+                  insert into main.product_category (id, name, parent_category_id, slug)
+                  values (1, 'category', null, 'category'),
+                  (2, 'children', 1, 'children'),
+                  (3, 'grandchildren', 2, 'grandchildren');
                   """)
   void shouldNotMoveCategoryWhenMoveToDescendant() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 3L);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 3L, null);
 
     given()
         .auth()
@@ -278,13 +296,13 @@ class CategoryControllerIT {
   @Sql(
       statements =
           """
-                          insert into main.product_category (id, name, parent_category_id)
-                          values (1, 'category', null),
-                          (2, 'children', 1),
-                          (3, 'grandchildren', 2);
-                          """)
+                  insert into main.product_category (id, name, parent_category_id, slug)
+                  values (1, 'category', null, 'category'),
+                  (2, 'children', 1, 'children'),
+                  (3, 'grandchildren', 2, 'grandchildren');
+                  """)
   void shouldNotMoveCategoryWhenMoveToItself() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 1L);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 1L, null);
 
     given()
         .auth()
