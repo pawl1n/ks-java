@@ -17,36 +17,36 @@ import ua.kishkastrybaie.category.CategoryMapper;
 @Component
 @RequiredArgsConstructor
 public class CategoryTreeModelAssembler
-        implements RepresentationModelAssembler<Category, CategoryTreeDto> {
-    private final CategoryMapper categoryMapper;
+    implements RepresentationModelAssembler<Category, CategoryTreeDto> {
+  private final CategoryMapper categoryMapper;
 
-    @Override
-    @NonNull
-    public CategoryTreeDto toModel(@NonNull Category category) {
-        CategoryTreeDto categoryTreeDto = categoryMapper.toTreeDto(category);
+  @Override
+  @NonNull
+  public CategoryTreeDto toModel(@NonNull Category category) {
+    CategoryTreeDto categoryTreeDto = categoryMapper.toTreeDto(category);
 
-        addLinks(categoryTreeDto);
+    addLinks(categoryTreeDto);
 
-        return categoryTreeDto;
+    return categoryTreeDto;
+  }
+
+  @Override
+  @NonNull
+  public CollectionModel<CategoryTreeDto> toCollectionModel(
+      @NonNull Iterable<? extends Category> categories) {
+    CollectionModel<CategoryTreeDto> mapped =
+        StreamSupport.stream(categories.spliterator(), false)
+            .map(this::toModel)
+            .collect(Collectors.collectingAndThen(Collectors.toList(), CollectionModel::of));
+
+    return mapped.add(linkTo(methodOn(CategoryController.class).tree()).withSelfRel());
+  }
+
+  private void addLinks(CategoryTreeDto category) {
+    if (category.getDescendants() != null) {
+      category.getDescendants().forEach(this::addLinks);
     }
 
-    @Override
-    @NonNull
-    public CollectionModel<CategoryTreeDto> toCollectionModel(
-            @NonNull Iterable<? extends Category> categories) {
-        CollectionModel<CategoryTreeDto> mapped =
-                StreamSupport.stream(categories.spliterator(), false)
-                        .map(this::toModel)
-                        .collect(Collectors.collectingAndThen(Collectors.toList(), CollectionModel::of));
-
-        return mapped.add(linkTo(methodOn(CategoryController.class).tree()).withSelfRel());
-    }
-
-    private void addLinks(CategoryTreeDto category) {
-        if (category.getDescendants() != null) {
-            category.getDescendants().forEach(this::addLinks);
-        }
-
-        category.add(linkTo(methodOn(CategoryController.class).one(category.getId())).withSelfRel());
-    }
+    category.add(linkTo(methodOn(CategoryController.class).one(category.getId())).withSelfRel());
+  }
 }

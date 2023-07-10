@@ -162,7 +162,7 @@ class ProductServiceImplTest {
                     product ->
                         product.getName().equals(productRequestDto.name())
                             && product.getDescription().equals(productRequestDto.description())
-                            && product.getSlug().equals("product-1"))))
+                            && product.getSlug().equals("product_1"))))
         .willReturn(product1);
     given(productModelAssembler.toModel(product1)).willReturn(productDto1);
 
@@ -204,7 +204,7 @@ class ProductServiceImplTest {
                         product.getId().equals(2L)
                             && product.getName().equals(productRequestDto.name())
                             && product.getDescription().equals(productRequestDto.description())
-                            && product.getSlug().equals("product-1"))))
+                            && product.getSlug().equals("product_1"))))
         .willReturn(changedProduct);
     given(productModelAssembler.toModel(changedProduct)).willReturn(changedProductDto);
 

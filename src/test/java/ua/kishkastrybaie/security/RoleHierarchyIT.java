@@ -71,7 +71,7 @@ class RoleHierarchyIT {
 
   @Test
   void shouldAccessAdminEndpointWhenAdmin() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, "test");
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null);
 
     RestAssured.given()
         .body(categoryRequestDto)
