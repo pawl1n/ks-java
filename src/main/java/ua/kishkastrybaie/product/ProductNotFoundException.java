@@ -8,4 +8,9 @@ public class ProductNotFoundException extends RuntimeException {
     super("Product not found with id: " + id);
     log.error(getMessage());
   }
+
+  public ProductNotFoundException(String message) {
+    super(message);
+    log.error(getMessage());
+  }
 }

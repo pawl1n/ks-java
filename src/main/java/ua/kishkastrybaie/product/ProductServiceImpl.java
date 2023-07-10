@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.kishkastrybaie.category.*;
 import ua.kishkastrybaie.image.*;
 import ua.kishkastrybaie.shared.AuthorizationService;
+import ua.kishkastrybaie.shared.SlugService;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +45,38 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   @Transactional
+  public ProductDto findBySlug(String slug) {
+    return productModelAssembler.toModel(
+        productRepository
+            .findBySlug(slug)
+            .orElseThrow(
+                () -> new ProductNotFoundException("Product not found with slug: " + slug)));
+  }
+
+  @Override
+  @Transactional
+  public CollectionModel<ProductDto> findByCategoryPath(String path, Pageable pageable) {
+    if (path == null) {
+      throw new IllegalArgumentException("Path cannot be null");
+    }
+
+    String ltreePath = path.replace("/", ".").replace("-", "_");
+    if (ltreePath.startsWith(".")) {
+      ltreePath = ltreePath.substring(1);
+    }
+
+    Category category =
+        categoryRepository
+            .findByPath(ltreePath)
+            .orElseThrow(
+                () -> new CategoryNotFoundException("Category not found with path: " + path));
+
+    return pagedResourcesAssembler.toModel(
+        productRepository.findAllByCategory(category, pageable), productModelAssembler);
+  }
+
+  @Override
+  @Transactional
   public ProductDto create(ProductRequestDto productRequestDto) {
     Category category = getCategory(productRequestDto.category());
     Image image = getImage(productRequestDto.mainImage());
@@ -53,6 +86,7 @@ public class ProductServiceImpl implements ProductService {
     product.setName(productRequestDto.name());
     product.setCategory(category);
     product.setMainImage(image);
+    product.setSlug(generateSlug(productRequestDto));
 
     Product saved = productRepository.save(product);
 
@@ -74,6 +108,7 @@ public class ProductServiceImpl implements ProductService {
                   p.setDescription(productRequestDto.description());
                   p.setCategory(category);
                   p.setMainImage(image);
+                  p.setSlug(generateSlug(productRequestDto));
                   return productRepository.save(p);
                 })
             .orElseThrow(() -> new ProductNotFoundException(id));
@@ -141,5 +176,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     return image;
+  }
+
+  private String generateSlug(ProductRequestDto productRequestDto) {
+    String textToSlugify;
+    if (productRequestDto.slug() != null) {
+      textToSlugify = productRequestDto.slug();
+    } else {
+      textToSlugify = productRequestDto.name();
+    }
+
+    return SlugService.slugify(textToSlugify);
   }
 }

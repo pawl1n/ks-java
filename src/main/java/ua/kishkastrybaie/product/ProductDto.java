@@ -16,6 +16,7 @@ public class ProductDto extends RepresentationModel<ProductDto> {
   private final Long id;
   private final String name;
   private final String description;
+  private final String slug;
   private final CategoryDto category;
   private final URL mainImage;
 }

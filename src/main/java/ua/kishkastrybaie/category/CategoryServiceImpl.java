@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.kishkastrybaie.category.tree.CategoryTreeDto;
 import ua.kishkastrybaie.category.tree.CategoryTreeModelAssembler;
+import ua.kishkastrybaie.shared.SlugService;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +46,25 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
+  @Transactional
+  public CategoryTreeDto findByPath(String path) {
+    if (path == null) {
+      throw new IllegalArgumentException("Path cannot be null");
+    }
+
+    String ltreePath = path.replace("/", ".").replace("-", "_");
+    if (ltreePath.startsWith(".")) {
+      ltreePath = ltreePath.substring(1);
+    }
+
+    return categoryTreeModelAssembler.toModel(
+        categoryRepository
+            .findByPath(ltreePath)
+            .orElseThrow(
+                () -> new CategoryNotFoundException("Category not found with path: " + path)));
+  }
+
+  @Override
   public CollectionModel<CategoryDto> findAllDescendants(Long parentCategoryId) {
     return categoryModelAssembler.toCollectionModel(
         categoryRepository.findAllDescendantsById(parentCategoryId));
@@ -55,6 +75,7 @@ public class CategoryServiceImpl implements CategoryService {
   public CategoryDto create(CategoryRequestDto categoryRequestDto) {
     Category category = new Category();
     category.setName(categoryRequestDto.name());
+    category.setSlug(generateSlug(category));
 
     Category parentCategory = getCategory(categoryRequestDto.parentCategory());
     category.setParentCategory(parentCategory);
@@ -71,15 +92,16 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository
             .findById(id)
             .map(
-                p -> {
+                c -> {
                   if (categoryRepository.isCategoryAncestorOfOther(
                       id, categoryRequestDto.parentCategory())) {
                     throw new CyclicCategoryPathException(id, categoryRequestDto.parentCategory());
                   }
 
-                  p.setName(categoryRequestDto.name());
-                  p.setParentCategory(parentCategory);
-                  return categoryRepository.save(p);
+                  c.setName(categoryRequestDto.name());
+                  c.setParentCategory(parentCategory);
+                  c.setSlug(generateSlug(c));
+                  return categoryRepository.save(c);
                 })
             .orElseThrow(() -> new CategoryNotFoundException(id));
 
@@ -103,5 +125,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     return null;
+  }
+
+  private String generateSlug(Category category) {
+    StringBuilder sb = new StringBuilder();
+    if (category.getParentCategory() != null) {
+      sb.append(category.getParentCategory().getSlug()).append("/");
+    }
+
+    sb.append(category.getName());
+
+    return SlugService.slugify(sb.toString());
   }
 }

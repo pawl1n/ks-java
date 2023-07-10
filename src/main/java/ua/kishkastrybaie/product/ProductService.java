@@ -10,6 +10,10 @@ public interface ProductService {
 
   ProductDto findById(Long id);
 
+  ProductDto findBySlug(String slug);
+
+  CollectionModel<ProductDto> findByCategoryPath(String path, Pageable pageable);
+
   ProductDto create(ProductRequestDto productRequestDto);
 
   ProductDto replace(Long id, ProductRequestDto productRequestDto);

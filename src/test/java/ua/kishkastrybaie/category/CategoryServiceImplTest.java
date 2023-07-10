@@ -46,7 +46,7 @@ class CategoryServiceImplTest {
 
     categoryDto2 = new CategoryDto(2L, "Name", "/1/");
 
-    categoryRequestDto = new CategoryRequestDto("Parent category", 1L);
+    categoryRequestDto = new CategoryRequestDto("Parent category", 1L, null);
   }
 
   @Test

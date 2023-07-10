@@ -30,6 +30,8 @@
         <asciidoctor-maven-plugin.version>2.2.4</asciidoctor-maven-plugin.version>
         <jboss-logging-annotations.version>2.2.1.Final</jboss-logging-annotations.version>
         <testcontainers.version>1.18.3</testcontainers.version>
+        <icu4j.version>73.2</icu4j.version>
+        <slugify.version>3.0.5</slugify.version>
     </properties>
 
     <dependencies>
@@ -104,7 +106,16 @@
             <version>${jboss-logging-annotations.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>${icu4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.slugify</groupId>
+            <artifactId>slugify</artifactId>
+            <version>${slugify.version}</version>
+        </dependency>
 
         <!-- documentation -->
         <dependency>

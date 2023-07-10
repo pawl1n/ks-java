@@ -70,17 +70,19 @@ class ProductServiceImplTest {
             1L,
             "Product 1",
             "Description 1",
+            "product-1",
             new CategoryDto(1L, "Category 1", null),
             new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
 
-    productDto2 = new ProductDto(2L, "Product 2", null, null, null);
+    productDto2 = new ProductDto(2L, "Product 2", null, null, null, null);
 
     productRequestDto =
         new ProductRequestDto(
             "Product 1",
             "Description 1",
             1L,
-            new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
+            new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"),
+            null);
   }
 
   @Test
@@ -159,7 +161,8 @@ class ProductServiceImplTest {
                 argThat(
                     product ->
                         product.getName().equals(productRequestDto.name())
-                            && product.getDescription().equals(productRequestDto.description()))))
+                            && product.getDescription().equals(productRequestDto.description())
+                            && product.getSlug().equals("product_1"))))
         .willReturn(product1);
     given(productModelAssembler.toModel(product1)).willReturn(productDto1);
 
@@ -185,6 +188,7 @@ class ProductServiceImplTest {
             2L,
             "Product 1",
             "Description 1",
+            "product-1",
             new CategoryDto(1L, "Category 1", null),
             new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
 
@@ -199,7 +203,8 @@ class ProductServiceImplTest {
                     product ->
                         product.getId().equals(2L)
                             && product.getName().equals(productRequestDto.name())
-                            && product.getDescription().equals(productRequestDto.description()))))
+                            && product.getDescription().equals(productRequestDto.description())
+                            && product.getSlug().equals("product_1"))))
         .willReturn(changedProduct);
     given(productModelAssembler.toModel(changedProduct)).willReturn(changedProductDto);
 

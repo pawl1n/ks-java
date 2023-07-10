@@ -32,6 +32,8 @@ public class Product {
 
   @Column private String description;
 
+  @Column private String slug;
+
   @ManyToOne(cascade = CascadeType.MERGE)
   private Image mainImage;
 

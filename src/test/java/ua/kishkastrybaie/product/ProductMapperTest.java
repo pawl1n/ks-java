@@ -51,6 +51,7 @@ class ProductMapperTest {
                 1L,
                 "name",
                 "description",
+                null,
                 categoryDto,
                 new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg")));
   }

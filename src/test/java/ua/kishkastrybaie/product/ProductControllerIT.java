@@ -59,15 +59,15 @@ class ProductControllerIT {
 
   @AfterEach
   public void afterEach() {
-    productRepository.deleteAll();
-    categoryRepository.deleteAll();
+    productRepository.deleteAllInBatch();
+    categoryRepository.deleteAllInBatch();
   }
 
   @AfterAll
   public void afterAll() {
-    userRepository.deleteAll();
-    productRepository.deleteAll();
-    categoryRepository.deleteAll();
+    userRepository.deleteAllInBatch();
+    productRepository.deleteAllInBatch();
+    categoryRepository.deleteAllInBatch();
   }
 
   @Test
@@ -79,8 +79,8 @@ class ProductControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product (id, name, description, main_image_id, category_id)
-                  values (1, 'product', 'description', null, null);
+                  insert into main.product (id, name, description, slug)
+                  values (1, 'product', 'description', 'product');
                   """)
   void shouldGetOne() {
     given()
@@ -105,10 +105,60 @@ class ProductControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product_category(id, name)
-                  values (1, 'category');
-                  insert into main.product (id, name, description, category_id)
-                  values (1, 'product', 'description', 1);
+                  insert into main.product (id, name, description, slug)
+                  values (1, 'product', 'description', 'product-slug');
+                  """)
+  void shouldGetOneBySlug() {
+    given()
+        .when()
+        .get("/api/products/slug/product-slug")
+        .then()
+        .statusCode(HttpStatus.OK.value())
+        .body(
+            "id",
+            equalTo(1),
+            "name",
+            equalTo("product"),
+            "description",
+            equalTo("description"),
+            "slug",
+            equalTo("product-slug"),
+            "mainImage",
+            equalTo(null),
+            "category",
+            equalTo(null));
+  }
+
+  @Test
+  @Sql(
+      statements =
+          """
+                  insert into main.product_category(id, name, slug, parent_category_id)
+                  values (1, 'category', 'category_path', null),
+                         (2, 'childCategory', 'child_category_path', 1);
+                  insert into main.product (id, name, description, category_id, slug)
+                  values (1, 'product1', 'description1', 1, 'product1'),
+                         (2, 'product2', 'description2', 2, 'product2');
+                  """)
+  void shouldGetByCategoryPath() {
+    given()
+        .when()
+        .get("/api/products/by-category-path/category-path/child-category-path")
+        .then()
+        .statusCode(HttpStatus.OK.value())
+        .body(
+            "_embedded.products.size()", equalTo(1),
+            "_embedded.products[0].name", equalTo("product2"));
+  }
+
+  @Test
+  @Sql(
+      statements =
+          """
+                  insert into main.product_category(id, name, slug)
+                  values (1, 'category', 'category');
+                  insert into main.product (id, name, description, category_id, slug)
+                  values (1, 'product', 'description', 1, 'product');
                   """)
   void shouldGetCategory() {
     given()
@@ -122,7 +172,7 @@ class ProductControllerIT {
   @Test
   void shouldNotSaveWhenNotAuthenticated() {
     ProductRequestDto productRequestDto =
-        new ProductRequestDto("product", "description", null, null);
+        new ProductRequestDto("product", "description", null, null, null);
 
     given()
         .body(productRequestDto)
@@ -135,7 +185,8 @@ class ProductControllerIT {
 
   @Test
   void shouldNotSaveWhenInvalidCategory() {
-    ProductRequestDto productRequestDto = new ProductRequestDto("product", "description", 1L, null);
+    ProductRequestDto productRequestDto =
+        new ProductRequestDto("product", "description", 1L, null, null);
 
     given()
         .auth()
@@ -152,7 +203,7 @@ class ProductControllerIT {
   @Test
   void shouldSave() {
     ProductRequestDto productRequestDto =
-        new ProductRequestDto("product", "description", null, null);
+        new ProductRequestDto("product", "description", null, null, null);
 
     given()
         .auth()
@@ -174,7 +225,8 @@ class ProductControllerIT {
 
   @Test
   void shouldNotReplaceWhenNotAuthenticated() {
-    ProductRequestDto productRequestDto = new ProductRequestDto("changed", "changed", null, null);
+    ProductRequestDto productRequestDto =
+        new ProductRequestDto("changed", "changed", null, null, null);
 
     given()
         .body(productRequestDto)
@@ -187,7 +239,8 @@ class ProductControllerIT {
 
   @Test
   void shouldNotReplaceWhenProductDoesNotExist() {
-    ProductRequestDto productRequestDto = new ProductRequestDto("changed", "changed", null, null);
+    ProductRequestDto productRequestDto =
+        new ProductRequestDto("changed", "changed", null, null, null);
 
     given()
         .auth()
@@ -205,11 +258,12 @@ class ProductControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product (id, name, description, main_image_id, category_id)
-                  values (1, 'product', 'description', null, null);
+                  insert into main.product (id, name, description, slug)
+                  values (1, 'product', 'description', 'product');
                   """)
   void shouldReplace() {
-    ProductRequestDto productRequestDto = new ProductRequestDto("changed", "changed", null, null);
+    ProductRequestDto productRequestDto =
+        new ProductRequestDto("changed", "changed", null, null, null);
 
     given()
         .auth()
@@ -227,8 +281,8 @@ class ProductControllerIT {
   @Sql(
       statements =
           """
-                  insert into main.product (id, name, description, main_image_id, category_id)
-                  values (1, 'product', 'description', null, null);
+                  insert into main.product (id, name, description, slug)
+                  values (1, 'product', 'description', 'product');
                   """)
   void delete() {
     given()

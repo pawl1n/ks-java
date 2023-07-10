@@ -14,8 +14,8 @@ import org.springframework.hateoas.server.core.Relation;
 @Relation(itemRelation = "category", collectionRelation = "categories")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryTreeDto extends RepresentationModel<CategoryTreeDto> {
-    private final Long id;
-    private final String name;
-    private final String path;
-    private final List<CategoryTreeDto> descendants;
+  private final Long id;
+  private final String name;
+  private final String path;
+  private final List<CategoryTreeDto> descendants;
 }

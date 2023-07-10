@@ -27,6 +27,9 @@ public class Category {
   @Column(name = "name")
   private String name;
 
+  @Column(name = "slug")
+  private String slug;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_category_id")
   private Category parentCategory;
@@ -40,8 +43,8 @@ public class Category {
 
   @PreRemove
   void preRemove() {
-      if (!getDescendants().isEmpty()) {
-          throw new CategoryHasDescendantsException(this.id);
-      }
+    if (!getDescendants().isEmpty()) {
+      throw new CategoryHasDescendantsException(this.id);
+    }
   }
 }

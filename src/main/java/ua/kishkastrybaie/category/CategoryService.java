@@ -15,6 +15,8 @@ public interface CategoryService {
 
   CategoryDto findById(Long id);
 
+  CategoryTreeDto findByPath(String path);
+
   CategoryDto create(CategoryRequestDto category);
 
   CategoryDto replace(Long id, CategoryRequestDto category);

@@ -50,6 +50,13 @@ public class CategoryController {
     return ResponseEntity.ok(categoryService.getTree());
   }
 
+  @GetMapping("/path/{*path}")
+  public ResponseEntity<CategoryTreeDto> one(@PathVariable(name = "path") String path) {
+    log.info("Get category by path: {}", path);
+
+    return ResponseEntity.ok(categoryService.findByPath(path));
+  }
+
   @GetMapping("/{id}")
   public ResponseEntity<CategoryDto> one(@PathVariable Long id) {
     log.info("Get category by id: {}", id);
@@ -73,7 +80,7 @@ public class CategoryController {
 
     CategoryDto responseDto = categoryService.create(categoryRequestDto);
     return ResponseEntity.created(responseDto.getRequiredLink(IanaLinkRelations.SELF).toUri())
-        .body(responseDto);
+        .build();
   }
 
   @PutMapping("/{id}")

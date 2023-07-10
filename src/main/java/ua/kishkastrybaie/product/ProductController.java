@@ -35,6 +35,22 @@ public class ProductController {
     return ResponseEntity.ok(responseDto);
   }
 
+  @GetMapping("/slug/{slug}")
+  public ResponseEntity<ProductDto> one(@PathVariable String slug) {
+    log.info("Get product by slug: {}", slug);
+
+    ProductDto responseDto = productService.findBySlug(slug);
+    return ResponseEntity.ok(responseDto);
+  }
+
+  @GetMapping("/by-category-path/{*path}")
+  public ResponseEntity<CollectionModel<ProductDto>> allByCategory(
+      @PathVariable(name = "path") String path, @PageableDefault Pageable pageable) {
+    log.info("Get products by category path: {}", path);
+
+    return ResponseEntity.ok(productService.findByCategoryPath(path, pageable));
+  }
+
   @GetMapping("/{id}/category")
   public ResponseEntity<CategoryDto> category(@PathVariable Long id) {
     log.info("Get product category by id: {}", id);
