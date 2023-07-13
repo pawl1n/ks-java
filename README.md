@@ -39,7 +39,15 @@ The API provides endpoints for managing products, categories, and images.
 
 `GET /api/products` - Retrieves a list of all products.
 
+Params:
+
+| Param        | Description                                                                                        |
+|--------------|----------------------------------------------------------------------------------------------------|
+| categoryPath | Search products by category path.<br/>Finds products even if they belong to a descendant category. |
+
 `GET /api/products/{id}` - Retrieves a specific product by ID.
+
+`GET /api/products/slug/{slug}` - Retrieves a specific product by slug.
 
 `POST /api/products` - Creates a new product.
 
@@ -76,6 +84,8 @@ The API provides endpoints for managing products, categories, and images.
 `GET /api/categories/tree` - Retrieves a tree of all categories.
 
 `GET /api/categories/{id}` - Retrieves a specific category by ID.
+
+`GET /api/categories/path/{*path}` - Retrieves a specific category by its path.
 
 `GET /api/categories/{id}/descendants` - Retrieves descendants of category
 
