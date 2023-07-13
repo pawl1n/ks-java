@@ -34,7 +34,6 @@ public class ProductModelAssembler implements RepresentationModelAssembler<Produ
   public CollectionModel<ProductDto> toCollectionModel(
       @NonNull Iterable<? extends Product> products) {
     return RepresentationModelAssembler.super
-        .toCollectionModel(products)
-        .add(linkTo(methodOn(ProductController.class).all(null)).withSelfRel());
+        .toCollectionModel(products);
   }
 }

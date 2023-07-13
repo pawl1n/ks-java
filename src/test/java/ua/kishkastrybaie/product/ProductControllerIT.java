@@ -143,7 +143,7 @@ class ProductControllerIT {
   void shouldGetByCategoryPath() {
     given()
         .when()
-        .get("/api/products/by-category-path/category-path/child-category-path")
+        .get("/api/products?categoryPath=category-path/child-category-path")
         .then()
         .statusCode(HttpStatus.OK.value())
         .body(
