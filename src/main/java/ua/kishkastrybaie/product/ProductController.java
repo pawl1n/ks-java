@@ -1,6 +1,7 @@
 package ua.kishkastrybaie.product;
 
 import jakarta.validation.Valid;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -20,11 +21,23 @@ public class ProductController {
   private final ProductService productService;
 
   @GetMapping
-  public ResponseEntity<CollectionModel<ProductDto>> all(@PageableDefault Pageable pageable) {
-    log.info("Get all products");
+  public ResponseEntity<CollectionModel<ProductDto>> all(
+      @RequestParam Optional<String> categoryPath, @PageableDefault Pageable pageable) {
 
-    CollectionModel<ProductDto> responseDto = productService.findAll(pageable);
-    return ResponseEntity.ok(responseDto);
+    CollectionModel<ProductDto> result =
+        categoryPath
+            .map(
+                path -> {
+                  log.info("Get products by category path: {}", path);
+                  return productService.findByCategoryPath(path, pageable);
+                })
+            .orElseGet(
+                () -> {
+                  log.info("Get all products");
+                  return productService.findAll(pageable);
+                });
+
+    return ResponseEntity.ok(result);
   }
 
   @GetMapping("/{id}")
@@ -41,14 +54,6 @@ public class ProductController {
 
     ProductDto responseDto = productService.findBySlug(slug);
     return ResponseEntity.ok(responseDto);
-  }
-
-  @GetMapping("/by-category-path/{*path}")
-  public ResponseEntity<CollectionModel<ProductDto>> allByCategory(
-      @PathVariable(name = "path") String path, @PageableDefault Pageable pageable) {
-    log.info("Get products by category path: {}", path);
-
-    return ResponseEntity.ok(productService.findByCategoryPath(path, pageable));
   }
 
   @GetMapping("/{id}/category")
