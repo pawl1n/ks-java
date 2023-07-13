@@ -1,7 +1,6 @@
 package ua.kishkastrybaie.product;
 
 import jakarta.validation.Valid;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -22,20 +21,15 @@ public class ProductController {
 
   @GetMapping
   public ResponseEntity<CollectionModel<ProductDto>> all(
-      @RequestParam Optional<String> categoryPath, @PageableDefault Pageable pageable) {
-
-    CollectionModel<ProductDto> result =
-        categoryPath
-            .map(
-                path -> {
-                  log.info("Get products by category path: {}", path);
-                  return productService.findByCategoryPath(path, pageable);
-                })
-            .orElseGet(
-                () -> {
-                  log.info("Get all products");
-                  return productService.findAll(pageable);
-                });
+      @RequestParam(required = false) String categoryPath, @PageableDefault Pageable pageable) {
+    CollectionModel<ProductDto> result;
+    if (categoryPath == null) {
+      log.info("Get all products");
+      result = productService.findAll(pageable);
+    } else {
+      log.info("Get products by category path: {}", categoryPath);
+      result = productService.findByCategoryPath(categoryPath, pageable);
+    }
 
     return ResponseEntity.ok(result);
   }
