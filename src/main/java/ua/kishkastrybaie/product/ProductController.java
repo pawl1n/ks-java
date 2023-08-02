@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.kishkastrybaie.category.CategoryDto;
 import ua.kishkastrybaie.image.ImageDto;
+import ua.kishkastrybaie.product.details.ProductDetailsDto;
 
 @RestController
 @RequestMapping("/api/products")
@@ -47,6 +48,14 @@ public class ProductController {
     log.info("Get product by slug: {}", slug);
 
     ProductDto responseDto = productService.findBySlug(slug);
+    return ResponseEntity.ok(responseDto);
+  }
+
+  @GetMapping("/slug/{slug}/details")
+  public ResponseEntity<ProductDetailsDto> details(@PathVariable String slug) {
+    log.info("Get product details: {}", slug);
+
+    ProductDetailsDto responseDto = productService.getDetailsBySlug(slug);
     return ResponseEntity.ok(responseDto);
   }
 
