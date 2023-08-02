@@ -1,4 +1,4 @@
-[![Build And Test](https://github.com/pawl1n/ks-java/actions/workflows/maven.yml/badge.svg)](https://github.com/pawl1n/ks-java/actions/workflows/maven.yml)
+[![Build](https://github.com/pawl1n/ks-java/actions/workflows/build.yml/badge.svg)](https://github.com/pawl1n/ks-java/actions/workflows/build.yml)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=pawl1n_ks-java&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=pawl1n_ks-java)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=pawl1n_ks-java&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=pawl1n_ks-java)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=pawl1n_ks-java&metric=bugs)](https://sonarcloud.io/summary/new_code?id=pawl1n_ks-java)
