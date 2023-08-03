@@ -25,6 +25,8 @@ public class ProductModelAssembler implements RepresentationModelAssembler<Produ
             linkTo(methodOn(ProductController.class).category(product.getId())).withRel("category"))
         .add(linkTo(methodOn(ProductController.class).image(product.getId())).withRel("mainImage"))
         .add(
+            linkTo(methodOn(ProductController.class).details(product.getSlug())).withRel("details"))
+        .add(
             linkTo(methodOn(ProductItemController.class).all(product.getId(), null))
                 .withRel("variations"));
   }
@@ -33,7 +35,6 @@ public class ProductModelAssembler implements RepresentationModelAssembler<Produ
   @NonNull
   public CollectionModel<ProductDto> toCollectionModel(
       @NonNull Iterable<? extends Product> products) {
-    return RepresentationModelAssembler.super
-        .toCollectionModel(products);
+    return RepresentationModelAssembler.super.toCollectionModel(products);
   }
 }

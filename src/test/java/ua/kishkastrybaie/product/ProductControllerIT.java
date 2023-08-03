@@ -1,8 +1,7 @@
 package ua.kishkastrybaie.product;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -127,6 +126,43 @@ class ProductControllerIT {
             equalTo(null),
             "category",
             equalTo(null));
+  }
+
+  @Test
+  @Sql(
+      statements =
+          """
+                   insert into main.product_category(id, name, slug, parent_category_id)
+                   values (1, 'category', 'category_path', null),
+                  (2, 'childCategory', 'child_category_path', 1);
+                   insert into main.product (id, name, description, slug, category_id)
+                   values (1, 'product', 'description', 'product-slug', 2);
+                   """)
+  void shouldGetDetailsBySlug() {
+    given()
+        .when()
+        .get("/api/products/slug/product-slug/details")
+        .then()
+        .log()
+        .all()
+        .statusCode(HttpStatus.OK.value())
+        .body(
+            "product.id",
+            equalTo(1),
+            "product.name",
+            equalTo("product"),
+            "product.description",
+            equalTo("description"),
+            "product.slug",
+            equalTo("product-slug"),
+            "product.mainImage",
+            equalTo(null),
+            "product.category",
+            notNullValue(),
+            "variations",
+            empty(),
+            "breadcrumbs",
+            notNullValue());
   }
 
   @Test

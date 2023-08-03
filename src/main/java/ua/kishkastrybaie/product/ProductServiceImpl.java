@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.kishkastrybaie.category.*;
 import ua.kishkastrybaie.image.*;
+import ua.kishkastrybaie.product.details.ProductDetailsDto;
+import ua.kishkastrybaie.product.details.ProductDetailsModelAssembler;
 import ua.kishkastrybaie.shared.AuthorizationService;
 import ua.kishkastrybaie.shared.SlugService;
 
@@ -20,6 +22,7 @@ public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
   private final CategoryModelAssembler categoryModelAssembler;
   private final ProductModelAssembler productModelAssembler;
+  private final ProductDetailsModelAssembler productDetailsModelAssembler;
   private final PagedResourcesAssembler<Product> pagedResourcesAssembler;
   private final ImageModelAssembler imageModelAssembler;
   private final AuthorizationService authorizationService;
@@ -47,6 +50,16 @@ public class ProductServiceImpl implements ProductService {
   @Transactional
   public ProductDto findBySlug(String slug) {
     return productModelAssembler.toModel(
+        productRepository
+            .findBySlug(slug)
+            .orElseThrow(
+                () -> new ProductNotFoundException("Product not found with slug: " + slug)));
+  }
+
+  @Override
+  @Transactional
+  public ProductDetailsDto getDetailsBySlug(String slug) {
+    return productDetailsModelAssembler.toModel(
         productRepository
             .findBySlug(slug)
             .orElseThrow(

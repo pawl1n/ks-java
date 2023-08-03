@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import ua.kishkastrybaie.category.CategoryDto;
 import ua.kishkastrybaie.image.ImageDto;
+import ua.kishkastrybaie.product.details.ProductDetailsDto;
 
 public interface ProductService {
   CollectionModel<ProductDto> findAll(Pageable pageable);
@@ -11,6 +12,8 @@ public interface ProductService {
   ProductDto findById(Long id);
 
   ProductDto findBySlug(String slug);
+
+  ProductDetailsDto getDetailsBySlug(String slug);
 
   CollectionModel<ProductDto> findByCategoryPath(String path, Pageable pageable);
 
