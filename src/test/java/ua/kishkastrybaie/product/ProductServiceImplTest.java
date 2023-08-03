@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +25,10 @@ import org.springframework.hateoas.PagedModel;
 import ua.kishkastrybaie.category.*;
 import ua.kishkastrybaie.image.Image;
 import ua.kishkastrybaie.image.ImageRepository;
+import ua.kishkastrybaie.product.details.ProductDetailsDto;
+import ua.kishkastrybaie.product.details.ProductDetailsModelAssembler;
 import ua.kishkastrybaie.shared.AuthorizationService;
+import ua.kishkastrybaie.shared.BreadCrumb;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -37,6 +41,7 @@ class ProductServiceImplTest {
   private static Image image;
   @Mock private ProductRepository productRepository;
   @Mock private ProductModelAssembler productModelAssembler;
+  @Mock private ProductDetailsModelAssembler productDetailsModelAssembler;
   @Mock private CategoryModelAssembler categoryModelAssembler;
   @Mock private CategoryRepository categoryRepository;
   @Mock private ImageRepository imageRepository;
@@ -147,6 +152,59 @@ class ProductServiceImplTest {
     // then
     thenThrownBy(() -> productService.findById(1L)).isInstanceOf(ProductNotFoundException.class);
     verifyNoInteractions(productModelAssembler);
+  }
+
+  @Test
+  void shouldFindBySlug() {
+    // given
+    given(productRepository.findBySlug("product_1")).willReturn(Optional.of(product1));
+    given(productModelAssembler.toModel(product1)).willReturn(productDto1);
+
+    // when
+    ProductDto response = productService.findBySlug("product_1");
+
+    // then
+    then(response).isEqualTo(productDto1);
+  }
+
+  @Test
+  void shouldNotFindBySlugWhenInvalidSlug() {
+    // given
+
+    // when
+    when(productRepository.findBySlug("product_1")).thenReturn(Optional.empty());
+
+    // then
+    thenThrownBy(() -> productService.findBySlug("product_1"))
+        .isInstanceOf(ProductNotFoundException.class);
+  }
+
+  @Test
+  void shouldGetDetailsBySlug() {
+    // given
+    BreadCrumb breadcrumb = new BreadCrumb(category.getName(), category.getPath(), null);
+    ProductDetailsDto productDetailsDto = new ProductDetailsDto(productDto1, Set.of(), breadcrumb);
+
+    given(productRepository.findBySlug("product_1")).willReturn(Optional.of(product1));
+    given(productDetailsModelAssembler.toModel(product1)).willReturn(productDetailsDto);
+
+    // when
+    ProductDetailsDto response = productService.getDetailsBySlug("product_1");
+
+    // then
+    then(response).isEqualTo(productDetailsDto);
+  }
+
+  @Test
+  void shouldNotGetDetailsBySlugWhenInvalidSlug() {
+    // given
+
+    // when
+    when(productRepository.findBySlug("product_1")).thenReturn(Optional.empty());
+
+    // then
+    thenThrownBy(() -> productService.getDetailsBySlug("product_1"))
+        .isInstanceOf(ProductNotFoundException.class);
   }
 
   @Test
