@@ -20,7 +20,7 @@ To get started with the project, clone the repository and import it into your pr
 The project uses [Maven](https://maven.apache.org/) for dependency management, so you must have Maven installed on your
 system.
 
-### Environment Variables
+### Running project
 
 To run the project, you should set up environment variables for the [database](#database) and [CDN](#saving-images).
 
@@ -31,6 +31,12 @@ mvn spring-boot:run
 ```
 
 The application will start up and listen for requests on <http://localhost:8080>.
+
+It is possible to start the project using Docker with following command:
+
+```
+mvn clean install && docker-compose up
+```
 
 ## API Endpoints
 
