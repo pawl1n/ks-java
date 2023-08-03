@@ -9,6 +9,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -40,7 +42,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
-        run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.organization=pawl1n
-          -Dsonar.projectKey=pawl1n_ks-java
+        run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Pcoverage
+      - name: Add coverage to PR
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          paths: ${{ github.workspace }}/target/site/jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 40
+          min-coverage-changed-files: 60
+          title: '# :lobster: Coverage Report'
+          pass-emoji: ':green_circle:'
+          fail-emoji: ':red_circle:'
+          update-comment: true
