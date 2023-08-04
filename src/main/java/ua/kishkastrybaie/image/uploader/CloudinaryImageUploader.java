@@ -45,13 +45,12 @@ public class CloudinaryImageUploader implements ImageUploader {
     options.put("eager", List.of(transformation));
 
     try {
-      Map<?, ?> res = cloudinary.uploader().upload(tempFile, options);
+      byte[] decodedBytes = Base64.getDecoder().decode(base64encodedImage);
+      Map<?, ?> res = cloudinary.uploader().upload(decodedBytes, options);
 
       log.info("Uploaded file: {}", res);
 
-      Files.delete(tempFile.toPath());
-
-      if (res.get("eager") instanceof ArrayList<?> eagerMapArray) {
+      if (res.get("eager") instanceof List<?> eagerMapArray) {
         for (var eagerItem : eagerMapArray) {
           if (eagerItem instanceof Map<?, ?> eagerMap
               && eagerMap.get("format") instanceof String format
@@ -62,24 +61,6 @@ public class CloudinaryImageUploader implements ImageUploader {
       }
 
       return new URL(res.get("url").toString());
-
-    } catch (IOException exception) {
-      throw new ImageUploadException(exception.getMessage());
-    }
-  }
-
-  private File getTempFile(String base64encodedImage, String name) {
-    byte[] decodedBytes = Base64.getDecoder().decode(base64encodedImage);
-
-    try {
-      FileAttribute<Set<PosixFilePermission>> permissions =
-          PosixFilePermissions.asFileAttribute(EnumSet.of(OWNER_READ, OWNER_WRITE));
-
-      Path tempFilePath = Files.createTempFile("", name, permissions);
-      File tempFile = tempFilePath.toFile();
-
-      Files.write(tempFilePath, decodedBytes);
-      return tempFile;
 
     } catch (IOException exception) {
       throw new ImageUploadException(exception.getMessage());
