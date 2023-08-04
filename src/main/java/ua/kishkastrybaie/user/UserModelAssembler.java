@@ -18,8 +18,8 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
   public UserDto toModel(@NonNull User user) {
     return userMapper
         .toDto(user)
-        .add(linkTo(methodOn(UserController.class).getCurrentUser()).withSelfRel())
+        .add(linkTo(methodOn(UserController.class).getCurrentUser(user)).withSelfRel())
         .add(
-            linkTo(methodOn(UserController.class).changePassword(null)).withRel("change-password"));
+            linkTo(methodOn(UserController.class).changePassword(user, null)).withRel("change-password"));
   }
 }

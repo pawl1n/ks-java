@@ -1,5 +1,8 @@
 package ua.kishkastrybaie.image.uploader;
 
+import static java.nio.file.attribute.PosixFilePermission.OWNER_READ;
+import static java.nio.file.attribute.PosixFilePermission.OWNER_WRITE;
+
 import com.cloudinary.Cloudinary;
 import com.cloudinary.EagerTransformation;
 import java.io.File;
@@ -7,6 +10,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -84,7 +90,10 @@ public class CloudinaryImageUploader implements ImageUploader {
     byte[] decodedBytes = Base64.getDecoder().decode(base64encodedImage);
 
     try {
-      Path tempFilePath = Files.createTempFile("", name);
+      FileAttribute<Set<PosixFilePermission>> permissions =
+          PosixFilePermissions.asFileAttribute(EnumSet.of(OWNER_READ, OWNER_WRITE));
+
+      Path tempFilePath = Files.createTempFile("", name, permissions);
       File tempFile = tempFilePath.toFile();
 
       Files.write(tempFilePath, decodedBytes);

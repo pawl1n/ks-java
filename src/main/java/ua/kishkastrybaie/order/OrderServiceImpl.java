@@ -18,7 +18,6 @@ import ua.kishkastrybaie.order.status.OrderStatus;
 import ua.kishkastrybaie.product.item.ProductItem;
 import ua.kishkastrybaie.product.item.ProductItemNotFoundException;
 import ua.kishkastrybaie.product.item.ProductItemRepository;
-import ua.kishkastrybaie.shared.AuthorizationService;
 import ua.kishkastrybaie.user.User;
 
 @Service
@@ -27,7 +26,6 @@ public class OrderServiceImpl implements OrderService {
   private final OrderRepository orderRepository;
   private final PagedResourcesAssembler<Order> pagedResourcesAssembler;
   private final OrderModelAssembler orderModelAssembler;
-  private final AuthorizationService authorizationService;
   private final ProductItemRepository productItemRepository;
 
   @Override
@@ -39,10 +37,7 @@ public class OrderServiceImpl implements OrderService {
   @Override
   @Transactional
   public CollectionModel<OrderDto> findAllByUser(Pageable pageable, User user) {
-    Page<Order> orders =
-        orderRepository.findAllByUserEmail(
-            authorizationService.getAuthenticatedUser().getEmail(), pageable);
-
+    Page<Order> orders = orderRepository.findAllByUserEmail(user.getEmail(), pageable);
     return pagedResourcesAssembler.toModel(orders, orderModelAssembler);
   }
 
