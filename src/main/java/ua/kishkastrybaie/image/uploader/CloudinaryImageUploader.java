@@ -1,27 +1,19 @@
 package ua.kishkastrybaie.image.uploader;
 
-import static java.nio.file.attribute.PosixFilePermission.OWNER_READ;
-import static java.nio.file.attribute.PosixFilePermission.OWNER_WRITE;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.EagerTransformation;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.util.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
 @Slf4j
-@EnableConfigurationProperties(CloudinaryImageUploaderProperties.class)
+@RequiredArgsConstructor
 public class CloudinaryImageUploader implements ImageUploader {
 
   private static final int IMAGE_WIDTH = 150;
@@ -30,14 +22,6 @@ public class CloudinaryImageUploader implements ImageUploader {
   private static final String IMAGE_FORMAT = "webp";
 
   private final Cloudinary cloudinary;
-
-  public CloudinaryImageUploader(CloudinaryImageUploaderProperties properties) {
-    Map<String, String> config = new HashMap<>();
-    config.put("cloud_name", properties.getCloudName());
-    config.put("api_key", properties.getApiKey());
-    config.put("api_secret", properties.getApiSecret());
-    cloudinary = new Cloudinary(config);
-  }
 
   @Override
   public URL upload(String base64encodedImage, String filename) {
@@ -59,8 +43,6 @@ public class CloudinaryImageUploader implements ImageUploader {
     Map<String, Object> options = new HashMap<>();
     options.put("public_id", publicId);
     options.put("eager", List.of(transformation));
-
-    File tempFile = getTempFile(base64encodedImage, filename);
 
     try {
       Map<?, ?> res = cloudinary.uploader().upload(tempFile, options);
