@@ -15,7 +15,6 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDto getUserDetails(User user) {
-
     return userModelAssembler.toModel(user);
   }
 
