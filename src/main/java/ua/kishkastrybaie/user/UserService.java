@@ -3,9 +3,9 @@ package ua.kishkastrybaie.user;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService extends UserDetailsService {
-  UserDto getCurrentUser();
+  UserDto getUserDetails(User user);
 
-  UserDto update(UserRequestDto userRequestDto);
+  UserDto update(User user, UserRequestDto userRequestDto);
 
-  UserDto changePassword(ChangePasswordRequest changePasswordRequest);
+  UserDto changePassword(User user, ChangePasswordRequest changePasswordRequest);
 }

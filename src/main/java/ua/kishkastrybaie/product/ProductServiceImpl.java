@@ -13,7 +13,6 @@ import ua.kishkastrybaie.category.*;
 import ua.kishkastrybaie.image.*;
 import ua.kishkastrybaie.product.details.ProductDetailsDto;
 import ua.kishkastrybaie.product.details.ProductDetailsModelAssembler;
-import ua.kishkastrybaie.shared.AuthorizationService;
 import ua.kishkastrybaie.shared.SlugService;
 
 @Service
@@ -25,19 +24,13 @@ public class ProductServiceImpl implements ProductService {
   private final ProductDetailsModelAssembler productDetailsModelAssembler;
   private final PagedResourcesAssembler<Product> pagedResourcesAssembler;
   private final ImageModelAssembler imageModelAssembler;
-  private final AuthorizationService authorizationService;
   private final CategoryRepository categoryRepository;
   private final ImageRepository imageRepository;
 
   @Override
   public CollectionModel<ProductDto> findAll(Pageable pageable) {
-    if (authorizationService.isAdmin()) {
-      return pagedResourcesAssembler.toModel(
-          productRepository.findAll(pageable), productModelAssembler);
-    }
-
     return pagedResourcesAssembler.toModel(
-        productRepository.findAllByProductItemsIsNotNull(pageable), productModelAssembler);
+        productRepository.findAll(pageable), productModelAssembler);
   }
 
   @Override

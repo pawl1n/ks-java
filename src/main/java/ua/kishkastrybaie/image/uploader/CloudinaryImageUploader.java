@@ -1,21 +1,19 @@
 package ua.kishkastrybaie.image.uploader;
 
+
 import com.cloudinary.Cloudinary;
 import com.cloudinary.EagerTransformation;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
 @Slf4j
-@EnableConfigurationProperties(CloudinaryImageUploaderProperties.class)
+@RequiredArgsConstructor
 public class CloudinaryImageUploader implements ImageUploader {
 
   private static final int IMAGE_WIDTH = 150;
@@ -24,14 +22,6 @@ public class CloudinaryImageUploader implements ImageUploader {
   private static final String IMAGE_FORMAT = "webp";
 
   private final Cloudinary cloudinary;
-
-  public CloudinaryImageUploader(CloudinaryImageUploaderProperties properties) {
-    Map<String, String> config = new HashMap<>();
-    config.put("cloud_name", properties.getCloudName());
-    config.put("api_key", properties.getApiKey());
-    config.put("api_secret", properties.getApiSecret());
-    cloudinary = new Cloudinary(config);
-  }
 
   @Override
   public URL upload(String base64encodedImage, String filename) {
@@ -54,16 +44,13 @@ public class CloudinaryImageUploader implements ImageUploader {
     options.put("public_id", publicId);
     options.put("eager", List.of(transformation));
 
-    File tempFile = getTempFile(base64encodedImage, filename);
-
     try {
-      Map<?, ?> res = cloudinary.uploader().upload(tempFile, options);
+      byte[] decodedBytes = Base64.getDecoder().decode(base64encodedImage);
+      Map<?, ?> res = cloudinary.uploader().upload(decodedBytes, options);
 
       log.info("Uploaded file: {}", res);
 
-      Files.delete(tempFile.toPath());
-
-      if (res.get("eager") instanceof ArrayList<?> eagerMapArray) {
+      if (res.get("eager") instanceof List<?> eagerMapArray) {
         for (var eagerItem : eagerMapArray) {
           if (eagerItem instanceof Map<?, ?> eagerMap
               && eagerMap.get("format") instanceof String format
@@ -74,21 +61,6 @@ public class CloudinaryImageUploader implements ImageUploader {
       }
 
       return new URL(res.get("url").toString());
-
-    } catch (IOException exception) {
-      throw new ImageUploadException(exception.getMessage());
-    }
-  }
-
-  private File getTempFile(String base64encodedImage, String name) {
-    byte[] decodedBytes = Base64.getDecoder().decode(base64encodedImage);
-
-    try {
-      Path tempFilePath = Files.createTempFile("", name);
-      File tempFile = tempFilePath.toFile();
-
-      Files.write(tempFilePath, decodedBytes);
-      return tempFile;
 
     } catch (IOException exception) {
       throw new ImageUploadException(exception.getMessage());

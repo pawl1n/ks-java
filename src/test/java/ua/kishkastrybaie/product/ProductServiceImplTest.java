@@ -27,7 +27,6 @@ import ua.kishkastrybaie.image.Image;
 import ua.kishkastrybaie.image.ImageRepository;
 import ua.kishkastrybaie.product.details.ProductDetailsDto;
 import ua.kishkastrybaie.product.details.ProductDetailsModelAssembler;
-import ua.kishkastrybaie.shared.AuthorizationService;
 import ua.kishkastrybaie.shared.BreadCrumb;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +45,6 @@ class ProductServiceImplTest {
   @Mock private CategoryRepository categoryRepository;
   @Mock private ImageRepository imageRepository;
   @Mock private PagedResourcesAssembler<Product> pagedResourcesAssembler;
-  @Mock private AuthorizationService authorizationService;
   @InjectMocks private ProductServiceImpl productService;
 
   @BeforeEach
@@ -97,28 +95,7 @@ class ProductServiceImplTest {
     PagedModel<ProductDto> productDtoCollectionModel =
         PagedModel.of(List.of(productDto1, productDto2), new PagedModel.PageMetadata(5, 0, 2));
 
-    given(authorizationService.isAdmin()).willReturn(true);
     given(productRepository.findAll(PageRequest.ofSize(5))).willReturn(products);
-    given(pagedResourcesAssembler.toModel(products, productModelAssembler))
-        .willReturn(productDtoCollectionModel);
-
-    // when
-    CollectionModel<ProductDto> response = productService.findAll(PageRequest.ofSize(5));
-
-    // then
-    then(response).hasSize(2).usingRecursiveComparison().isEqualTo(productDtoCollectionModel);
-  }
-
-  @Test
-  void shouldFindAllWhenIsNotAdmin() {
-    // given
-    Page<Product> products = new PageImpl<>(List.of(product1, product2));
-    PagedModel<ProductDto> productDtoCollectionModel =
-        PagedModel.of(List.of(productDto1, productDto2), new PagedModel.PageMetadata(5, 0, 2));
-
-    given(authorizationService.isAdmin()).willReturn(false);
-    given(productRepository.findAllByProductItemsIsNotNull(PageRequest.ofSize(5)))
-        .willReturn(products);
     given(pagedResourcesAssembler.toModel(products, productModelAssembler))
         .willReturn(productDtoCollectionModel);
 
