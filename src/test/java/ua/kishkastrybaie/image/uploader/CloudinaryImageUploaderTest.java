@@ -99,6 +99,25 @@ class CloudinaryImageUploaderTest {
   }
 
   @Test
+  void shouldSaveInDefaultFormatWhenIncorrectFormatInResponse() throws IOException {
+    // given
+    String base64encodedImage = "base64encodedImage";
+    String filename = "filename";
+
+    Map<?, ?> expectedResponse =
+            Map.of("eager", List.of(Map.of("format", "not webp")), "url", "https://google.com/");
+
+    given(cloudinary.uploader()).willReturn(uploader);
+    given(uploader.upload(any(byte[].class), anyMap())).willReturn(expectedResponse);
+
+    // when
+    URL url = imageUploader.upload(base64encodedImage, filename);
+
+    // then
+    then(url).isEqualTo(new URL("https://google.com/"));
+  }
+
+  @Test
   void shouldSaveInDefaultFormatWhenFormatIsNull() throws IOException {
     // given
     String base64encodedImage = "base64encodedImage";
