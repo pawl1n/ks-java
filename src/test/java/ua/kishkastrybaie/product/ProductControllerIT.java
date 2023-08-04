@@ -143,8 +143,6 @@ class ProductControllerIT {
         .when()
         .get("/api/products/slug/product-slug/details")
         .then()
-        .log()
-        .all()
         .statusCode(HttpStatus.OK.value())
         .body(
             "product.id",
