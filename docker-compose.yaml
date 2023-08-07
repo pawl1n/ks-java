@@ -15,10 +15,9 @@ services:
       - PGUSER=postgres
       - PGPORT=5432
       - PGDATABASE=ks-db
-      - PGPASSWORD=test
-      - CDN_URL=test
-      - CDN_KEY=test
-      - CDN_SECRET=test
+      - PGPASSWORD=${PGPASSWORD}
+      - CLOUDINARY_URL=${CLOUDINARY_URL}
+
   postgresql_db:
     image: "postgres:15-alpine"
     restart: always
@@ -29,6 +28,7 @@ services:
     environment:
       POSTGRES_DB: ks-db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: test
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+
 volumes:
   db-data:
