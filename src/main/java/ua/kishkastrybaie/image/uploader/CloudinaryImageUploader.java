@@ -16,8 +16,8 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class CloudinaryImageUploader implements ImageUploader {
 
-  private static final int IMAGE_WIDTH = 150;
-  private static final int IMAGE_HEIGHT = 150;
+  private static final int IMAGE_WIDTH = 300;
+  private static final int IMAGE_HEIGHT = 300;
   private static final String IMAGE_CROP = "fill";
   private static final String IMAGE_FORMAT = "webp";
 
