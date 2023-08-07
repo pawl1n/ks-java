@@ -14,4 +14,5 @@ public class CategoryDto extends RepresentationModel<CategoryDto> {
   private final Long id;
   private final String name;
   private final String path;
+  private final Long parentCategory;
 }

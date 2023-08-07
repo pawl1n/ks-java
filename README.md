@@ -193,11 +193,9 @@ All the created images are stored in the [Cloudinary](https://cloudinary.com/).
 The end client will receive a link to the saved image transformed into
 the [WebP](https://developers.google.com/speed/webp/) format.
 
-To setup Cloudinary, you should insert these environment variables:
+To set up Cloudinary, you should insert this environment variable:
 
-* `CDN_CLOUD_NAME` - Cloud name
-* `CDN_API_KEY` - Api key
-* `CDN_API_SECRET` - Api secret
+* `CLOUDINARY_URL` - Url from Cloudinary
 
 ## Testing
 

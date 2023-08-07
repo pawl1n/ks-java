@@ -42,9 +42,9 @@ class CategoryServiceImplTest {
     category2.setName("Name");
     category2.setParentCategory(category1);
 
-    categoryDto1 = new CategoryDto(1L, "Parent category", "/");
+    categoryDto1 = new CategoryDto(1L, "Parent category", "/", null);
 
-    categoryDto2 = new CategoryDto(2L, "Name", "/1/");
+    categoryDto2 = new CategoryDto(2L, "Name", "/parent-category/", 1L);
 
     categoryRequestDto = new CategoryRequestDto("Parent category", 1L, null);
   }
@@ -71,11 +71,12 @@ class CategoryServiceImplTest {
   void shouldFindRootCategories() {
     // given
     List<Category> categories = List.of(category1);
-    CollectionModel<CategoryDto> categoryDtoCollectionModel = CollectionModel.of(List.of(categoryDto1));
+    CollectionModel<CategoryDto> categoryDtoCollectionModel =
+        CollectionModel.of(List.of(categoryDto1));
 
     given(categoryRepository.findRootCategories()).willReturn(categories);
     given(categoryModelAssembler.toCollectionModel(categories))
-            .willReturn(categoryDtoCollectionModel);
+        .willReturn(categoryDtoCollectionModel);
 
     // when
     CollectionModel<CategoryDto> actual = categoryService.findRootCategories();
@@ -87,7 +88,7 @@ class CategoryServiceImplTest {
   @Test
   void shouldFindById() {
     // given
-    CategoryDto categoryDto = new CategoryDto(2L, "Name", "Parent category");
+    CategoryDto categoryDto = new CategoryDto(2L, "Name", "parent-category", 1L);
 
     given(categoryRepository.findById(any())).willReturn(Optional.of(category2));
     given(categoryModelAssembler.toModel(any())).willReturn(categoryDto);
@@ -141,7 +142,7 @@ class CategoryServiceImplTest {
     changedCategory.setName("Parent category");
     //    changedCategory.setPath("/1/");
 
-    CategoryDto changedCategoryDto = new CategoryDto(2L, "New name", "/1/");
+    CategoryDto changedCategoryDto = new CategoryDto(2L, "New name", "/parent-category/", 1L);
 
     given(categoryRepository.existsById(1L)).willReturn(true);
     given(categoryRepository.getReferenceById(1L)).willReturn(category1);

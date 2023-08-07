@@ -12,7 +12,3 @@ spring:
   devtools:
     restart:
       enabled: true
-cloudinary:
-  cloud-name: ${CDN_CLOUD_NAME}
-  api-key: ${CDN_API_KEY}
-  api-secret: ${CDN_API_SECRET}

@@ -8,6 +8,7 @@ import ua.kishkastrybaie.category.tree.CategoryTreeDto;
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
   @Mapping(target = "path", qualifiedByName = "mapToApiPath")
+  @Mapping(target = "parentCategory", source = "parentCategory.id")
   CategoryDto toDto(Category category);
 
   @Mapping(target = "descendants", qualifiedByName = "mapDescendants")
