@@ -38,6 +38,7 @@ jobs:
       - name: Run tests
         run: mvn verify -Pcoverage
       - name: Analyze
+        if: ${{ github.actor != 'dependabot[bot]' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -45,6 +46,7 @@ jobs:
         run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
       - name: Add coverage to PR
         uses: madrapps/jacoco-report@v1.6.1
+        if: ${{ github.actor != 'dependabot[bot]' }}
         with:
           paths: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
