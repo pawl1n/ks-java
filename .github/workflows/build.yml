@@ -23,6 +23,7 @@ jobs:
           cache: maven
       - name: Cache SonarQube packages
         uses: actions/cache@v3
+        if: ${{ github.actor != 'dependabot[bot]' }}
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
