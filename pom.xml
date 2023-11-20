@@ -29,7 +29,7 @@
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <asciidoctor-maven-plugin.version>2.2.4</asciidoctor-maven-plugin.version>
         <jboss-logging-annotations.version>2.2.1.Final</jboss-logging-annotations.version>
-        <testcontainers.version>1.19.1</testcontainers.version>
+        <testcontainers.version>1.19.2</testcontainers.version>
         <icu4j.version>74.1</icu4j.version>
         <slugify.version>3.0.6</slugify.version>
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
