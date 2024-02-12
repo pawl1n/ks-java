@@ -27,7 +27,7 @@
         <rest-assured.version>5.4.0</rest-assured.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
-        <asciidoctor-maven-plugin.version>2.2.4</asciidoctor-maven-plugin.version>
+        <asciidoctor-maven-plugin.version>2.2.6</asciidoctor-maven-plugin.version>
         <jboss-logging-annotations.version>2.2.1.Final</jboss-logging-annotations.version>
         <testcontainers.version>1.19.3</testcontainers.version>
         <icu4j.version>74.2</icu4j.version>
