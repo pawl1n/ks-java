@@ -17,7 +17,7 @@
     <properties>
         <java.version>17</java.version>
         <postgresql.version>42.7.0</postgresql.version>
-        <liquibase-core.version>4.25.0</liquibase-core.version>
+        <liquibase-core.version>4.25.1</liquibase-core.version>
         <lombok.version>1.18.30</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
