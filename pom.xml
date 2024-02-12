@@ -25,7 +25,7 @@
         <cloudinary-http44.version>1.37.0</cloudinary-http44.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
         <rest-assured.version>5.4.0</rest-assured.version>
-        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <asciidoctor-maven-plugin.version>2.2.4</asciidoctor-maven-plugin.version>
         <jboss-logging-annotations.version>2.2.1.Final</jboss-logging-annotations.version>
