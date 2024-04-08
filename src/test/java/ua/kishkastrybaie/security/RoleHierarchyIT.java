@@ -36,6 +36,8 @@ class RoleHierarchyIT {
   public void setup() {
     RestAssured.port = springBootPort;
 
+    userRepository.deleteAllInBatch();
+
     User admin = new User();
     admin.setEmail("admin@admin");
     admin.setPassword(passwordEncoder.encode("administrator"));
