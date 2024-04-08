@@ -6,7 +6,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,14 +49,14 @@ class ProductServiceImplTest {
   @InjectMocks private ProductServiceImpl productService;
 
   @BeforeEach
-  void setUp() throws MalformedURLException {
+  void setUp() throws URISyntaxException, MalformedURLException {
     category = new Category();
     category.setId(1L);
     category.setName("Category 1");
 
     image = new Image();
     image.setName("image");
-    image.setUrl(new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
+    image.setUrl(new URI("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg").toURL());
 
     product1 = new Product();
     product1.setId(1L);
@@ -75,7 +76,7 @@ class ProductServiceImplTest {
             "Description 1",
             "product-1",
             new CategoryDto(1L, "Category 1", null, null, null),
-            new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
+            new URI("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg").toURL());
 
     productDto2 = new ProductDto(2L, "Product 2", null, null, null, null);
 
@@ -84,7 +85,7 @@ class ProductServiceImplTest {
             "Product 1",
             "Description 1",
             1L,
-            new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"),
+            new URI("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg").toURL(),
             null);
   }
 
@@ -209,7 +210,7 @@ class ProductServiceImplTest {
   }
 
   @Test
-  void shouldReplace() throws MalformedURLException {
+  void shouldReplace() throws URISyntaxException, MalformedURLException {
     // given
     Product changedProduct = new Product();
     changedProduct.setId(2L);
@@ -225,7 +226,7 @@ class ProductServiceImplTest {
             "Description 1",
             "product-1",
             new CategoryDto(1L, "Category 1", null, null, null),
-            new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
+            new URI("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg").toURL());
 
     given(categoryRepository.existsById(1L)).willReturn(true);
     given(categoryRepository.getReferenceById(1L)).willReturn(category);

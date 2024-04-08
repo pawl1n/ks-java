@@ -23,7 +23,6 @@ import org.springframework.hateoas.PagedModel;
 import ua.kishkastrybaie.category.Category;
 import ua.kishkastrybaie.image.Image;
 import ua.kishkastrybaie.order.item.OrderItem;
-import ua.kishkastrybaie.order.item.OrderItemDto;
 import ua.kishkastrybaie.order.item.OrderItemQuantityOutOfBoundsException;
 import ua.kishkastrybaie.order.item.OrderItemRequestDto;
 import ua.kishkastrybaie.order.payment.type.PaymentType;
@@ -89,9 +88,6 @@ class OrderServiceImplTest {
     orderItem2.setQuantity(2);
     orderItem2.setOrder(order);
     orderItem2.setPrice(40.0);
-
-    OrderItemDto orderItemDto1 = new OrderItemDto(1L, null, null, 1, 10.0, "Product 1");
-    OrderItemDto orderItemDto2 = new OrderItemDto(2L, null, null, 2, 40.0, "Product 2");
 
     order = new Order();
     order.setId(1L);
