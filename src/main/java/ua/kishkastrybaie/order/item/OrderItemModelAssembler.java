@@ -26,7 +26,8 @@ public class OrderItemModelAssembler
             linkTo(
                     methodOn(ProductController.class)
                         .one(entity.getProductItem().getProduct().getId()))
-                .withRel("productItem"));
+                .withRel("productItem"))
+            .add(linkTo(methodOn(OrderController.class).one(entity.getOrder().getId())).withRel("order"));
   }
 
   @Override
@@ -34,7 +35,6 @@ public class OrderItemModelAssembler
   public CollectionModel<OrderItemDto> toCollectionModel(
       @NonNull Iterable<? extends OrderItem> entities) {
     return RepresentationModelAssembler.super
-        .toCollectionModel(entities)
-        .add(linkTo(methodOn(OrderController.class).all(null)).withSelfRel());
+        .toCollectionModel(entities);
   }
 }

@@ -116,7 +116,7 @@ class OrderServiceImplTest {
             ShippingMethod.PICKUP,
             "User Test",
             "380111111111",
-            Set.of(orderItemDto1, orderItemDto2));
+            "Product 1, Product 2");
 
     OrderItemRequestDto orderItemRequestDto1 = new OrderItemRequestDto(1L, 1);
     OrderItemRequestDto orderItemRequestDto2 = new OrderItemRequestDto(2L, 2);

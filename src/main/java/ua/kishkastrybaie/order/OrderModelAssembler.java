@@ -8,6 +8,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import ua.kishkastrybaie.order.item.OrderItemController;
 
 @Component
 @RequiredArgsConstructor
@@ -19,7 +20,8 @@ public class OrderModelAssembler implements RepresentationModelAssembler<Order, 
   public OrderDto toModel(@NonNull Order entity) {
     return orderMapper
         .toDto(entity)
-        .add(linkTo(methodOn(OrderController.class).one(entity.getId())).withSelfRel());
+        .add(linkTo(methodOn(OrderController.class).one(entity.getId())).withSelfRel())
+        .add(linkTo(methodOn(OrderItemController.class).all(entity.getId(), null)).withRel("items"));
   }
 
   @Override

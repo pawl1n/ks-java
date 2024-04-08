@@ -1,11 +1,9 @@
 package ua.kishkastrybaie.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.util.Set;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
-import ua.kishkastrybaie.order.item.OrderItemDto;
 import ua.kishkastrybaie.order.payment.type.PaymentType;
 import ua.kishkastrybaie.order.shipping.method.ShippingMethod;
 import ua.kishkastrybaie.order.status.OrderStatus;
@@ -25,5 +23,5 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     private ShippingMethod shippingMethod;
     private String fullName;
     private String phoneNumber;
-    private Set<OrderItemDto> items;
+    private String description;
 }

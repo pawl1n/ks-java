@@ -1,7 +1,12 @@
 package ua.kishkastrybaie.order;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.mapstruct.*;
+import ua.kishkastrybaie.order.item.OrderItem;
 import ua.kishkastrybaie.order.item.OrderItemModelAssembler;
+import ua.kishkastrybaie.product.Product;
+import ua.kishkastrybaie.product.item.ProductItem;
 
 @Mapper(
     componentModel = "spring",
@@ -9,5 +14,12 @@ import ua.kishkastrybaie.order.item.OrderItemModelAssembler;
 public interface OrderMapper {
   @Mapping(target = "currentStatus", source = "status")
   @Mapping(target = "fullName", source = "customerFullName")
+  @Mapping(target = "description", source = "items", qualifiedByName = "mapItems")
   OrderDto toDto(Order order);
+
+  @Named("mapItems")
+  default String mapItems(Set<OrderItem> items) {
+    return items.stream().map(OrderItem::getProductItem).map(ProductItem::getProduct).map(Product::getName).collect(
+            Collectors.joining(", "));
+  }
 }
