@@ -98,8 +98,9 @@ class ProductItemServiceImplTest {
     productItem2.setStock(2);
     productItem2.setVariationOptions(new HashSet<>());
 
-    productItemDto1 = new ProductItemDto(1L, "sample", 10.0d, 1, new HashSet<>(List.of(variationOptionDto)));
-    productItemDto2 = new ProductItemDto(2L, "1111", 1000.0d, 2, new HashSet<>());
+    productItemDto1 = new ProductItemDto(1L, "Name", "value", "sample", 10.0d, 1,
+                                         new HashSet<>(List.of(variationOptionDto)));
+    productItemDto2 = new ProductItemDto(2L, "Name", "value", "1111", 1000.0d, 2, new HashSet<>());
 
     productItemRequestDto1 =
         new ProductItemRequestDto(

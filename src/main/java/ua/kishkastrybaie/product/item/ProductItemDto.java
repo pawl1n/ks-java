@@ -14,6 +14,8 @@ import ua.kishkastrybaie.variation.option.VariationOptionDto;
 @Relation(itemRelation = "productItem", collectionRelation = "productItems")
 public class ProductItemDto extends RepresentationModel<ProductItemDto> {
   private Long id;
+  private String productName;
+  private String description;
   private String sku;
   private Double price;
   private Integer stock;
