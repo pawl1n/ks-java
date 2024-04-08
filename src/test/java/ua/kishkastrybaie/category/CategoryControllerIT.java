@@ -31,6 +31,8 @@ class CategoryControllerIT {
   public void setup() {
     RestAssured.port = springBootPort;
 
+    userRepository.deleteAllInBatch();
+
     User user = new User();
     user.setEmail("admin@admin");
     user.setPassword(passwordEncoder.encode("admin"));

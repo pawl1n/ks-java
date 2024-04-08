@@ -75,7 +75,7 @@ public class CategoryServiceImpl implements CategoryService {
   public CategoryDto create(CategoryRequestDto categoryRequestDto) {
     Category category = new Category();
     category.setName(categoryRequestDto.name());
-    category.setSlug(generateSlug(category));
+    category.setSlug(generateSlug(categoryRequestDto));
 
     Category parentCategory = getCategory(categoryRequestDto.parentCategory());
     category.setParentCategory(parentCategory);
@@ -100,7 +100,7 @@ public class CategoryServiceImpl implements CategoryService {
 
                   c.setName(categoryRequestDto.name());
                   c.setParentCategory(parentCategory);
-                  c.setSlug(generateSlug(c));
+                  c.setSlug(generateSlug(categoryRequestDto));
                   return categoryRepository.save(c);
                 })
             .orElseThrow(() -> new CategoryNotFoundException(id));
@@ -127,14 +127,11 @@ public class CategoryServiceImpl implements CategoryService {
     return null;
   }
 
-  private String generateSlug(Category category) {
-    StringBuilder sb = new StringBuilder();
-    if (category.getParentCategory() != null) {
-      sb.append(category.getParentCategory().getSlug()).append("/");
+  private String generateSlug(CategoryRequestDto requestDto) {
+    if (requestDto.slug() != null && !requestDto.slug().isBlank()) {
+      return SlugService.slugify(requestDto.slug());
     }
 
-    sb.append(category.getName());
-
-    return SlugService.slugify(sb.toString());
+    return SlugService.slugify(requestDto.name());
   }
 }
