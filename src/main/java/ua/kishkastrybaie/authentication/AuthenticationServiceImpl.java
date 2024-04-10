@@ -1,6 +1,5 @@
 package ua.kishkastrybaie.authentication;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,7 +24,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       TokenService tokenService,
       AuthenticationManager authenticationManager,
       PasswordEncoder passwordEncoder,
-      @Qualifier("refreshToken") JwtAuthenticationProvider jwtAuthenticationProvider) {
+      JwtAuthenticationProvider jwtAuthenticationProvider) {
     this.userRepository = userRepository;
     this.tokenService = tokenService;
     this.authenticationManager = authenticationManager;

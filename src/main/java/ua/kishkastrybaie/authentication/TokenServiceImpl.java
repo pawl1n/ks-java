@@ -3,7 +3,6 @@ package ua.kishkastrybaie.authentication;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -17,10 +16,9 @@ public class TokenServiceImpl implements TokenService {
   private final JwtEncoder accessTokenEncoder;
   private final JwtEncoder refreshTokenEncoder;
 
-  public TokenServiceImpl(
-      JwtEncoder accessTokenEncoder, @Qualifier("refreshToken") JwtEncoder refreshTokenEncoder) {
+  public TokenServiceImpl(JwtEncoder accessTokenEncoder, JwtEncoder jwtRefreshTokenEncoder) {
     this.accessTokenEncoder = accessTokenEncoder;
-    this.refreshTokenEncoder = refreshTokenEncoder;
+    this.refreshTokenEncoder = jwtRefreshTokenEncoder;
   }
 
   private String generateAccessToken(Authentication authentication) {

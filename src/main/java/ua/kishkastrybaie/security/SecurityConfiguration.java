@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -127,19 +126,16 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  @Qualifier("refreshToken")
   JwtEncoder jwtRefreshTokenEncoder() {
     return new NimbusJwtEncoder(keyUtils.getRefreshTokenJwkSource());
   }
 
   @Bean
-  @Qualifier("refreshToken")
   JwtDecoder jwtRefreshTokenDecoder() {
     return NimbusJwtDecoder.withPublicKey(keyUtils.getRefreshTokenPublicKey()).build();
   }
 
   @Bean
-  @Qualifier("refreshToken")
   JwtAuthenticationProvider jwtAuthenticationProvider() {
     JwtAuthenticationProvider jwtAuthenticationProvider =
         new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
