@@ -24,10 +24,6 @@ public class ProductItem {
 
   @ManyToOne private Product product;
 
-  @Column private String sku;
-
-  @Column private Double price;
-
   @Column private Integer stock;
 
   @ManyToMany(fetch = FetchType.EAGER)

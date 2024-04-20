@@ -71,13 +71,12 @@ class OrderControllerIT {
     product.setName("product");
     product.setDescription("description");
     product.setSlug("product");
+    product.setPrice(100.0);
     product = productRepository.save(product);
 
     ProductItem productItem = new ProductItem();
     productItem.setProduct(product);
     productItem.setStock(10);
-    productItem.setPrice(100.0);
-    productItem.setSku("sku");
     productItem = productItemRepository.save(productItem);
 
     Order order = new Order();

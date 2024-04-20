@@ -73,7 +73,7 @@ class RoleHierarchyIT {
 
   @Test
   void shouldAccessAdminEndpointWhenAdmin() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null, null);
 
     RestAssured.given()
         .body(categoryRequestDto)
@@ -88,7 +88,7 @@ class RoleHierarchyIT {
 
   @Test
   void shouldNotAccessAdminEndpointWhenUser() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null, null);
 
     RestAssured.given()
         .body(categoryRequestDto)
@@ -103,7 +103,7 @@ class RoleHierarchyIT {
 
   @Test
   void shouldNotAccessAdminEndpointWhenUnauthenticated() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null, null);
 
     RestAssured.given()
         .body(categoryRequestDto)

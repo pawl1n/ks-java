@@ -58,21 +58,21 @@ class OrderServiceImplTest {
     product1.setDescription("Description 1");
     product1.setCategory(category);
     product1.setMainImage(new Image());
+    product1.setPrice(10.0);
 
     Product product2 = new Product();
     product2.setId(2L);
     product2.setName("Product 2");
+    product2.setPrice(20.0);
 
     productItem1 = new ProductItem();
     productItem1.setId(1L);
     productItem1.setProduct(product1);
-    productItem1.setPrice(10.0);
     productItem1.setStock(10);
 
     productItem2 = new ProductItem();
     productItem2.setId(2L);
     productItem2.setProduct(product2);
-    productItem2.setPrice(20.0);
     productItem2.setStock(20);
 
     OrderItem orderItem1 = new OrderItem();

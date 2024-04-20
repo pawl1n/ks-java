@@ -34,6 +34,10 @@ public class Product {
 
   @Column private String slug;
 
+  @Column private String sku;
+
+  @Column private Double price;
+
   @ManyToOne(cascade = CascadeType.MERGE)
   private Image mainImage;
 

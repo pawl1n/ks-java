@@ -75,10 +75,12 @@ class ProductServiceImplTest {
             "Product 1",
             "Description 1",
             "product-1",
-            new CategoryDto(1L, "Category 1", null, null, null),
+            null,
+            1000.0,
+            new CategoryDto(1L, "Category 1", null, null, null, null),
             new URI("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg").toURL());
 
-    productDto2 = new ProductDto(2L, "Product 2", null, null, null, null);
+    productDto2 = new ProductDto(2L, "Product 2", null, null, null, 1000.0, null, null);
 
     productRequestDto =
         new ProductRequestDto(
@@ -86,7 +88,9 @@ class ProductServiceImplTest {
             "Description 1",
             1L,
             new URI("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg").toURL(),
-            null);
+            null,
+            null,
+            1000.0);
   }
 
   @Test
@@ -225,7 +229,9 @@ class ProductServiceImplTest {
             "Product 1",
             "Description 1",
             "product-1",
-            new CategoryDto(1L, "Category 1", null, null, null),
+            null,
+            1000.0,
+            new CategoryDto(1L, "Category 1", null, null, null, null),
             new URI("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg").toURL());
 
     given(categoryRepository.existsById(1L)).willReturn(true);
@@ -295,7 +301,7 @@ class ProductServiceImplTest {
   @Test
   void shouldGetProductCategory() {
     // given
-    CategoryDto categoryDto = new CategoryDto(1L, "Category 1", null, null, null);
+    CategoryDto categoryDto = new CategoryDto(1L, "Category 1", null, null, null, null);
     given(productRepository.findById(1L)).willReturn(Optional.of(product1));
     given(categoryModelAssembler.toModel(category)).willReturn(categoryDto);
 

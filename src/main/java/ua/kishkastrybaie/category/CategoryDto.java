@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
+import ua.kishkastrybaie.variation.VariationDto;
+
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -16,4 +19,5 @@ public class CategoryDto extends RepresentationModel<CategoryDto> {
   private final String path;
   private final Long parentCategory;
   private final String slug;
+  Set<VariationDto> variations;
 }

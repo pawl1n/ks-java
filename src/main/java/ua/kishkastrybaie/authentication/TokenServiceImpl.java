@@ -3,6 +3,9 @@ package ua.kishkastrybaie.authentication;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+
+import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -12,14 +15,10 @@ import org.springframework.stereotype.Service;
 import ua.kishkastrybaie.user.User;
 
 @Service
+@RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
-  private final JwtEncoder accessTokenEncoder;
-  private final JwtEncoder refreshTokenEncoder;
-
-  public TokenServiceImpl(JwtEncoder accessTokenEncoder, JwtEncoder jwtRefreshTokenEncoder) {
-    this.accessTokenEncoder = accessTokenEncoder;
-    this.refreshTokenEncoder = jwtRefreshTokenEncoder;
-  }
+  @Resource private final JwtEncoder jwtAccessTokenEncoder;
+  @Resource private final JwtEncoder jwtRefreshTokenEncoder;
 
   private String generateAccessToken(Authentication authentication) {
     Instant now = Instant.now();
@@ -31,7 +30,7 @@ public class TokenServiceImpl implements TokenService {
             .subject(authentication.getName())
             .build();
 
-    return accessTokenEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    return jwtAccessTokenEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
   }
 
   private String generateRefreshToken(Authentication authentication) {
@@ -44,7 +43,7 @@ public class TokenServiceImpl implements TokenService {
             .subject(authentication.getName())
             .build();
 
-    return refreshTokenEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    return jwtRefreshTokenEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
   }
 
   @Override

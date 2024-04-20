@@ -16,8 +16,6 @@ public class ProductItemDto extends RepresentationModel<ProductItemDto> {
   private Long id;
   private String productName;
   private String description;
-  private String sku;
-  private Double price;
   private Integer stock;
   private Set<VariationOptionDto> variationOptions;
 }

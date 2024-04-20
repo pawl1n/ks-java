@@ -9,6 +9,5 @@ import ua.kishkastrybaie.product.item.ProductItemMapper;
     uses = {ProductItemMapper.class})
 public interface OrderItemMapper {
   @Mapping(target = "productName", source = "productItem.product.name")
-  @Mapping(target = "sku", source = "productItem.sku")
   OrderItemDto toDto(OrderItem orderItem);
 }

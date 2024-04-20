@@ -38,8 +38,9 @@ class ProductMapperTest {
     product.setDescription("description");
     product.setCategory(category);
     product.setMainImage(image);
+    product.setPrice(1000.0);
 
-    CategoryDto categoryDto = new CategoryDto(1L, "category", null, null, null);
+    CategoryDto categoryDto = new CategoryDto(1L, "category", null, null, null, null);
 
     // when
     when(categoryMapper.toDto(category)).thenReturn(categoryDto);
@@ -53,6 +54,8 @@ class ProductMapperTest {
                 "name",
                 "description",
                 null,
+                null,
+                1000.0,
                 categoryDto,
                 new URI("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg").toURL()));
   }

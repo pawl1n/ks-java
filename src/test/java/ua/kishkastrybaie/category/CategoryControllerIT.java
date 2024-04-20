@@ -148,7 +148,7 @@ class CategoryControllerIT {
 
   @Test
   void shouldNotSaveWhenNotAuthenticated() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null, null);
 
     given()
         .body(categoryRequestDto)
@@ -161,7 +161,7 @@ class CategoryControllerIT {
 
   @Test
   void shouldNotSaveWhenInvalidParentCategory() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 1L, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 1L, null, null);
 
     given()
         .auth()
@@ -177,7 +177,7 @@ class CategoryControllerIT {
 
   @Test
   void shouldSave() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null, null);
 
     given()
         .auth()
@@ -192,7 +192,7 @@ class CategoryControllerIT {
 
   @Test
   void shouldNotReplaceWhenNotAuthenticated() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null, null);
 
     given()
         .body(categoryRequestDto)
@@ -205,7 +205,7 @@ class CategoryControllerIT {
 
   @Test
   void shouldNotReplaceWhenProductDoesNotExist() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", null, null, null);
 
     given()
         .auth()
@@ -227,7 +227,7 @@ class CategoryControllerIT {
                   values (1, 'category', 'category');
                   """)
   void shouldReplace() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("changed", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("changed", null, null, null);
 
     given()
         .auth()
@@ -281,7 +281,7 @@ class CategoryControllerIT {
                   (3, 'grandchildren', 2, 'grandchildren');
                   """)
   void shouldNotMoveCategoryWhenMoveToDescendant() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 3L, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 3L, null, null);
 
     given()
         .auth()
@@ -304,7 +304,7 @@ class CategoryControllerIT {
                   (3, 'grandchildren', 2, 'grandchildren');
                   """)
   void shouldNotMoveCategoryWhenMoveToItself() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 1L, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("category", 1L, null, null);
 
     given()
         .auth()

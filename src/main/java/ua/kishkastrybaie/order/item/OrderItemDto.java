@@ -15,7 +15,6 @@ import ua.kishkastrybaie.product.item.ProductItemDto;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderItemDto extends RepresentationModel<OrderItemDto> {
   private Long id;
-  private String sku;
   private ProductItemDto productItem;
   private Integer quantity;
   private Double price;
