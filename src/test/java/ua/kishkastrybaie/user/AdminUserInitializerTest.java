@@ -35,7 +35,7 @@ class AdminUserInitializerTest {
                 user ->
                     user.getRole() == Role.ADMIN
                         && user.getFirstName().equals("Admin")
-                        && user.getEmail().equals("admin@admin")));
+                        && user.getEmail().equals("admin@localhost")));
   }
 
   @Test
