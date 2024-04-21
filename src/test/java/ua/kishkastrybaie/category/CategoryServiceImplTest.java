@@ -46,9 +46,9 @@ class CategoryServiceImplTest {
     category2.setName("Name");
     category2.setParentCategory(category1);
 
-    categoryDto1 = new CategoryDto(1L, "Parent category", "/", null, null, null);
+    categoryDto1 = new CategoryDto(1L, "Parent category", "/", null, null);
 
-    categoryDto2 = new CategoryDto(2L, "Name", "/parent-category/", 1L, null, null);
+    categoryDto2 = new CategoryDto(2L, "Name", "/parent-category/", 1L, null);
 
     categoryRequestDto = new CategoryRequestDto("Parent category", 1L, null, null);
   }
@@ -91,7 +91,7 @@ class CategoryServiceImplTest {
   @Test
   void shouldFindById() {
     // given
-    CategoryDto categoryDto = new CategoryDto(2L, "Name", "parent-category", 1L, null, null);
+    CategoryDto categoryDto = new CategoryDto(2L, "Name", "parent-category", 1L, null);
 
     given(categoryRepository.findById(any())).willReturn(Optional.of(category2));
     given(categoryModelAssembler.toModel(any())).willReturn(categoryDto);
@@ -145,7 +145,7 @@ class CategoryServiceImplTest {
     changedCategory.setName("Parent category");
     // changedCategory.setPath("/1/");
 
-    CategoryDto changedCategoryDto = new CategoryDto(2L, "New name", "/parent-category/", 1L, null, null);
+    CategoryDto changedCategoryDto = new CategoryDto(2L, "New name", "/parent-category/", 1L, null);
 
     given(categoryRepository.existsById(1L)).willReturn(true);
     given(categoryRepository.getReferenceById(1L)).willReturn(category1);

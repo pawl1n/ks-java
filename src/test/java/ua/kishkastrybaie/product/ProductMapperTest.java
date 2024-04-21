@@ -40,7 +40,7 @@ class ProductMapperTest {
     product.setMainImage(image);
     product.setPrice(1000.0);
 
-    CategoryDto categoryDto = new CategoryDto(1L, "category", null, null, null, null);
+    CategoryDto categoryDto = new CategoryDto(1L, "category", null, null, null);
 
     // when
     when(categoryMapper.toDto(category)).thenReturn(categoryDto);
