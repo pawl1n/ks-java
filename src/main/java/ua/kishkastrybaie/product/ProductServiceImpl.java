@@ -159,6 +159,11 @@ public class ProductServiceImpl implements ProductService {
     return imageModelAssembler.toModel(image);
   }
 
+  @Override
+  public CollectionModel<ProductDto> search(String text, Pageable pageable) {
+    return pagedResourcesAssembler.toModel(productRepository.search(text, pageable), productModelAssembler);
+  }
+
   private Category getCategory(Long id) {
     if (id != null) {
       if (!categoryRepository.existsById(id)) {

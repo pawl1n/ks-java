@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.kishkastrybaie.category.CategoryDto;
 import ua.kishkastrybaie.image.ImageDto;
 import ua.kishkastrybaie.product.details.ProductDetailsDto;
+import ua.kishkastrybaie.search.SearchRequestDto;
 
 @RestController
 @RequestMapping("/api/products")
@@ -100,5 +101,13 @@ public class ProductController {
 
     productService.deleteById(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<CollectionModel<ProductDto>> search(@PageableDefault Pageable pageable, SearchRequestDto searchRequestDto) {
+    log.info("Search products: {}", searchRequestDto.q());
+
+    CollectionModel<ProductDto> result = productService.search(searchRequestDto.q(), pageable);
+    return ResponseEntity.ok(result);
   }
 }
