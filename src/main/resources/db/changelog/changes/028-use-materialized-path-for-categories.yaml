@@ -37,7 +37,7 @@ databaseChangeLog:
                   ELSE
                       NEW.path = NEW.slug;
                   END IF;
-                  
+              
                   RETURN NEW;
               END;
               $$ LANGUAGE plpgsql;
@@ -52,17 +52,17 @@ databaseChangeLog:
               AS
               $$
               BEGIN
-                  IF OLD.parent_category_id = NEW.parent_category_id THEN
+                  IF OLD.parent_category_id = NEW.parent_category_id AND OLD.slug = NEW.slug THEN
                       RETURN NEW;
                   END IF;
-                  
+              
                   IF EXISTS(SELECT 1
                             FROM main.product_category
                             WHERE id = NEW.parent_category_id
                               AND path <@ NEW.path) THEN
                       RAISE EXCEPTION 'Invalid parent category id: Cyclic path detected';
                   END IF;
-                  
+              
                   IF NEW.parent_category_id IS NULL THEN
                       NEW.path = NEW.slug;
                   ELSE
@@ -71,17 +71,17 @@ databaseChangeLog:
                                FROM main.product_category
                                WHERE id = NEW.parent_category_id);
                   END IF;
-                  
+              
                   UPDATE main.product_category
-                  SET path = replace(path::text, OLD.path::text, (NEW.path || slug)::text)::ltree
+                  SET path = replace(path::text, OLD.path::text, NEW.path::text)::ltree
                   WHERE path > OLD.path;
-                  
+              
                   RETURN NEW;
               END;
               $$ LANGUAGE plpgsql;
               @@
               CREATE TRIGGER update_category_path
-                  AFTER UPDATE
+                  BEFORE UPDATE
                   ON main.product_category
                   FOR EACH ROW
               EXECUTE PROCEDURE main.update_category_path();

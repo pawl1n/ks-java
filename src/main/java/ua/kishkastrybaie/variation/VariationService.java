@@ -8,10 +8,11 @@ public interface VariationService {
 
   VariationDto findById(Long id);
 
+  CollectionModel<VariationDto> findAllVariationsByCategory(Long categoryId);
+
   VariationDto create(VariationRequestDto variationRequestDto);
 
   VariationDto replace(Long id, VariationRequestDto variationRequestDto);
 
   void deleteById(Long id);
-
- }
+}

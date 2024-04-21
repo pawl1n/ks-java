@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: 030-add-variations-to-categories
+      author: andrii
+      changes:
+        - createTable:
+            tableName: category_variation
+            schemaName: main
+            columns:
+              - column:
+                  name: product_category_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: category_id_FK
+                    referencedColumnNames: id
+                    referencedTableName: product_category
+                    referencedTableSchemaName: main
+                    nullable: false
+              - column:
+                  name: variation_id
+                  type: bigInt
+                  constraints:
+                    foreignKeyName: variation_id
+                    referencedColumnNames: id
+                    referencedTableSchemaName: main
+                    referencedTableName: variation
+                    nullable: false
+
+        - dropColumn:
+            tableName: product_item
+            schemaName: main
+            columns:
+              - column:
+                  name: sku
+              - column:
+                  name: price
+
+        - addColumn:
+            tableName: product
+            schemaName: main
+            columns:
+              - column:
+                  name: sku
+                  type: text
+              - column:
+                  name: price
+                  type: double
+                  defaultValue: "0"
+                  constraints:
+                    nullable: false

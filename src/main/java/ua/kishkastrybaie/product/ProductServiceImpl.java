@@ -92,6 +92,8 @@ public class ProductServiceImpl implements ProductService {
     product.setName(productRequestDto.name());
     product.setCategory(category);
     product.setMainImage(image);
+    product.setSku(productRequestDto.sku());
+    product.setPrice(productRequestDto.price());
     product.setSlug(generateSlug(productRequestDto));
 
     Product saved = productRepository.save(product);
@@ -114,6 +116,8 @@ public class ProductServiceImpl implements ProductService {
                   p.setDescription(productRequestDto.description());
                   p.setCategory(category);
                   p.setMainImage(image);
+                  p.setSku(productRequestDto.sku());
+                  p.setPrice(productRequestDto.price());
                   p.setSlug(generateSlug(productRequestDto));
                   return productRepository.save(p);
                 })

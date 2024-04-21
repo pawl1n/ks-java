@@ -13,6 +13,8 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.kishkastrybaie.category.tree.CategoryTreeDto;
+import ua.kishkastrybaie.variation.VariationDto;
+import ua.kishkastrybaie.variation.VariationService;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -20,6 +22,7 @@ import ua.kishkastrybaie.category.tree.CategoryTreeDto;
 @Slf4j
 public class CategoryController {
   private final CategoryService categoryService;
+  private final VariationService variationService;
 
   @GetMapping
   public ResponseEntity<CollectionModel<CategoryDto>> all(@PageableDefault Pageable pageable) {
@@ -70,6 +73,14 @@ public class CategoryController {
     log.info("Get category descendants by id: {}", id);
 
     CollectionModel<CategoryDto> responseDto = categoryService.findAllDescendants(id);
+    return ResponseEntity.ok(responseDto);
+  }
+
+  @GetMapping("/{id}/variations")
+  public ResponseEntity<CollectionModel<VariationDto>> variations(@PathVariable Long id) {
+    log.info("Get category variations by id: {}", id);
+
+    CollectionModel<VariationDto> responseDto = variationService.findAllVariationsByCategory(id);
     return ResponseEntity.ok(responseDto);
   }
 

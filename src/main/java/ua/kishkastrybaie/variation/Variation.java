@@ -2,8 +2,12 @@ package ua.kishkastrybaie.variation;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.Setter;
+import ua.kishkastrybaie.category.Category;
 
 @Entity
 @Table(name = "variation", schema = "main")
@@ -22,4 +26,14 @@ public class Variation implements Serializable {
 
   @Column(nullable = false)
   private String name;
+
+  @ManyToMany
+  @JoinTable(
+          name = "category_variation",
+          schema = "main",
+          joinColumns = {@JoinColumn(name = "variation_id")},
+          inverseJoinColumns = {
+                  @JoinColumn(name = "product_category_id")
+          })
+  private Set<Category> categories = new HashSet<>();
 }

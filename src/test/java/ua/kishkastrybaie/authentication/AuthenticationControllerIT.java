@@ -31,7 +31,7 @@ class AuthenticationControllerIT {
     RestAssured.port = springBootPort;
 
     User user = new User();
-    user.setEmail("admin@admin");
+    user.setEmail("admin_test@admin");
     user.setPassword(passwordEncoder.encode("admin"));
     user.setFirstName("admin");
     user.setPhoneNumber("+380501234567");
@@ -65,7 +65,7 @@ class AuthenticationControllerIT {
 
   @Test
   void shouldAuthenticate() {
-    AuthenticationRequest authenticationRequest = new AuthenticationRequest("admin@admin", "admin");
+    AuthenticationRequest authenticationRequest = new AuthenticationRequest("admin_test@admin", "admin");
     RestAssured.given()
         .body(authenticationRequest)
         .contentType(ContentType.JSON)
@@ -79,7 +79,7 @@ class AuthenticationControllerIT {
 
   @Test
   void shouldRefresh() {
-    AuthenticationRequest authenticationRequest = new AuthenticationRequest("admin@admin", "admin");
+    AuthenticationRequest authenticationRequest = new AuthenticationRequest("admin_test@admin", "admin");
     TokenDto tokens =
         RestAssured.given()
             .body(authenticationRequest)

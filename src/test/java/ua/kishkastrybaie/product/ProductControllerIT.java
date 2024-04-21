@@ -206,7 +206,7 @@ class ProductControllerIT {
   @Test
   void shouldNotSaveWhenNotAuthenticated() {
     ProductRequestDto productRequestDto =
-        new ProductRequestDto("product", "description", null, null, null);
+        new ProductRequestDto("product", "description", null, null, null, null, 1000.0);
 
     given()
         .body(productRequestDto)
@@ -220,7 +220,7 @@ class ProductControllerIT {
   @Test
   void shouldNotSaveWhenInvalidCategory() {
     ProductRequestDto productRequestDto =
-        new ProductRequestDto("product", "description", 1L, null, null);
+        new ProductRequestDto("product", "description", 1L, null, null, null, 1000.0);
 
     given()
         .auth()
@@ -237,7 +237,7 @@ class ProductControllerIT {
   @Test
   void shouldSave() {
     ProductRequestDto productRequestDto =
-        new ProductRequestDto("product", "description", null, null, null);
+        new ProductRequestDto("product", "description", null, null, null, null, 1000.0);
 
     given()
         .auth()
@@ -260,7 +260,7 @@ class ProductControllerIT {
   @Test
   void shouldNotReplaceWhenNotAuthenticated() {
     ProductRequestDto productRequestDto =
-        new ProductRequestDto("changed", "changed", null, null, null);
+        new ProductRequestDto("changed", "changed", null, null, null, null, 1000.0);
 
     given()
         .body(productRequestDto)
@@ -274,7 +274,7 @@ class ProductControllerIT {
   @Test
   void shouldNotReplaceWhenProductDoesNotExist() {
     ProductRequestDto productRequestDto =
-        new ProductRequestDto("changed", "changed", null, null, null);
+        new ProductRequestDto("changed", "changed", null, null, null, null, 1000.0);
 
     given()
         .auth()
@@ -297,7 +297,7 @@ class ProductControllerIT {
                   """)
   void shouldReplace() {
     ProductRequestDto productRequestDto =
-        new ProductRequestDto("changed", "changed", null, null, null);
+        new ProductRequestDto("changed", "changed", null, null, null, null, 1000.0);
 
     given()
         .auth()

@@ -36,6 +36,8 @@ class RoleHierarchyIT {
   public void setup() {
     RestAssured.port = springBootPort;
 
+    userRepository.deleteAllInBatch();
+
     User admin = new User();
     admin.setEmail("admin@admin");
     admin.setPassword(passwordEncoder.encode("administrator"));
@@ -71,7 +73,7 @@ class RoleHierarchyIT {
 
   @Test
   void shouldAccessAdminEndpointWhenAdmin() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null, null);
 
     RestAssured.given()
         .body(categoryRequestDto)
@@ -86,7 +88,7 @@ class RoleHierarchyIT {
 
   @Test
   void shouldNotAccessAdminEndpointWhenUser() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null, null);
 
     RestAssured.given()
         .body(categoryRequestDto)
@@ -101,7 +103,7 @@ class RoleHierarchyIT {
 
   @Test
   void shouldNotAccessAdminEndpointWhenUnauthenticated() {
-    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null);
+    CategoryRequestDto categoryRequestDto = new CategoryRequestDto("test", null, null, null);
 
     RestAssured.given()
         .body(categoryRequestDto)

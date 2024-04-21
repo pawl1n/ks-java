@@ -81,29 +81,27 @@ class ProductItemServiceImplTest {
     product.setId(1L);
     product.setMainImage(image);
     product.setName("Name");
+    product.setPrice(10.0d);
+    product.setSku("sample");
 
     productItem1 = new ProductItem();
     productItem1.setId(1L);
-    productItem1.setPrice(10.0d);
     productItem1.setProduct(product);
-    productItem1.setSku("sample");
     productItem1.setStock(1);
     productItem1.setVariationOptions(new HashSet<>(List.of(variationOption)));
 
     productItem2 = new ProductItem();
     productItem2.setId(2L);
-    productItem2.setPrice(1000.0d);
     productItem2.setProduct(product);
-    productItem2.setSku("1111");
     productItem2.setStock(2);
     productItem2.setVariationOptions(new HashSet<>());
 
-    productItemDto1 = new ProductItemDto(1L, "sample", 10.0d, 1, new HashSet<>(List.of(variationOptionDto)));
-    productItemDto2 = new ProductItemDto(2L, "1111", 1000.0d, 2, new HashSet<>());
+    productItemDto1 =
+        new ProductItemDto(1L, "Name", "value", 1, new HashSet<>(List.of(variationOptionDto)));
+    productItemDto2 = new ProductItemDto(2L, "Name", "value", 2, new HashSet<>());
 
     productItemRequestDto1 =
-        new ProductItemRequestDto(
-            10.0d, 1, "sample", new HashSet<>(List.of(variationOptionRequestDto)));
+        new ProductItemRequestDto(1, new HashSet<>(List.of(variationOptionRequestDto)));
   }
 
   @Test
@@ -197,9 +195,7 @@ class ProductItemServiceImplTest {
             productItemRepository.save(
                 argThat(
                     productItem ->
-                        productItem.getPrice().equals(productItem1.getPrice())
-                            && productItem.getProduct().equals(productItem1.getProduct())
-                            && productItem.getSku().equals(productItem1.getSku())
+                        productItem.getProduct().equals(productItem1.getProduct())
                             && productItem.getStock().equals(productItem1.getStock())
                             && productItem.getVariationOptions().size() == 1)))
         .willReturn(productItem1);
@@ -276,9 +272,7 @@ class ProductItemServiceImplTest {
                 argThat(
                     productItem ->
                         productItem.getId().equals(2L)
-                            && productItem.getPrice().equals(productItem1.getPrice())
                             && productItem.getProduct().equals(productItem1.getProduct())
-                            && productItem.getSku().equals(productItem1.getSku())
                             && productItem.getStock().equals(productItem1.getStock())
                             && productItem.getVariationOptions().size() == 1)))
         .willReturn(productItem1);

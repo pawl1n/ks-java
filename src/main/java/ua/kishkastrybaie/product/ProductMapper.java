@@ -16,11 +16,10 @@ public interface ProductMapper {
   @Mapping(source = "mainImage.url", target = "mainImage")
   ProductDto toDto(Product product);
 
-//  @Mapping(source = "mainImage.url", target = "product.mainImage")
-@Mapping(target = "product", qualifiedByName = "toDto")
-@Mapping(source = "productItems", target = "variations")
-@Mapping(target = "breadcrumbs", source = "category", qualifiedByName = "constructBreadcrumbs")
-ProductDetailsDto toDetailsDto(Product product);
+  @Mapping(target = "product", qualifiedByName = "toDto")
+  @Mapping(source = "productItems", target = "variations")
+  @Mapping(target = "breadcrumbs", source = "category", qualifiedByName = "constructBreadcrumbs")
+  ProductDetailsDto toDetailsDto(Product product);
 
   @Named("constructBreadcrumbs")
   default BreadCrumb toBreadCrumb(Category category) {

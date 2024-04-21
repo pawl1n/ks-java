@@ -17,7 +17,7 @@ import ua.kishkastrybaie.authentication.AuthenticationService;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UserControllerTest {
+class UserControllerIT {
   @LocalServerPort private int springBootPort;
 
   @Autowired private UserRepository userRepository;

@@ -9,6 +9,6 @@ public interface SlugService {
         .underscoreSeparator(true)
         .lowerCase(true)
         .build()
-        .slugify(text);
+        .slugify(text.replace('-', '_'));
   }
 }

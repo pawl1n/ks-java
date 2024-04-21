@@ -26,6 +26,11 @@ public class VariationServiceImpl implements VariationService {
   }
 
   @Override
+  public CollectionModel<VariationDto> findAllVariationsByCategory(Long categoryId) {
+    return variationModelAssembler.toCollectionModel(variationRepository.findAllByCategoriesId(categoryId));
+  }
+
+  @Override
   public VariationDto create(VariationRequestDto variationRequestDto) {
     Variation variation = new Variation();
     variation.setName(variationRequestDto.name());

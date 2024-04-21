@@ -2,9 +2,9 @@ package ua.kishkastrybaie.order.status;
 
 public enum OrderStatus {
   CREATED,
-  APPROVED,
+  CONFIRMED,
   CANCELED,
-  SENT,
+  SHIPPED,
   DELIVERED,
   COMPLETED
 }

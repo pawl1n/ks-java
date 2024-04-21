@@ -4,7 +4,8 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.Mockito.when;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +22,7 @@ class ProductMapperTest {
   @InjectMocks private ProductMapperImpl productMapper;
 
   @Test
-  void shouldMapToDto() throws MalformedURLException {
+  void shouldMapToDto() throws URISyntaxException, MalformedURLException {
     // given
     Category category = new Category();
     category.setId(1L);
@@ -29,7 +30,7 @@ class ProductMapperTest {
 
     Image image = new Image();
     image.setName("E4bu1cRXoAMRnXz.jpg");
-    image.setUrl(new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg"));
+    image.setUrl(new URI("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg").toURL());
 
     Product product = new Product();
     product.setId(1L);
@@ -37,8 +38,9 @@ class ProductMapperTest {
     product.setDescription("description");
     product.setCategory(category);
     product.setMainImage(image);
+    product.setPrice(1000.0);
 
-    CategoryDto categoryDto = new CategoryDto(1L, "category", null, null);
+    CategoryDto categoryDto = new CategoryDto(1L, "category", null, null, null);
 
     // when
     when(categoryMapper.toDto(category)).thenReturn(categoryDto);
@@ -52,7 +54,9 @@ class ProductMapperTest {
                 "name",
                 "description",
                 null,
+                null,
+                1000.0,
                 categoryDto,
-                new URL("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg")));
+                new URI("https://pbs.twimg.com/media/E4bu1cRXoAMRnXz.jpg").toURL()));
   }
 }

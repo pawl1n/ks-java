@@ -23,7 +23,6 @@ import org.springframework.hateoas.PagedModel;
 import ua.kishkastrybaie.category.Category;
 import ua.kishkastrybaie.image.Image;
 import ua.kishkastrybaie.order.item.OrderItem;
-import ua.kishkastrybaie.order.item.OrderItemDto;
 import ua.kishkastrybaie.order.item.OrderItemQuantityOutOfBoundsException;
 import ua.kishkastrybaie.order.item.OrderItemRequestDto;
 import ua.kishkastrybaie.order.payment.type.PaymentType;
@@ -59,21 +58,21 @@ class OrderServiceImplTest {
     product1.setDescription("Description 1");
     product1.setCategory(category);
     product1.setMainImage(new Image());
+    product1.setPrice(10.0);
 
     Product product2 = new Product();
     product2.setId(2L);
     product2.setName("Product 2");
+    product2.setPrice(20.0);
 
     productItem1 = new ProductItem();
     productItem1.setId(1L);
     productItem1.setProduct(product1);
-    productItem1.setPrice(10.0);
     productItem1.setStock(10);
 
     productItem2 = new ProductItem();
     productItem2.setId(2L);
     productItem2.setProduct(product2);
-    productItem2.setPrice(20.0);
     productItem2.setStock(20);
 
     OrderItem orderItem1 = new OrderItem();
@@ -89,9 +88,6 @@ class OrderServiceImplTest {
     orderItem2.setQuantity(2);
     orderItem2.setOrder(order);
     orderItem2.setPrice(40.0);
-
-    OrderItemDto orderItemDto1 = new OrderItemDto(1L, null, null, 1, 10.0, "Product 1");
-    OrderItemDto orderItemDto2 = new OrderItemDto(2L, null, null, 2, 40.0, "Product 2");
 
     order = new Order();
     order.setId(1L);
@@ -116,7 +112,7 @@ class OrderServiceImplTest {
             ShippingMethod.PICKUP,
             "User Test",
             "380111111111",
-            Set.of(orderItemDto1, orderItemDto2));
+            "Product 1, Product 2");
 
     OrderItemRequestDto orderItemRequestDto1 = new OrderItemRequestDto(1L, 1);
     OrderItemRequestDto orderItemRequestDto2 = new OrderItemRequestDto(2L, 2);

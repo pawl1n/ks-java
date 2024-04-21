@@ -65,9 +65,7 @@ public class ProductItemServiceImpl implements ProductItemService {
 
     ProductItem productItem = new ProductItem();
     productItem.setProduct(product);
-    productItem.setPrice(requestDto.price());
     productItem.setStock(requestDto.stock());
-    productItem.setSku(requestDto.sku());
     productItem.setVariationOptions(variationOptions);
 
     return productItemModelAssembler.toModel(productItemRepository.save(productItem));
@@ -88,9 +86,7 @@ public class ProductItemServiceImpl implements ProductItemService {
             .findByIdAndProductId(productItemId, productId)
             .orElseThrow(() -> new ProductItemNotFoundException(productItemId));
 
-    productItem.setPrice(requestDto.price());
     productItem.setStock(requestDto.stock());
-    productItem.setSku(requestDto.sku());
     productItem.setVariationOptions(variationOptions);
 
     return productItemModelAssembler.toModel(productItemRepository.save(productItem));

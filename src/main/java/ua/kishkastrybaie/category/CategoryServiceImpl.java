@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.kishkastrybaie.category.tree.CategoryTreeDto;
 import ua.kishkastrybaie.category.tree.CategoryTreeModelAssembler;
 import ua.kishkastrybaie.shared.SlugService;
+import ua.kishkastrybaie.variation.VariationRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +19,10 @@ public class CategoryServiceImpl implements CategoryService {
   private final CategoryModelAssembler categoryModelAssembler;
   private final PagedResourcesAssembler<Category> pagedResourcesAssembler;
   private final CategoryTreeModelAssembler categoryTreeModelAssembler;
+  private final VariationRepository variationRepository;
 
   @Override
+  @Transactional
   public CollectionModel<CategoryDto> findAll(Pageable pageable) {
     return pagedResourcesAssembler.toModel(
         categoryRepository.findAll(pageable), categoryModelAssembler);
@@ -40,6 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
+  @Transactional
   public CategoryDto findById(Long id) {
     return categoryModelAssembler.toModel(
         categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id)));
@@ -65,6 +69,7 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
+  @Transactional
   public CollectionModel<CategoryDto> findAllDescendants(Long parentCategoryId) {
     return categoryModelAssembler.toCollectionModel(
         categoryRepository.findAllDescendantsById(parentCategoryId));
@@ -75,7 +80,11 @@ public class CategoryServiceImpl implements CategoryService {
   public CategoryDto create(CategoryRequestDto categoryRequestDto) {
     Category category = new Category();
     category.setName(categoryRequestDto.name());
-    category.setSlug(generateSlug(category));
+    category.setSlug(generateSlug(categoryRequestDto));
+
+    if (categoryRequestDto.variations() != null) {
+      category.setVariations(variationRepository.findAllById(categoryRequestDto.variations()));
+    }
 
     Category parentCategory = getCategory(categoryRequestDto.parentCategory());
     category.setParentCategory(parentCategory);
@@ -100,7 +109,10 @@ public class CategoryServiceImpl implements CategoryService {
 
                   c.setName(categoryRequestDto.name());
                   c.setParentCategory(parentCategory);
-                  c.setSlug(generateSlug(c));
+                  c.setSlug(generateSlug(categoryRequestDto));
+                  if (categoryRequestDto.variations() != null) {
+                    c.setVariations(variationRepository.findAllById(categoryRequestDto.variations()));
+                  }
                   return categoryRepository.save(c);
                 })
             .orElseThrow(() -> new CategoryNotFoundException(id));
@@ -127,14 +139,11 @@ public class CategoryServiceImpl implements CategoryService {
     return null;
   }
 
-  private String generateSlug(Category category) {
-    StringBuilder sb = new StringBuilder();
-    if (category.getParentCategory() != null) {
-      sb.append(category.getParentCategory().getSlug()).append("/");
+  private String generateSlug(CategoryRequestDto requestDto) {
+    if (requestDto.slug() != null && !requestDto.slug().isBlank()) {
+      return SlugService.slugify(requestDto.slug());
     }
 
-    sb.append(category.getName());
-
-    return SlugService.slugify(sb.toString());
+    return SlugService.slugify(requestDto.name());
   }
 }

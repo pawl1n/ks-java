@@ -26,10 +26,14 @@ class CategoryServiceImplTest {
   private static CategoryDto categoryDto1;
   private static CategoryDto categoryDto2;
   private static CategoryRequestDto categoryRequestDto;
-  @Mock private CategoryModelAssembler categoryModelAssembler;
-  @Mock private CategoryRepository categoryRepository;
-  @Mock private PagedResourcesAssembler<Category> pagedResourcesAssembler;
-  @InjectMocks private CategoryServiceImpl categoryService;
+  @Mock
+  private CategoryModelAssembler categoryModelAssembler;
+  @Mock
+  private CategoryRepository categoryRepository;
+  @Mock
+  private PagedResourcesAssembler<Category> pagedResourcesAssembler;
+  @InjectMocks
+  private CategoryServiceImpl categoryService;
 
   @BeforeEach
   void setUp() {
@@ -42,19 +46,19 @@ class CategoryServiceImplTest {
     category2.setName("Name");
     category2.setParentCategory(category1);
 
-    categoryDto1 = new CategoryDto(1L, "Parent category", "/", null);
+    categoryDto1 = new CategoryDto(1L, "Parent category", "/", null, null);
 
-    categoryDto2 = new CategoryDto(2L, "Name", "/parent-category/", 1L);
+    categoryDto2 = new CategoryDto(2L, "Name", "/parent-category/", 1L, null);
 
-    categoryRequestDto = new CategoryRequestDto("Parent category", 1L, null);
+    categoryRequestDto = new CategoryRequestDto("Parent category", 1L, null, null);
   }
 
   @Test
   void shouldFindAll() {
     // given
     Page<Category> categories = new PageImpl<>(List.of(category1, category2));
-    PagedModel<CategoryDto> categoryDtoCollectionModel =
-        PagedModel.of(List.of(categoryDto1, categoryDto2), new PagedModel.PageMetadata(5, 0, 1));
+    PagedModel<CategoryDto> categoryDtoCollectionModel = PagedModel.of(List.of(categoryDto1, categoryDto2),
+        new PagedModel.PageMetadata(5, 0, 1));
 
     given(categoryRepository.findAll(PageRequest.ofSize(5))).willReturn(categories);
     given(pagedResourcesAssembler.toModel(categories, categoryModelAssembler))
@@ -71,8 +75,7 @@ class CategoryServiceImplTest {
   void shouldFindRootCategories() {
     // given
     List<Category> categories = List.of(category1);
-    CollectionModel<CategoryDto> categoryDtoCollectionModel =
-        CollectionModel.of(List.of(categoryDto1));
+    CollectionModel<CategoryDto> categoryDtoCollectionModel = CollectionModel.of(List.of(categoryDto1));
 
     given(categoryRepository.findRootCategories()).willReturn(categories);
     given(categoryModelAssembler.toCollectionModel(categories))
@@ -88,7 +91,7 @@ class CategoryServiceImplTest {
   @Test
   void shouldFindById() {
     // given
-    CategoryDto categoryDto = new CategoryDto(2L, "Name", "parent-category", 1L);
+    CategoryDto categoryDto = new CategoryDto(2L, "Name", "parent-category", 1L, null);
 
     given(categoryRepository.findById(any())).willReturn(Optional.of(category2));
     given(categoryModelAssembler.toModel(any())).willReturn(categoryDto);
@@ -118,8 +121,8 @@ class CategoryServiceImplTest {
     given(categoryRepository.existsById(1L)).willReturn(true);
     given(categoryRepository.getReferenceById(1L)).willReturn(category1);
     given(
-            categoryRepository.save(
-                argThat(category -> category.getName().equals(categoryRequestDto.name()))))
+        categoryRepository.save(
+            argThat(category -> category.getName().equals(categoryRequestDto.name()))))
         .willReturn(category2);
     given(categoryModelAssembler.toModel(category2)).willReturn(categoryDto2);
 
@@ -140,19 +143,18 @@ class CategoryServiceImplTest {
     Category changedCategory = new Category();
     changedCategory.setId(2L);
     changedCategory.setName("Parent category");
-    //    changedCategory.setPath("/1/");
+    // changedCategory.setPath("/1/");
 
-    CategoryDto changedCategoryDto = new CategoryDto(2L, "New name", "/parent-category/", 1L);
+    CategoryDto changedCategoryDto = new CategoryDto(2L, "New name", "/parent-category/", 1L, null);
 
     given(categoryRepository.existsById(1L)).willReturn(true);
     given(categoryRepository.getReferenceById(1L)).willReturn(category1);
     given(categoryRepository.findById(2L)).willReturn(Optional.of(category2));
     given(
-            categoryRepository.save(
-                argThat(
-                    category ->
-                        category.getId().equals(2L)
-                            && category.getName().equals(categoryRequestDto.name()))))
+        categoryRepository.save(
+            argThat(
+                category -> category.getId().equals(2L)
+                    && category.getName().equals(categoryRequestDto.name()))))
         .willReturn(changedCategory);
     given(categoryModelAssembler.toModel(changedCategory)).willReturn(changedCategoryDto);
 
@@ -207,8 +209,7 @@ class CategoryServiceImplTest {
   void shouldFindAllByParentCategoryId() {
     // given
     List<Category> categories = List.of(category2);
-    CollectionModel<CategoryDto> categoryDtoCollectionModel =
-        CollectionModel.of(List.of(categoryDto2));
+    CollectionModel<CategoryDto> categoryDtoCollectionModel = CollectionModel.of(List.of(categoryDto2));
 
     given(categoryRepository.findAllDescendantsById(1L)).willReturn(categories);
     given(categoryModelAssembler.toCollectionModel(categories))

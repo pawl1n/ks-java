@@ -1,12 +1,13 @@
 package ua.kishkastrybaie.category;
 
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ua.kishkastrybaie.variation.Variation;
 
 @Entity
 @Table(name = "product_category", schema = "main")
@@ -35,7 +36,15 @@ public class Category {
   private Category parentCategory;
 
   @OneToMany(mappedBy = "parentCategory")
-  private Set<Category> descendants = new HashSet<>();
+  private List<Category> descendants = new ArrayList<>();
+
+  @ManyToMany
+  @JoinTable(
+      name = "category_variation",
+      schema = "main",
+      joinColumns = {@JoinColumn(name = "product_category_id")},
+      inverseJoinColumns = {@JoinColumn(name = "variation_id")})
+  private List<Variation> variations = new ArrayList<>();
 
   @Column(name = "path", columnDefinition = "ltree", updatable = false, insertable = false)
   @Setter(AccessLevel.NONE)
