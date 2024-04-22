@@ -9,6 +9,12 @@ spring:
     url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        search:
+          backend:
+            directory:
+              root: /data/lucene-indexes/
   devtools:
     restart:
       enabled: true

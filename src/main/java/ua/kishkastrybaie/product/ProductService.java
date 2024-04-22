@@ -26,4 +26,6 @@ public interface ProductService {
   CategoryDto getProductCategory(Long id);
 
   ImageDto getProductImage(Long id);
+
+  CollectionModel<ProductDto> search(String text, Pageable pageable);
 }

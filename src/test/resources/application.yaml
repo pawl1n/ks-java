@@ -4,3 +4,9 @@ spring:
     url: jdbc:tc:postgresql:15-alpine:///ks
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        search:
+          backend:
+            directory:
+              root: ./target/test-indexes/
