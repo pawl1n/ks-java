@@ -17,8 +17,8 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 
 @Transactional
-public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
-    implements SearchRepository<T, ID> {
+public class SearchRepositoryImpl<T, I extends Serializable> extends SimpleJpaRepository<T, I>
+    implements SearchRepository<T, I> {
   private final EntityManager entityManager;
 
   public SearchRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {

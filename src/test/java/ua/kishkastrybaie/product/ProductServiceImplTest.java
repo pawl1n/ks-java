@@ -306,11 +306,11 @@ class ProductServiceImplTest {
     List<Product> products = List.of(product1, product2);
     Page<Product> page = new PageImpl<>(products);
     PagedModel<ProductDto> productDtoCollectionModel =
-            PagedModel.of(List.of(productDto1, productDto2), new PagedModel.PageMetadata(5, 0, 2));
+        PagedModel.of(List.of(productDto1, productDto2), new PagedModel.PageMetadata(5, 0, 2));
 
     given(productRepository.search("product", pageable)).willReturn(page);
     given(pagedResourcesAssembler.toModel(page, productModelAssembler))
-            .willReturn(productDtoCollectionModel);
+        .willReturn(productDtoCollectionModel);
 
     // when
     CollectionModel<ProductDto> response = productService.search("product", pageable);

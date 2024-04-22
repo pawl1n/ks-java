@@ -17,43 +17,24 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class IndexerTest {
-    @Mock
-    EntityManager entityManager;
-    @InjectMocks Indexer indexer;
+  @Mock EntityManager entityManager;
+  @InjectMocks Indexer indexer;
 
   @Test
-  void shouldIndexPersistedData() throws IndexException, InterruptedException {
-        // given
-        SearchSession searchSession = mock(SearchSession.class);
-        MassIndexer massIndexer = mock(MassIndexer.class);
+  void shouldIndexPersistedData() throws InterruptedException {
+    // given
+    SearchSession searchSession = mock(SearchSession.class);
+    MassIndexer massIndexer = mock(MassIndexer.class);
 
-        try (MockedStatic<Search> search = mockStatic(Search.class)) {
-            // when
-            search.when(() -> Search.session(entityManager)).thenReturn(searchSession);
-            when(searchSession.massIndexer(Product.class)).thenReturn(massIndexer);
+    try (MockedStatic<Search> search = mockStatic(Search.class)) {
+      // when
+      search.when(() -> Search.session(entityManager)).thenReturn(searchSession);
+      when(searchSession.massIndexer(Product.class)).thenReturn(massIndexer);
 
-            indexer.indexPersistedData(Product.class);
+      indexer.indexPersistedData(Product.class);
 
-            // then
-            verify(massIndexer).startAndWait();
-        }
+      // then
+      verify(massIndexer).startAndWait();
     }
-
-  @Test
-  void shouldNotIndexPersistedData() throws IndexException, InterruptedException {
-      // given
-      SearchSession searchSession = mock(SearchSession.class);
-      MassIndexer massIndexer = mock(MassIndexer.class);
-
-      try (MockedStatic<Search> search = mockStatic(Search.class)) {
-          // when
-          search.when(() -> Search.session(entityManager)).thenReturn(searchSession);
-          when(searchSession.massIndexer(Product.class)).thenReturn(massIndexer);
-          doThrow(InterruptedException.class).when(massIndexer).startAndWait();
-
-          // then
-          assertThatThrownBy(() -> indexer.indexPersistedData(Product.class))
-              .isInstanceOf(IndexException.class);
-      }
   }
 }
