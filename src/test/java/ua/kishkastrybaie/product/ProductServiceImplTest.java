@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
@@ -296,6 +297,26 @@ class ProductServiceImplTest {
     // then
     thenThrownBy(() -> productService.deleteById(1L)).isInstanceOf(ProductNotFoundException.class);
     verifyNoInteractions(productModelAssembler);
+  }
+
+  @Test
+  void shouldSearch() {
+    // given
+    Pageable pageable = Pageable.ofSize(5);
+    List<Product> products = List.of(product1, product2);
+    Page<Product> page = new PageImpl<>(products);
+    PagedModel<ProductDto> productDtoCollectionModel =
+            PagedModel.of(List.of(productDto1, productDto2), new PagedModel.PageMetadata(5, 0, 2));
+
+    given(productRepository.search("product", pageable)).willReturn(page);
+    given(pagedResourcesAssembler.toModel(page, productModelAssembler))
+            .willReturn(productDtoCollectionModel);
+
+    // when
+    CollectionModel<ProductDto> response = productService.search("product", pageable);
+
+    // then
+    then(response).usingRecursiveComparison().isEqualTo(productDtoCollectionModel);
   }
 
   @Test
