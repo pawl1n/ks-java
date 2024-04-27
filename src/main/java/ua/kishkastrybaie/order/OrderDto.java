@@ -21,7 +21,7 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     private OrderStatus currentStatus;
     private PaymentType paymentType;
     private ShippingMethod shippingMethod;
-    private String fullName;
+    private String customerFullName;
     private String phoneNumber;
     private String description;
 }
