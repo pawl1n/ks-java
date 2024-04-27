@@ -146,7 +146,7 @@ class OrderControllerIT {
             equalTo(100.0F),
             "shippingMethod",
             equalTo(ShippingMethod.PICKUP.toString()),
-            "fullName",
+            "customerFullName",
             equalTo("admin"),
             "address",
             equalTo("address"),
@@ -167,6 +167,7 @@ class OrderControllerIT {
             PaymentType.CASH,
             "address",
             ShippingMethod.PICKUP,
+            OrderStatus.CREATED,
             Set.of(orderItemRequestDto));
 
     given()

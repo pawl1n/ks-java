@@ -28,7 +28,7 @@ public class AdminUserInitializer implements CommandLineRunner {
 
             userRepository.save(adminUser);
 
-            log.info("Admin user created: email={}, password={}", adminUser.getEmail(), password);
+            log.info("Admin user created: userEmail={}, password={}", adminUser.getEmail(), password);
         }
     }
 }

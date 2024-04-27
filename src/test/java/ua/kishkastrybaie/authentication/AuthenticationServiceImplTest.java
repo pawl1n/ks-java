@@ -36,7 +36,7 @@ class AuthenticationServiceImplTest {
     // given
     RegisterRequest registerRequest =
         new RegisterRequest(
-            "firstName", "middleName", "lastName", "email@email.com", "phoneNumber", "password");
+            "firstName", "middleName", "lastName", "userEmail@userEmail.com", "phoneNumber", "password");
 
     User user =
         new User(
@@ -44,7 +44,7 @@ class AuthenticationServiceImplTest {
             "firstName",
             "middleName",
             "lastName",
-            "email@email.com",
+            "userEmail@userEmail.com",
             "phoneNumber",
             "password",
             Role.USER);
@@ -67,7 +67,7 @@ class AuthenticationServiceImplTest {
   void shouldAuthenticate() {
     // given
     AuthenticationRequest authenticationRequest =
-        new AuthenticationRequest("email@email.com", "password");
+        new AuthenticationRequest("userEmail@userEmail.com", "password");
 
     given(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
         .willReturn(authentication);

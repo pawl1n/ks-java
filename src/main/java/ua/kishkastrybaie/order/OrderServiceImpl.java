@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
     order.setPaymentType(orderRequest.paymentType());
     order.setPhoneNumber(orderRequest.phoneNumber());
     order.setShippingMethod(orderRequest.shippingMethod());
-    order.setUserEmail(orderRequest.email().toLowerCase());
+    order.setUserEmail(orderRequest.userEmail().toLowerCase());
 
     order.setItems(getItems(orderRequest.items()));
     order.setTotalPrice(calculateTotalPrice(order));
@@ -81,13 +81,16 @@ public class OrderServiceImpl implements OrderService {
                   o.setAddress(orderRequest.address());
                   o.setShippingMethod(orderRequest.shippingMethod());
                   o.setCustomerFullName(orderRequest.customerFullName());
-                  o.setUserEmail(orderRequest.email().toLowerCase());
+                  o.setUserEmail(orderRequest.userEmail().toLowerCase());
 
                   processProductItemsReturning(o.getItems());
                   o.setItems(getItems(orderRequest.items()));
                   processProductItemsSelling(o.getItems());
 
                   o.setTotalPrice(calculateTotalPrice(o));
+
+                  changeStatus(o, orderRequest.status());
+
                   return orderRepository.save(o);
                 })
             .orElseThrow(() -> new OrderNotFoundException(id));
@@ -95,11 +98,7 @@ public class OrderServiceImpl implements OrderService {
     return orderModelAssembler.toModel(orderRepository.save(order));
   }
 
-  @Override
-  @Transactional
-  public OrderDto changeStatus(Long id, OrderStatus status) {
-    Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
-
+  private void changeStatus(Order order, OrderStatus status) {
     if (!order.getStatus().equals(status)) {
       if (status.equals(CANCELED)) {
         processProductItemsReturning(order.getItems());
@@ -109,8 +108,6 @@ public class OrderServiceImpl implements OrderService {
 
       order.setStatus(status);
     }
-
-    return orderModelAssembler.toModel(orderRepository.save(order));
   }
 
   private Set<OrderItem> getItems(Set<OrderItemRequestDto> items) {

@@ -132,7 +132,7 @@ class UserServiceImplTest {
   @Test
   void shouldLoadUserByUsername() {
     // given
-    String username = "email";
+    String username = "userEmail";
 
     // when
     when(userRepository.findByEmailEqualsIgnoreCase(username)).thenReturn(Optional.of(user));

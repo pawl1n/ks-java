@@ -58,7 +58,7 @@ class UserControllerIT {
         .then()
         .statusCode(HttpStatus.OK.value())
         .body(
-            "email",
+            "userEmail",
             equalTo("user@user"),
             "firstName",
             equalTo("user"),
