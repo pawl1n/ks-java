@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
@@ -32,6 +33,7 @@ import ua.kishkastrybaie.product.Product;
 import ua.kishkastrybaie.product.item.ProductItem;
 import ua.kishkastrybaie.product.item.ProductItemNotFoundException;
 import ua.kishkastrybaie.product.item.ProductItemRepository;
+import ua.kishkastrybaie.user.User;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
@@ -147,6 +149,27 @@ class OrderServiceImplTest {
 
     // then
     then(ordersDto).hasSize(1).usingRecursiveComparison().isEqualTo(orderDtoPagedModel);
+  }
+
+  @Test
+  void shouldFindAllByUser() {
+    // given
+    User user = new User();
+    user.setEmail("user@example.com");
+
+    given(orderRepository.findAllByUserEmail("user@example.com", PageRequest.ofSize(5)))
+        .willReturn(new PageImpl<>(List.of(order)));
+    given(pagedResourcesAssembler.toModel(new PageImpl<>(List.of(order)), orderModelAssembler))
+        .willReturn(PagedModel.of(List.of(orderDto1), new PagedModel.PageMetadata(5, 0, 1)));
+
+    // when
+    CollectionModel<OrderDto> ordersDto = orderService.findAllByUser(Pageable.ofSize(5), user);
+
+    // then
+    then(ordersDto)
+        .hasSize(1)
+        .usingRecursiveComparison()
+        .isEqualTo(PagedModel.of(List.of(orderDto1), new PagedModel.PageMetadata(5, 0, 1)));
   }
 
   @Test
