@@ -3,8 +3,7 @@ package ua.kishkastrybaie.order;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +24,7 @@ import ua.kishkastrybaie.category.Category;
 import ua.kishkastrybaie.image.Image;
 import ua.kishkastrybaie.order.item.OrderItem;
 import ua.kishkastrybaie.order.item.OrderItemQuantityOutOfBoundsException;
+import ua.kishkastrybaie.order.item.OrderItemRepository;
 import ua.kishkastrybaie.order.item.OrderItemRequestDto;
 import ua.kishkastrybaie.order.payment.type.PaymentType;
 import ua.kishkastrybaie.order.shipping.method.ShippingMethod;
@@ -46,6 +46,7 @@ class OrderServiceImplTest {
   @Mock private PagedResourcesAssembler<Order> pagedResourcesAssembler;
   @Mock private OrderModelAssembler orderModelAssembler;
   @Mock private ProductItemRepository productItemRepository;
+  @Mock private OrderItemRepository orderItemRepository;
   @InjectMocks private OrderServiceImpl orderService;
 
   @BeforeEach
@@ -93,7 +94,7 @@ class OrderServiceImplTest {
 
     order = new Order();
     order.setId(1L);
-    order.setItems(new HashSet<>(Arrays.asList(orderItem1, orderItem2)));
+    order.setItems(new ArrayList<>(Arrays.asList(orderItem1, orderItem2)));
     order.setTotalPrice(50.0);
     order.setStatus(OrderStatus.CREATED);
     order.setUserEmail("user@example.com");

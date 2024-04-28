@@ -10,6 +10,8 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
@@ -42,5 +44,11 @@ public class OrderController {
       @PathVariable Long id, @Valid @RequestBody OrderRequestDto orderRequest) {
     log.info("Update order {}", orderRequest);
     return ResponseEntity.ok(orderService.replace(id, orderRequest));
+  }
+
+  @GetMapping("/report")
+  public ResponseEntity<OrderCountReportDto> getReport(@RequestParam Instant startDate, @RequestParam Instant endDate) {
+    log.info("Get report from {} to {}", startDate, endDate);
+    return ResponseEntity.ok(orderService.getReport(startDate, endDate));
   }
 }

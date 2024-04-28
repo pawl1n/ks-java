@@ -4,6 +4,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import ua.kishkastrybaie.user.User;
 
+import java.time.Instant;
+
 public interface OrderService {
   CollectionModel<OrderDto> findAll(Pageable pageable);
 
@@ -14,4 +16,6 @@ public interface OrderService {
   OrderDto save(OrderRequestDto orderRequest);
 
   OrderDto replace(Long id, OrderRequestDto orderRequest);
+
+  OrderCountReportDto getReport(Instant startDate, Instant endDate);
 }

@@ -89,3 +89,6 @@ databaseChangeLog:
   - include:
       file: changes/030-add-variations-to-categories.yaml
       relativeToChangelogFile: true
+  - include:
+      file: changes/031-drop-order-status.yaml
+      relativeToChangelogFile: true

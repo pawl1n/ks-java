@@ -1,6 +1,6 @@
 package ua.kishkastrybaie.order;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.mapstruct.*;
 import ua.kishkastrybaie.order.item.OrderItem;
@@ -17,7 +17,7 @@ public interface OrderMapper {
   OrderDto toDto(Order order);
 
   @Named("mapItems")
-  default String mapItems(Set<OrderItem> items) {
+  default String mapItems(List<OrderItem> items) {
     return items.stream().map(OrderItem::getProductItem).map(ProductItem::getProduct).map(Product::getName).collect(
             Collectors.joining(", "));
   }

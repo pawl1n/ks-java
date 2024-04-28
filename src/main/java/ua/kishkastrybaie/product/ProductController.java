@@ -23,14 +23,19 @@ public class ProductController {
 
   @GetMapping
   public ResponseEntity<CollectionModel<ProductDto>> all(
-      @RequestParam(required = false) String categoryPath, @PageableDefault Pageable pageable) {
+      @RequestParam(required = false) String categoryPath,
+      @RequestParam(required = false) String q,
+      @PageableDefault Pageable pageable) {
     CollectionModel<ProductDto> result;
-    if (categoryPath == null) {
-      log.info("Get all products");
-      result = productService.findAll(pageable);
-    } else {
+    if (categoryPath != null) {
       log.info("Get products by category path: {}", categoryPath);
       result = productService.findByCategoryPath(categoryPath, pageable);
+    } else if (q != null && !q.isEmpty()) {
+      log.info("Get products by search query: {}", q);
+      result = productService.search(q, pageable);
+    } else {
+      log.info("Get all products");
+      result = productService.findAll(pageable);
     }
 
     return ResponseEntity.ok(result);
@@ -101,13 +106,5 @@ public class ProductController {
 
     productService.deleteById(id);
     return ResponseEntity.noContent().build();
-  }
-
-  @GetMapping("/search")
-  public ResponseEntity<CollectionModel<ProductDto>> search(@PageableDefault Pageable pageable, SearchRequestDto searchRequestDto) {
-    log.info("Search products: {}", searchRequestDto.q());
-
-    CollectionModel<ProductDto> result = productService.search(searchRequestDto.q(), pageable);
-    return ResponseEntity.ok(result);
   }
 }

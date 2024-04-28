@@ -1,16 +1,21 @@
 package ua.kishkastrybaie.order;
 
 import jakarta.persistence.*;
-import java.util.Set;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import ua.kishkastrybaie.order.item.OrderItem;
 import ua.kishkastrybaie.order.payment.type.PaymentType;
 import ua.kishkastrybaie.order.shipping.method.ShippingMethod;
 import ua.kishkastrybaie.order.status.OrderStatus;
-import ua.kishkastrybaie.order.status.OrderStatusHistory;
 
 @Entity
 @Table(name = "`order`", schema = "main")
@@ -36,9 +41,6 @@ public class Order {
   @Enumerated(EnumType.STRING)
   private OrderStatus status;
 
-  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-  private Set<OrderStatusHistory> statusHistory;
-
   @Enumerated(EnumType.STRING)
   private PaymentType paymentType;
 
@@ -51,15 +53,34 @@ public class Order {
 
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
   @Setter(AccessLevel.NONE)
-  private Set<OrderItem> items;
+  private List<OrderItem> items = new ArrayList<>();
+
+  @CreationTimestamp
+  @Setter(AccessLevel.NONE)
+  private Instant createdAt;
 
   /**
    * Set items for order and set order for order items
    *
    * @param orderItems - order items
    */
-  public void setItems(Set<OrderItem> orderItems) {
-    orderItems.forEach(item -> item.setOrder(this));
-    this.items = orderItems;
+  public void setItems(List<OrderItem> orderItems) {
+    List<OrderItem> mappedOrderItems = orderItems.stream().map(
+        item -> {
+          Optional<OrderItem> orderItem =
+              this.items.stream()
+                  .filter(
+                      value -> value.getProductItem().getId().equals(item.getProductItem().getId()))
+                  .findFirst();
+
+          if (orderItem.isPresent()) {
+            orderItem.get().setQuantity(item.getQuantity());
+            return orderItem.get();
+          } else {
+            item.setOrder(this);
+            return item;
+          }
+        }).toList();
+    this.items = new ArrayList<>(mappedOrderItems);
   }
 }
