@@ -9,7 +9,6 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.kishkastrybaie.order.status.OrderStatus;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -38,10 +37,10 @@ public class OrderController {
         .body(responseDto);
   }
 
-  @PutMapping("/{id}/status")
-  public ResponseEntity<OrderDto> changeStatus(
-      @PathVariable Long id, @Valid @RequestBody OrderStatus status) {
-    log.info("Change order status {}", status);
-    return ResponseEntity.ok(orderService.changeStatus(id, status));
+  @PutMapping("/{id}")
+  public ResponseEntity<OrderDto> update(
+      @PathVariable Long id, @Valid @RequestBody OrderRequestDto orderRequest) {
+    log.info("Update order {}", orderRequest);
+    return ResponseEntity.ok(orderService.replace(id, orderRequest));
   }
 }

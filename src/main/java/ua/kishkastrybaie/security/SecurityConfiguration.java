@@ -44,6 +44,7 @@ import ua.kishkastrybaie.user.Role;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
   private static final String[] PUBLIC_ENDPOINTS = new String[] {"/api/auth/**"};
+  private static final String[] PUBLIC_POST_ENDPOINTS = new String[] {"/api/orders"};
   private static final String[] PUBLIC_GET_ENDPOINTS =
       new String[] {"/api/products/**", "/api/categories/**", "/api/", "/api/variations/**"};
   private static final String[] USER_ENDPOINTS = new String[] {"/api/users/me/**"};
@@ -78,6 +79,8 @@ public class SecurityConfiguration {
                 auth.requestMatchers(PUBLIC_ENDPOINTS)
                     .permitAll()
                     .requestMatchers(GET, PUBLIC_GET_ENDPOINTS)
+                    .permitAll()
+                    .requestMatchers(POST, PUBLIC_POST_ENDPOINTS)
                     .permitAll()
                     .requestMatchers(USER_ENDPOINTS)
                     .access(hasRoleUser)

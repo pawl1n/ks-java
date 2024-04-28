@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
@@ -32,6 +33,7 @@ import ua.kishkastrybaie.product.Product;
 import ua.kishkastrybaie.product.item.ProductItem;
 import ua.kishkastrybaie.product.item.ProductItemNotFoundException;
 import ua.kishkastrybaie.product.item.ProductItemRepository;
+import ua.kishkastrybaie.user.User;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
@@ -128,6 +130,7 @@ class OrderServiceImplTest {
             PaymentType.CASH,
             "test address",
             ShippingMethod.PICKUP,
+            OrderStatus.CREATED,
             orderItemRequestDtoSet);
   }
 
@@ -147,29 +150,27 @@ class OrderServiceImplTest {
     // then
     then(ordersDto).hasSize(1).usingRecursiveComparison().isEqualTo(orderDtoPagedModel);
   }
-//
-//  @Test
-//  void shouldFindAllWhenUser() {
-//    // given
-//    User user = new User();
-//    user.setEmail("user@example.com");
-//
-//    Page<Order> orders = new PageImpl<>(List.of(order));
-//    PagedModel<OrderDto> orderDtoPagedModel =
-//        PagedModel.of(List.of(orderDto1), new PagedModel.PageMetadata(5, 0, 2));
-//    given(authorizationService.isAdmin()).willReturn(false);
-//    given(authorizationService.getAuthenticatedUser()).willReturn(user);
-//    given(orderRepository.findAllByUserEmail("user@example.com", PageRequest.ofSize(5)))
-//        .willReturn(orders);
-//    given(pagedResourcesAssembler.toModel(orders, orderModelAssembler))
-//        .willReturn(orderDtoPagedModel);
-//
-//    // when
-//    CollectionModel<OrderDto> ordersDto = orderService.findAll(PageRequest.ofSize(5));
-//
-//    // then
-//    then(ordersDto).hasSize(1).usingRecursiveComparison().isEqualTo(orderDtoPagedModel);
-//  }
+
+  @Test
+  void shouldFindAllByUser() {
+    // given
+    User user = new User();
+    user.setEmail("user@example.com");
+
+    given(orderRepository.findAllByUserEmail("user@example.com", PageRequest.ofSize(5)))
+        .willReturn(new PageImpl<>(List.of(order)));
+    given(pagedResourcesAssembler.toModel(new PageImpl<>(List.of(order)), orderModelAssembler))
+        .willReturn(PagedModel.of(List.of(orderDto1), new PagedModel.PageMetadata(5, 0, 1)));
+
+    // when
+    CollectionModel<OrderDto> ordersDto = orderService.findAllByUser(Pageable.ofSize(5), user);
+
+    // then
+    then(ordersDto)
+        .hasSize(1)
+        .usingRecursiveComparison()
+        .isEqualTo(PagedModel.of(List.of(orderDto1), new PagedModel.PageMetadata(5, 0, 1)));
+  }
 
   @Test
   void shouldFindById() {
@@ -249,6 +250,7 @@ class OrderServiceImplTest {
             PaymentType.CASH,
             "test address",
             ShippingMethod.PICKUP,
+            OrderStatus.CREATED,
             orderItemRequestDtoSet);
 
     // when
@@ -324,6 +326,7 @@ class OrderServiceImplTest {
             PaymentType.CASH,
             "test address",
             ShippingMethod.PICKUP,
+            OrderStatus.CREATED,
             orderItemRequestDtoSet);
 
     // when
@@ -332,51 +335,5 @@ class OrderServiceImplTest {
     // then
     thenThrownBy(() -> orderService.replace(1L, orderRequestDto))
         .isInstanceOf(OrderItemQuantityOutOfBoundsException.class);
-  }
-
-  @Test
-  void shouldChangeStatus() {
-    // given
-    ArgumentCaptor<Order> captor = ArgumentCaptor.forClass(Order.class);
-
-    given(orderRepository.findById(1L)).willReturn(Optional.of(order));
-    given(orderRepository.save(captor.capture())).willReturn(order);
-    given(orderModelAssembler.toModel(order)).willReturn(orderDto1);
-
-    // when
-    OrderDto result = orderService.changeStatus(1L, OrderStatus.COMPLETED);
-
-    // then
-    then(captor.getValue()).usingRecursiveComparison().isEqualTo(order);
-    then(result).usingRecursiveComparison().isEqualTo(orderDto1);
-  }
-
-  @Test
-  void shouldNotChangeStatusWhenInvalidOrderId() {
-    // given
-
-    // when
-    given(orderRepository.findById(1L)).willReturn(Optional.empty());
-
-    // then
-    thenThrownBy(() -> orderService.changeStatus(1L, OrderStatus.COMPLETED))
-        .isInstanceOf(OrderNotFoundException.class);
-  }
-
-  @Test
-  void shouldNotChangeStatusWhenSameStatus() {
-    // given
-    ArgumentCaptor<Order> captor = ArgumentCaptor.forClass(Order.class);
-
-    given(orderRepository.findById(1L)).willReturn(Optional.of(order));
-    given(orderRepository.save(captor.capture())).willReturn(order);
-    given(orderModelAssembler.toModel(order)).willReturn(orderDto1);
-
-    // when
-    OrderDto result = orderService.changeStatus(1L, order.getStatus());
-
-    // then
-    then(captor.getValue()).usingRecursiveComparison().isEqualTo(order);
-    then(result).usingRecursiveComparison().isEqualTo(orderDto1);
   }
 }

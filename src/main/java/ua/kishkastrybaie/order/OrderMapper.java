@@ -13,7 +13,6 @@ import ua.kishkastrybaie.product.item.ProductItem;
     uses = {OrderItemModelAssembler.class})
 public interface OrderMapper {
   @Mapping(target = "currentStatus", source = "status")
-  @Mapping(target = "fullName", source = "customerFullName")
   @Mapping(target = "description", source = "items", qualifiedByName = "mapItems")
   OrderDto toDto(Order order);
 
