@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 032-add-creation-time-to-users
+      author: andrii
+      changes:
+        - addColumn:
+            tableName: user
+            schemaName: main
+            columns:
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValue: "now()"
+                  constraints:
+                    nullable: false

@@ -20,6 +20,8 @@ import ua.kishkastrybaie.user.Role;
 import ua.kishkastrybaie.user.User;
 import ua.kishkastrybaie.user.UserRepository;
 
+import java.time.Instant;
+
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceImplTest {
 
@@ -47,7 +49,8 @@ class AuthenticationServiceImplTest {
             "userEmail@userEmail.com",
             "phoneNumber",
             "password",
-            Role.USER);
+            Role.USER,
+            Instant.now());
 
     given(passwordEncoder.encode("password")).willReturn("password");
     given(userRepository.save(ArgumentMatchers.any())).willReturn(user);

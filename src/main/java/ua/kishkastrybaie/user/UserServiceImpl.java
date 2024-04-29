@@ -5,6 +5,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.kishkastrybaie.shared.StatisticsDto;
+
+import java.time.Instant;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +47,14 @@ public class UserServiceImpl implements UserService {
     user.setPassword(passwordEncoder.encode(changePasswordRequest.newPassword()));
 
     return userModelAssembler.toModel(userRepository.save(user));
+  }
+
+  @Override
+  public StatisticsDto getCountStatistics(Role role, Instant startDate, Instant endDate) {
+    StatisticsDto countStatisticsDto = new StatisticsDto();
+    countStatisticsDto.setCount(userRepository.countAllByRoleAndCreatedAtBetween(role, startDate, endDate));
+    countStatisticsDto.setFilters(Map.of("role", role.name()));
+    return countStatisticsDto;
   }
 
   @Override

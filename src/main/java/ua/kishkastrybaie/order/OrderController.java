@@ -9,6 +9,8 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.kishkastrybaie.order.status.OrderStatus;
+import ua.kishkastrybaie.shared.StatisticsDto;
 
 import java.time.Instant;
 
@@ -50,5 +52,11 @@ public class OrderController {
   public ResponseEntity<OrderCountReportDto> getReport(@RequestParam Instant startDate, @RequestParam Instant endDate) {
     log.info("Get report from {} to {}", startDate, endDate);
     return ResponseEntity.ok(orderService.getReport(startDate, endDate));
+  }
+
+  @GetMapping("/stats")
+  public ResponseEntity<StatisticsDto> getCountStatistics(@RequestParam OrderStatus orderStatus, @RequestParam Instant startDate, @RequestParam Instant endDate) {
+      log.info("Get count statistics for orders");
+      return ResponseEntity.ok(orderService.getCountStatistics(orderStatus, startDate, endDate));
   }
 }

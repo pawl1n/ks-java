@@ -19,12 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.kishkastrybaie.order.item.OrderItem;
 import ua.kishkastrybaie.order.item.OrderItemQuantityOutOfBoundsException;
-import ua.kishkastrybaie.order.item.OrderItemRepository;
 import ua.kishkastrybaie.order.item.OrderItemRequestDto;
 import ua.kishkastrybaie.order.status.OrderStatus;
 import ua.kishkastrybaie.product.item.ProductItem;
 import ua.kishkastrybaie.product.item.ProductItemNotFoundException;
 import ua.kishkastrybaie.product.item.ProductItemRepository;
+import ua.kishkastrybaie.shared.StatisticsDto;
 import ua.kishkastrybaie.user.User;
 
 @Service
@@ -35,7 +35,6 @@ public class OrderServiceImpl implements OrderService {
   private final PagedResourcesAssembler<Order> pagedResourcesAssembler;
   private final OrderModelAssembler orderModelAssembler;
   private final ProductItemRepository productItemRepository;
-  private final OrderItemRepository orderItemRepository;
 
   @Override
   @Transactional
@@ -110,22 +109,19 @@ public class OrderServiceImpl implements OrderService {
   @Override
   @Transactional
   public OrderCountReportDto getReport(Instant startDate, Instant endDate) {
-    List<IOrderCountReport> report =
-        orderRepository.countByStatusHistoryCreatedAtBetweenAndStatusHistoryStatusIs(
-            startDate, endDate);
+    List<IOrderCountReport> report = orderRepository.groupByCreatedAtBetween(startDate, endDate);
 
     if (report.isEmpty()) {
       return null;
     }
 
-      Map<OrderStatus, Map<LocalDate, Integer>> reportByDate =
-          report.stream()
-              .collect(
-                  groupingBy(
-                      IOrderCountReport::getStatus,
-                      groupingBy(
-                          IOrderCountReport::getDate,
-                          summingInt(IOrderCountReport::getCount))));
+    Map<OrderStatus, Map<LocalDate, Integer>> reportByDate =
+        report.stream()
+            .collect(
+                groupingBy(
+                    IOrderCountReport::getStatus,
+                    groupingBy(
+                        IOrderCountReport::getDate, summingInt(IOrderCountReport::getCount))));
 
     OrderCountReportDto countReportDto = new OrderCountReportDto();
     countReportDto.setStartDate(startDate);
@@ -133,6 +129,17 @@ public class OrderServiceImpl implements OrderService {
     countReportDto.setDetails(reportByDate);
 
     return countReportDto;
+  }
+
+  @Override
+  public StatisticsDto getCountStatistics(OrderStatus status, Instant startDate, Instant endDate) {
+    StatisticsDto countStatistics = new StatisticsDto();
+    countStatistics.setCount(
+        orderRepository.countByStatusAndCreatedAtBetween(status, startDate, endDate));
+    countStatistics.setSum(
+        orderRepository.sumTotalPriceByStatusAndCreatedAtBetween(status, startDate, endDate));
+    countStatistics.setFilters(Map.of("status", status.name()));
+    return countStatistics;
   }
 
   private void changeStatus(Order order, OrderStatus status) {

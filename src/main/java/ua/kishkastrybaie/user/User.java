@@ -2,9 +2,12 @@ package ua.kishkastrybaie.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,6 +50,10 @@ public class User implements UserDetails {
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private Role role;
+
+  @CreationTimestamp
+  @Setter(AccessLevel.NONE)
+  private Instant createdAt;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

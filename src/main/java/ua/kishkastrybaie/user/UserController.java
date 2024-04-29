@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ua.kishkastrybaie.shared.StatisticsDto;
+
+import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/users")
@@ -40,5 +43,11 @@ public class UserController {
     UserDto userDto = userService.changePassword(user, changePasswordRequest);
 
     return ResponseEntity.ok(userDto);
+  }
+
+  @GetMapping("/stats")
+  public ResponseEntity<StatisticsDto> getCountStatistics(@RequestParam Role role, @RequestParam Instant startDate, @RequestParam Instant endDate) {
+      log.info("Get count statistics for users");
+      return ResponseEntity.ok(userService.getCountStatistics(role, startDate, endDate));
   }
 }

@@ -92,3 +92,6 @@ databaseChangeLog:
   - include:
       file: changes/031-drop-order-status.yaml
       relativeToChangelogFile: true
+  - include:
+      file: changes/032-add-creation-time-to-users.yaml
+      relativeToChangelogFile: true
