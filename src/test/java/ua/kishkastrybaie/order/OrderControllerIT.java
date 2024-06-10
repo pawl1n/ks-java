@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.*;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +95,7 @@ class OrderControllerIT {
     orderItem.setProductItem(productItem);
     orderItem.setQuantity(1);
     orderItem.setPrice(100.0);
-    order.setItems(Set.of(orderItem));
+    order.setItems(List.of(orderItem));
     orderRepository.save(order);
 
     this.orderItemId = orderItem.getId();

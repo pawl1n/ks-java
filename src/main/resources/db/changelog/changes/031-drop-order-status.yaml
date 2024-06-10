@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 030-add-variations-to-categories
+      author: andrii
+      changes:
+        - dropTable:
+            tableName: order_status
+            schemaName: main
+
+        - dropSequence:
+            sequenceName: order_status_seq
+            schemaName: main
+
+        - addColumn:
+            tableName: order
+            schemaName: main
+            columns:
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValue: "now()"
+                  constraints:
+                    nullable: false

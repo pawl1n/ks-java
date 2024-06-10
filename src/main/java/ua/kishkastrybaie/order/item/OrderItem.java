@@ -3,6 +3,7 @@ package ua.kishkastrybaie.order.item;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import ua.kishkastrybaie.order.Order;
 import ua.kishkastrybaie.product.item.ProductItem;
 
@@ -10,6 +11,7 @@ import ua.kishkastrybaie.product.item.ProductItem;
 @Table(name = "order_item", schema = "main")
 @Getter
 @Setter
+@ToString
 public class OrderItem {
   @Id
   @GeneratedValue(generator = "order_item_seq")

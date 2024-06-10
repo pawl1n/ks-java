@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   api_service:
     build: .
@@ -10,6 +8,8 @@ services:
       - postgresql_db
     links:
       - postgresql_db:postgresql_db
+    volumes:
+      - lucene-indexes:/data/lucene-indexes
     environment:
       - PGHOST=postgresql_db
       - PGUSER=postgres
@@ -32,3 +32,4 @@ services:
 
 volumes:
   db-data:
+  lucene-indexes:

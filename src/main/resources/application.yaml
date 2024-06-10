@@ -18,3 +18,9 @@ spring:
   devtools:
     restart:
       enabled: true
+logging:
+  level:
+    org:
+      hibernate:
+        sql: debug
+        type: trace

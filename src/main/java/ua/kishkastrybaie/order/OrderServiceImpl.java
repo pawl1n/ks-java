@@ -1,10 +1,16 @@
 package ua.kishkastrybaie.order;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingInt;
 import static ua.kishkastrybaie.order.status.OrderStatus.*;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -18,10 +24,12 @@ import ua.kishkastrybaie.order.status.OrderStatus;
 import ua.kishkastrybaie.product.item.ProductItem;
 import ua.kishkastrybaie.product.item.ProductItemNotFoundException;
 import ua.kishkastrybaie.product.item.ProductItemRepository;
+import ua.kishkastrybaie.shared.StatisticsDto;
 import ua.kishkastrybaie.user.User;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
   private final OrderRepository orderRepository;
   private final PagedResourcesAssembler<Order> pagedResourcesAssembler;
@@ -98,6 +106,42 @@ public class OrderServiceImpl implements OrderService {
     return orderModelAssembler.toModel(orderRepository.save(order));
   }
 
+  @Override
+  @Transactional
+  public OrderCountReportDto getReport(Instant startDate, Instant endDate) {
+    List<IOrderCountReport> report = orderRepository.groupByCreatedAtBetween(startDate, endDate);
+
+    if (report.isEmpty()) {
+      return null;
+    }
+
+    Map<OrderStatus, Map<LocalDate, Integer>> reportByDate =
+        report.stream()
+            .collect(
+                groupingBy(
+                    IOrderCountReport::getStatus,
+                    groupingBy(
+                        IOrderCountReport::getDate, summingInt(IOrderCountReport::getCount))));
+
+    OrderCountReportDto countReportDto = new OrderCountReportDto();
+    countReportDto.setStartDate(startDate);
+    countReportDto.setEndDate(endDate);
+    countReportDto.setDetails(reportByDate);
+
+    return countReportDto;
+  }
+
+  @Override
+  public StatisticsDto getCountStatistics(OrderStatus status, Instant startDate, Instant endDate) {
+    StatisticsDto countStatistics = new StatisticsDto();
+    countStatistics.setCount(
+        orderRepository.countByStatusAndCreatedAtBetween(status, startDate, endDate));
+    countStatistics.setSum(
+        orderRepository.sumTotalPriceByStatusAndCreatedAtBetween(status, startDate, endDate));
+    countStatistics.setFilters(Map.of("status", status.name()));
+    return countStatistics;
+  }
+
   private void changeStatus(Order order, OrderStatus status) {
     if (!order.getStatus().equals(status)) {
       if (status.equals(CANCELED)) {
@@ -110,8 +154,8 @@ public class OrderServiceImpl implements OrderService {
     }
   }
 
-  private Set<OrderItem> getItems(Set<OrderItemRequestDto> items) {
-    return items.stream().map(this::mapToOrderItem).collect(Collectors.toSet());
+  private List<OrderItem> getItems(Set<OrderItemRequestDto> items) {
+    return items.stream().map(this::mapToOrderItem).toList();
   }
 
   private OrderItem mapToOrderItem(OrderItemRequestDto orderItemRequestDto) {
@@ -128,7 +172,7 @@ public class OrderServiceImpl implements OrderService {
     return orderItem;
   }
 
-  private void processProductItemsReturning(Set<OrderItem> items) {
+  private void processProductItemsReturning(Iterable<OrderItem> items) {
     items.forEach(
         item -> {
           ProductItem productItem = item.getProductItem();
@@ -138,7 +182,7 @@ public class OrderServiceImpl implements OrderService {
         });
   }
 
-  private void processProductItemsSelling(Set<OrderItem> items) {
+  private void processProductItemsSelling(Iterable<OrderItem> items) {
     items.forEach(
         item -> {
           ProductItem productItem = item.getProductItem();
