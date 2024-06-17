@@ -32,7 +32,7 @@
         <jboss-logging-annotations.version>2.2.1.Final</jboss-logging-annotations.version>
         <testcontainers.version>1.19.8</testcontainers.version>
         <icu4j.version>75.1</icu4j.version>
-        <slugify.version>3.0.6</slugify.version>
+        <slugify.version>3.0.7</slugify.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <sonar.organization>pawl1n</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
