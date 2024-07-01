@@ -20,7 +20,7 @@
         <liquibase-core.version>4.28.0</liquibase-core.version>
         <lombok.version>1.18.32</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <springdoc-openapi.version>2.5.0</springdoc-openapi.version>
+        <springdoc-openapi.version>2.6.0</springdoc-openapi.version>
         <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
         <hibernate-search.version>7.1.1.Final</hibernate-search.version>
         <cloudinary-http44.version>1.38.0</cloudinary-http44.version>
