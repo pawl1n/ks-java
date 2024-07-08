@@ -29,7 +29,7 @@
         <maven-surefire-plugin.version>3.3.0</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <asciidoctor-maven-plugin.version>3.0.0</asciidoctor-maven-plugin.version>
-        <jboss-logging-annotations.version>2.2.1.Final</jboss-logging-annotations.version>
+        <jboss-logging-annotations.version>3.0.0.Final</jboss-logging-annotations.version>
         <testcontainers.version>1.19.8</testcontainers.version>
         <icu4j.version>75.1</icu4j.version>
         <slugify.version>3.0.7</slugify.version>
