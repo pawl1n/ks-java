@@ -23,7 +23,7 @@
         <springdoc-openapi.version>2.6.0</springdoc-openapi.version>
         <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
         <hibernate-search.version>7.1.1.Final</hibernate-search.version>
-        <cloudinary-http44.version>1.38.0</cloudinary-http44.version>
+        <cloudinary-http44.version>1.39.0</cloudinary-http44.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
         <rest-assured.version>5.5.0</rest-assured.version>
         <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
