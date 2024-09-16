@@ -19,7 +19,7 @@
         <postgresql.version>42.7.4</postgresql.version>
         <liquibase-core.version>4.29.1</liquibase-core.version>
         <lombok.version>1.18.34</lombok.version>
-        <mapstruct.version>1.6.0</mapstruct.version>
+        <mapstruct.version>1.6.2</mapstruct.version>
         <springdoc-openapi.version>2.6.0</springdoc-openapi.version>
         <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
         <hibernate-search.version>7.1.1.Final</hibernate-search.version>
