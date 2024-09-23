@@ -46,7 +46,7 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
         run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
       - name: Add coverage to PR
-        uses: madrapps/jacoco-report@v1.7.0
+        uses: madrapps/jacoco-report@v1.7.1
         if: ${{ github.actor != 'dependabot[bot]' }}
         with:
           paths: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
